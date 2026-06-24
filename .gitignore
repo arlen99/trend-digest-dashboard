@@ -1,0 +1,8 @@
+.env
+*.token
+.DS_Store
+output/*
+!output/user_ids.json
+__pycache__/
+*.pyc
+tools/ocr

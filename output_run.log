@@ -1,0 +1,4 @@
+Scraping 107 accounts via Apify (apify~instagram-scraper)...
+Wrote output/top_posts_2026-06-21.json and .md (40 rows)
+
+Next: review the .md shortlist, then push to Notion (notion_push.py or ask Claude to import + write the digest).

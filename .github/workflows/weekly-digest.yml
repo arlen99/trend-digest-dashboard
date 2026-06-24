@@ -1,0 +1,62 @@
+name: Weekly Trend Digest (data layer)
+
+# Refreshes the DETERMINISTIC layers (scrape, sound chart, TikTok trends, trend
+# candidates, provenance) and redeploys the dashboard — no Mac required.
+# The CURATION + trend-card prose still need Claude (see CLOUD_SETUP.md): either a
+# separate /schedule cloud routine, or add an Agent-SDK step below.
+
+on:
+  schedule:
+    - cron: "7 8 * * 1"   # Mondays 08:07 UTC — adjust for your timezone
+  workflow_dispatch: {}    # allow manual runs from the Actions tab
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # allow the workflow to push the refreshed dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system deps (ffmpeg + Tesseract OCR)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr
+
+      - name: Run the deterministic pipeline
+        env:
+          TIKHUB_TOKEN: ${{ secrets.TIKHUB_TOKEN }}
+          AUDD_TOKEN: ${{ secrets.AUDD_TOKEN }}
+          OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
+          CLIPS_PER_ACCOUNT: "20"
+        run: |
+          set -e
+          TODAY=$(date +%F)
+          python3 scrape.py
+          python3 tiktok_scrape.py
+          python3 keyword_posts.py
+          python3 audio_trends.py
+          python3 tiktok_trends.py
+          python3 chart_audd.py
+          python3 hook_text.py output/top_posts_${TODAY}.json --limit 150
+          python3 trends.py
+          python3 hook_search.py
+          # dashboard data refresh (deterministic parts only)
+          python3 audio_chart_to_dashboard.py
+          python3 tiktok_to_dashboard.py --top 12
+          python3 keyword_posts_to_dashboard.py --top 12
+          python3 provenance.py
+          python3 build_dashboard.py
+          # NOTE: curated swipe-file posts + Trend Radar card prose are NOT refreshed
+          # here (they need Claude). See CLOUD_SETUP.md for the options.
+
+      - name: Commit & deploy (push from repo root → Vercel)
+        run: |
+          git config user.email "arlentan@gmail.com"
+          git config user.name "Trend Digest Bot"
+          git add -A
+          git commit -m "weekly data refresh $(date +%F)" || echo "no changes"
+          git push
+        # Vercel auto-deploys from this repo's main branch (Root Directory = dashboard/).
