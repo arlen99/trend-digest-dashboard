@@ -2,7 +2,18 @@
 *.token
 .DS_Store
 output/*
+# keep the JSON the cloud run + Claude routine read (caches, candidates, momentum baseline)
 !output/user_ids.json
+!output/hook_texts.json
+!output/chart_audd.json
+!output/top_posts_*.json
+!output/top_posts_tiktok_*.json
+!output/keyword_posts_*.json
+!output/audio_trends_*.json
+!output/tiktok_trends_*.json
+!output/trends_*.json
+!output/hook_trends_*.json
+# (.md reports + downloaded media stay ignored)
 __pycache__/
 *.pyc
 tools/ocr
