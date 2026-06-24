@@ -5,23 +5,23 @@
       "type": "audio",
       "anchor": "Sign of the Times — Harry Styles",
       "original": false,
-      "creators": 8,
-      "uses": 9,
+      "creators": 10,
+      "uses": 11,
       "accounts": [
+        "andres.visual",
         "anthonyg.xdr",
         "braedenpato",
         "danieltremsky",
         "dario.explore",
-        "eric.sierra",
-        "juliakursten"
+        "david_zamut"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "rising",
+      "prev_creators": 8,
       "samples": [
+        "https://www.instagram.com/reel/DZfheGuJtf6/",
         "https://www.instagram.com/reel/DXFFeJehCMT/",
         "https://www.instagram.com/reel/DWbsmTxD2oH/",
-        "https://www.instagram.com/reel/DXOJ_txElUY/",
-        "https://www.instagram.com/reel/DZBhJK-MKcU/"
+        "https://www.instagram.com/reel/DXOJ_txElUY/"
       ]
     },
     {
@@ -37,13 +37,100 @@
         "gonzalopasquier",
         "tom_webster5"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 5,
       "samples": [
         "https://www.instagram.com/reel/DTmWUdUjLxF/",
         "https://www.instagram.com/reel/DYZKVzOqUNW/",
         "https://www.instagram.com/reel/DTs5xUjjcF0/",
         "https://www.instagram.com/reel/DTKyZTQASSd/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Where'd All the Time Go? — Dr. Dog",
+      "original": false,
+      "creators": 5,
+      "uses": 5,
+      "accounts": [
+        "bxnmxclean",
+        "danielzelinger",
+        "ikdmiantara",
+        "qmike",
+        "thesunnilife"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DTrH8GMExe4/",
+        "https://www.instagram.com/reel/DZkIbW0v5fN/",
+        "https://www.instagram.com/reel/DUGiOu-iPNa/",
+        "https://www.instagram.com/reel/DPAsKgRjtL7/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Daydream — Gunter Kallmann Choir",
+      "original": false,
+      "creators": 5,
+      "uses": 5,
+      "accounts": [
+        "aagnesefontana",
+        "daniescayola",
+        "kolbydaniellephoto",
+        "timtimruivo",
+        "zacfreuden"
+      ],
+      "momentum": "rising",
+      "prev_creators": 4,
+      "samples": [
+        "https://www.instagram.com/reel/DZgNfFkTGrN/",
+        "https://www.instagram.com/reel/DTPJWaUklnm/",
+        "https://www.instagram.com/reel/DZR22TAyTJy/",
+        "https://www.instagram.com/reel/CsZW13wIakt/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Sadeness — Enigma",
+      "original": false,
+      "creators": 5,
+      "uses": 5,
+      "accounts": [
+        "debruptravelfilms",
+        "isabelledvictoria",
+        "jonanthonyjames",
+        "michaelacarrot",
+        "qmike"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DY9WpcdIRv_/",
+        "https://www.instagram.com/reel/DZNPeqvT5EO/",
+        "https://www.instagram.com/reel/DZiSfyiJI8x/",
+        "https://www.instagram.com/reel/DYzadhrBCy8/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "M83 Outro — alexcisse",
+      "original": true,
+      "creators": 4,
+      "uses": 4,
+      "accounts": [
+        "elliotmacguire",
+        "javipostigo",
+        "jetlagjessy",
+        "sebastienclosuit"
+      ],
+      "momentum": "rising",
+      "prev_creators": 3,
+      "samples": [
+        "https://www.instagram.com/reel/DZaXlMwzFIo/",
+        "https://www.instagram.com/reel/DWO8k70iA5t/",
+        "https://www.instagram.com/reel/DZ4KVmSs-oj/",
+        "https://www.instagram.com/reel/DZyA6AnO5Rb/"
       ]
     },
     {
@@ -58,8 +145,8 @@
         "nilenriquezz",
         "phillippfeiffer_"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 4,
       "samples": [
         "https://www.instagram.com/reel/DX69gFRNpoy/",
         "https://www.instagram.com/reel/DXYnqcuEo36/",
@@ -79,55 +166,13 @@
         "sebastienclosuit",
         "the_visualexplorer"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 4,
       "samples": [
         "https://www.instagram.com/reel/DZnIsaJxBr7/",
         "https://www.instagram.com/reel/DYcdNojN2Fo/",
         "https://www.instagram.com/reel/DZb3NNHsA4x/",
         "https://www.instagram.com/reel/DZAoLQTxCSJ/"
-      ]
-    },
-    {
-      "type": "audio",
-      "anchor": "Daydream — Gunter Kallmann Choir",
-      "original": false,
-      "creators": 4,
-      "uses": 4,
-      "accounts": [
-        "aagnesefontana",
-        "daniescayola",
-        "kolbydaniellephoto",
-        "timtimruivo"
-      ],
-      "momentum": "new",
-      "prev_creators": null,
-      "samples": [
-        "https://www.instagram.com/reel/DTPJWaUklnm/",
-        "https://www.instagram.com/reel/DZR22TAyTJy/",
-        "https://www.instagram.com/reel/CsZW13wIakt/",
-        "https://www.instagram.com/reel/DWAe3RmkX75/"
-      ]
-    },
-    {
-      "type": "audio",
-      "anchor": "Sadeness — Enigma",
-      "original": false,
-      "creators": 4,
-      "uses": 4,
-      "accounts": [
-        "debruptravelfilms",
-        "isabelledvictoria",
-        "jonanthonyjames",
-        "michaelacarrot"
-      ],
-      "momentum": "new",
-      "prev_creators": null,
-      "samples": [
-        "https://www.instagram.com/reel/DZNPeqvT5EO/",
-        "https://www.instagram.com/reel/DZiSfyiJI8x/",
-        "https://www.instagram.com/reel/DYzadhrBCy8/",
-        "https://www.instagram.com/reel/DYbfWDvz2ik/"
       ]
     },
     {
@@ -141,13 +186,33 @@
         "somewhere.island",
         "tonyolsenfilm"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DSZYPjIjUQ-/",
         "https://www.instagram.com/reel/DSLGDI4jYPi/",
         "https://www.instagram.com/reel/DRqFQ68DU3p/",
         "https://www.instagram.com/reel/DRkrzQZExkE/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "misses — Dominic Fike",
+      "original": false,
+      "creators": 3,
+      "uses": 4,
+      "accounts": [
+        "danjdickman",
+        "jaxon_roberts",
+        "psalm1.0"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DYSiNkisVsw/",
+        "https://www.instagram.com/reel/DW58g9ggQGs/",
+        "https://www.instagram.com/reel/DX6TSj4zUpz/",
+        "https://www.instagram.com/reel/DYtkEZ_Noxf/"
       ]
     },
     {
@@ -161,8 +226,8 @@
         "chrisglaze",
         "dario.explore"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DV0QMD8E_D1/",
         "https://www.instagram.com/reel/C9918AeRzBy/",
@@ -181,13 +246,51 @@
         "loriis_r",
         "monicaroams"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DVlA-IODDRv/",
         "https://www.instagram.com/reel/DXOLoalEcGk/",
         "https://www.instagram.com/reel/DZjua8_xy8s/",
         "https://www.instagram.com/reel/DZVQjd6iauT/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "End of August — Noah Kahan",
+      "original": false,
+      "creators": 3,
+      "uses": 3,
+      "accounts": [
+        "colinringas",
+        "elliotmacguire",
+        "jonsoriginals"
+      ],
+      "momentum": "rising",
+      "prev_creators": 1,
+      "samples": [
+        "https://www.instagram.com/reel/DZVEkFQT44t/",
+        "https://www.instagram.com/reel/DX4lcpFJLO-/",
+        "https://www.instagram.com/reel/DXxd1hUSr6i/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Caribbean Blue (Single Version) — Enya",
+      "original": false,
+      "creators": 3,
+      "uses": 3,
+      "accounts": [
+        "bonnyandgava",
+        "daniescayola",
+        "keankburke"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DZc_IsQMAWc/",
+        "https://www.instagram.com/reel/DZov7eAzsHc/",
+        "https://www.instagram.com/reel/DWyxVavDZdP/"
       ]
     },
     {
@@ -201,31 +304,12 @@
         "kolbydaniellephoto",
         "saxonkent"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DNTi6-GN6KO/",
         "https://www.instagram.com/reel/DMuoU-OpTuE/",
         "https://www.instagram.com/reel/DTelfa8DnHN/"
-      ]
-    },
-    {
-      "type": "audio",
-      "anchor": "M83 Outro — alexcisse",
-      "original": true,
-      "creators": 3,
-      "uses": 3,
-      "accounts": [
-        "javipostigo",
-        "jetlagjessy",
-        "sebastienclosuit"
-      ],
-      "momentum": "new",
-      "prev_creators": null,
-      "samples": [
-        "https://www.instagram.com/reel/DWO8k70iA5t/",
-        "https://www.instagram.com/reel/DZ4KVmSs-oj/",
-        "https://www.instagram.com/reel/DZyA6AnO5Rb/"
       ]
     },
     {
@@ -239,12 +323,50 @@
         "anthonyg.xdr",
         "jaxon_roberts"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DZuKg_Wzscb/",
         "https://www.instagram.com/reel/DZ1r9s8TTOU/",
         "https://www.instagram.com/reel/DZ7VeImAnOR/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Can You Hear The Music — Ludwig Göransson",
+      "original": false,
+      "creators": 3,
+      "uses": 3,
+      "accounts": [
+        "david_zamut",
+        "i.jaziii",
+        "jaxon_roberts"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DXq7ORok7jj/",
+        "https://www.instagram.com/reel/C4QMXqhvuQt/",
+        "https://www.instagram.com/reel/DXoYxJsDJFJ/"
+      ]
+    },
+    {
+      "type": "audio",
+      "anchor": "Sailor Song — Gigi Perez",
+      "original": false,
+      "creators": 3,
+      "uses": 3,
+      "accounts": [
+        "lauradesnoeck",
+        "marshal_roam",
+        "saxonkent"
+      ],
+      "momentum": "rising",
+      "prev_creators": 2,
+      "samples": [
+        "https://www.instagram.com/reel/DMiTmkyuT43/",
+        "https://www.instagram.com/reel/DZ4mVYts9Oq/",
+        "https://www.instagram.com/reel/DYct1C7INmp/"
       ]
     },
     {
@@ -258,8 +380,8 @@
         "rayanclaverrol",
         "scotthowes"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DKkBXQsIN9s/",
         "https://www.instagram.com/reel/DKrjHcph1o1/",
@@ -277,8 +399,8 @@
         "juliakursten",
         "oli.amos"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DXZlcTOkv86/",
         "https://www.instagram.com/reel/C3StVZ8q6Ma/",
@@ -287,21 +409,21 @@
     },
     {
       "type": "audio",
-      "anchor": "Original audio — cadensnyder_",
-      "original": true,
+      "anchor": "LET ME BE — The Second Voice",
+      "original": false,
       "creators": 3,
       "uses": 3,
       "accounts": [
-        "dennisglanz",
         "juliagal_",
+        "martadtravels",
         "michaelacarrot"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "rising",
+      "prev_creators": 2,
       "samples": [
-        "https://www.instagram.com/reel/DYxCstviszc/",
-        "https://www.instagram.com/reel/DYcW9UXsEWq/",
-        "https://www.instagram.com/reel/DZzyXEkMZTq/"
+        "https://www.instagram.com/reel/DY7V9FBzEs2/",
+        "https://www.instagram.com/reel/DXjsKMbEqGp/",
+        "https://www.instagram.com/reel/DZ8TwRDMnkv/"
       ]
     },
     {
@@ -315,8 +437,8 @@
         "martadtravels",
         "rayanclaverrol"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/CvNL_xopczA/",
         "https://www.instagram.com/reel/CuVH8snAZmI/",
@@ -334,8 +456,8 @@
         "aagnesefontana",
         "dayn_moron"
       ],
-      "momentum": "new",
-      "prev_creators": null,
+      "momentum": "steady",
+      "prev_creators": 3,
       "samples": [
         "https://www.instagram.com/reel/DYEq07UyDCj/",
         "https://www.instagram.com/reel/DUqonyBiSqM/",
