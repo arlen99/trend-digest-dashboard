@@ -514,23 +514,24 @@ function injectEmbed(media,src){
   f.setAttribute('allowfullscreen','');f.setAttribute('scrolling','no');
   media.appendChild(f);media.classList.add('playing');
 }
-// Play INLINE — never opens a tab. TikTok + (expired) IG fall back to the platform embed, which never expires.
+function embedFor(media,url,plat){const id=ttId(url),code=igCode(url);
+  if(plat==='tiktok'&&id)injectEmbed(media,`https://www.tiktok.com/embed/v2/${id}`);
+  else if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);}
+// Play INLINE — never opens a tab. Native <video> off the durable Blob URL for both
+// platforms; the platform embed is only a fallback if a video is missing/fails.
 function play(card){
   const media=card.querySelector('.media');
   if(media.classList.contains('playing'))return;
   if(card.dataset.carousel){const g=document.createElement('div');g.className='gallery';media.appendChild(g);media.classList.add('playing');initGallery(g,JSON.parse(card.dataset.carousel));return;}
-  const url=card.dataset.url, plat=card.dataset.platform||'instagram';
-  if(plat==='tiktok'){const id=ttId(url);if(id)injectEmbed(media,`https://www.tiktok.com/embed/v2/${id}`);return;}
-  const v=card.dataset.video, code=igCode(url);
+  const url=card.dataset.url, plat=card.dataset.platform||'instagram', v=card.dataset.video;
   if(v){
     const vid=document.createElement('video');vid.className='vid';vid.controls=true;vid.playsInline=true;
     vid.preload='metadata';vid.poster=card.dataset.thumb||'';vid.src=v;
-    // signed IG URLs expire — on error fall back to the IG embed inline (NOT a new tab)
-    vid.addEventListener('error',()=>{vid.remove();media.classList.remove('playing');if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);});
+    vid.addEventListener('error',()=>{vid.remove();media.classList.remove('playing');embedFor(media,url,plat);});
     media.appendChild(vid);media.classList.add('playing');vid.play().catch(()=>{});
     return;
   }
-  if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);
+  embedFor(media,url,plat);
 }
 /* ---- modal popup ---- */
 function openPost(url){
@@ -539,6 +540,7 @@ function openPost(url){
   const er=p.engRate==null?'':`<div class="m er"><b>${p.engRate}%</b>ER</div>`;
   const ttv=p.platform==='tiktok'?ttId(p.url):'', igc=p.platform!=='tiktok'?igCode(p.url):'';
   const m=(p.carousel&&p.carousel.length)?`<div class="gallery" id="m-gal"></div>`
+    :p.video?`<video controls autoplay playsinline poster="${p.thumb}" src="${p.video}"></video>`
     :ttv?`<iframe class="embed-frame" src="https://www.tiktok.com/embed/v2/${ttv}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
     :igc?`<iframe class="embed-frame" src="https://www.instagram.com/reel/${igc}/embed/" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
     :`<img src="${p.thumb}" alt="@${p.account}">`;

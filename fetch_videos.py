@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""
+Self-host the displayed posts' videos on Vercel Blob so they play INLINE natively
+and never expire (IG/TikTok signed CDN URLs die in hours).
+
+Per displayed video post: fetch a FRESH source URL (IG via fetch_post_by_url, TikTok
+via fetch_one_video — the web endpoint strips it), download the MP4, upload to Blob at
+a STABLE pathname (videos/<platform>_<shortcode>.mp4 → stable public URL), and point
+the card's `video` field at the Blob URL. Then PRUNE: delete any Blob video no longer
+referenced, so storage stays bounded (~the displayed set), never accumulating.
+
+Pure stdlib (urllib) — runs in CI with no extra deps.
+Usage: set -a && . ./.env && set +a && python3 fetch_videos.py
+Env: TIKHUB_TOKEN, BLOB_READ_WRITE_TOKEN.
+"""
+import json
+import os
+import re
+import time
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).parent
+DASH = ROOT / "dashboard"
+TIKHUB = os.environ.get("TIKHUB_TOKEN")
+BLOB = os.environ.get("BLOB_READ_WRITE_TOKEN")
+BLOB_API = "https://blob.vercel-storage.com"
+UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
+      "(KHTML, like Gecko) Version/16 Safari/605.1.15")
+
+
+def ig_code(u):
+    m = re.search(r"/(?:reel|reels|p|tv)/([A-Za-z0-9_-]+)", u or "");  return m.group(1) if m else ""
+
+
+def tt_id(u):
+    m = re.search(r"/video/(\d+)", u or "");  return m.group(1) if m else ""
+
+
+def th(path):
+    for _ in range(4):
+        try:
+            req = urllib.request.Request("https://api.tikhub.io" + path,
+                                         headers={"Authorization": "Bearer " + TIKHUB, "User-Agent": UA, "accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.loads(r.read().decode())
+        except Exception:  # noqa: BLE001
+            time.sleep(1.5)
+    return {}
+
+
+def deep_play_url(o):
+    if isinstance(o, dict):
+        pa = o.get("play_addr") or o.get("download_addr")
+        if isinstance(pa, dict) and pa.get("url_list"):
+            return pa["url_list"][0]
+        for v in o.values():
+            r = deep_play_url(v)
+            if r:
+                return r
+    elif isinstance(o, list):
+        for v in o:
+            r = deep_play_url(v)
+            if r:
+                return r
+    return ""
+
+
+def fresh_source(p):
+    """Fresh, downloadable MP4 URL for a post (IG or TikTok)."""
+    if p.get("platform") == "tiktok":
+        aid = tt_id(p["url"])
+        return deep_play_url(th(f"/api/v1/tiktok/app/v3/fetch_one_video?aweme_id={aid}")) if aid else ""
+    d = th(f"/api/v1/instagram/v1/fetch_post_by_url?post_url={urllib.parse.quote(p['url'])}")
+    return (d.get("data", {}) or {}).get("video_url", "")
+
+
+def download(url):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Referer": "https://www.tiktok.com/"})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        return r.read()
+
+
+def blob_put(pathname, data):
+    req = urllib.request.Request(f"{BLOB_API}/{pathname}", data=data, method="PUT", headers={
+        "authorization": "Bearer " + BLOB, "x-content-type": "video/mp4",
+        "x-add-random-suffix": "0", "x-allow-overwrite": "1", "x-api-version": "7"})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        return json.loads(r.read().decode())["url"]
+
+
+def blob_list(prefix="videos/"):
+    req = urllib.request.Request(f"{BLOB_API}?prefix={prefix}", headers={"authorization": "Bearer " + BLOB})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode()).get("blobs", [])
+
+
+def blob_delete(urls):
+    if not urls:
+        return
+    req = urllib.request.Request(f"{BLOB_API}/delete", method="POST",
+                                 data=json.dumps({"urls": urls}).encode(),
+                                 headers={"authorization": "Bearer " + BLOB, "content-type": "application/json", "x-api-version": "7"})
+    urllib.request.urlopen(req, timeout=60).read()
+
+
+def main():
+    if not (TIKHUB and BLOB):
+        raise SystemExit("Need TIKHUB_TOKEN and BLOB_READ_WRITE_TOKEN in env.")
+    data = json.loads((DASH / "data.json").read_text())
+    # displayed posts that are single videos (skip carousels/photos)
+    vids = [p for p in data["posts"] if p.get("platform") == "tiktok"
+            or (p.get("format") == "Reel" and not p.get("carousel"))]
+    keep_paths, ok, fail = set(), 0, 0
+    for p in vids:
+        plat = p.get("platform", "instagram")
+        code = tt_id(p["url"]) if plat == "tiktok" else ig_code(p["url"])
+        if not code:
+            continue
+        pathname = f"videos/{plat}_{code}.mp4"
+        keep_paths.add(pathname)
+        try:
+            src = fresh_source(p)
+            if not src:
+                fail += 1; continue
+            mp4 = download(src)
+            if len(mp4) < 5000:
+                fail += 1; continue
+            p["video"] = blob_put(pathname, mp4)
+            ok += 1
+            print(f"  ✓ {plat:9} @{p['account'][:16]:<16} {len(mp4)//1024:>5}KB")
+        except Exception as e:  # noqa: BLE001
+            fail += 1
+            print(f"  ✗ {plat} @{p.get('account')}: {str(e)[:50]}")
+        time.sleep(0.2)
+    # prune blobs no longer referenced
+    existing = blob_list()
+    stale = [b["url"] for b in existing if b["pathname"] not in keep_paths]
+    blob_delete(stale)
+    (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    print(f"\nSelf-hosted {ok} videos ({fail} failed), pruned {len(stale)} stale. "
+          f"Blob now holds {len(keep_paths)} videos.")
+
+
+if __name__ == "__main__":
+    main()
