@@ -29,6 +29,7 @@ jobs:
         env:
           TIKHUB_TOKEN: ${{ secrets.TIKHUB_TOKEN }}
           AUDD_TOKEN: ${{ secrets.AUDD_TOKEN }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
           OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
           CLIPS_PER_ACCOUNT: "20"
         run: |
@@ -47,6 +48,7 @@ jobs:
           python3 audio_chart_to_dashboard.py
           python3 tiktok_to_dashboard.py --top 12
           python3 keyword_posts_to_dashboard.py --top 12
+          python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
           python3 provenance.py
           python3 build_dashboard.py
           # NOTE: curated swipe-file posts + Trend Radar card prose are NOT refreshed
