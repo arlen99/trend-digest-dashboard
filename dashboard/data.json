@@ -2514,7 +2514,20 @@
     "audioShown": 30,
     "ttSounds": 50,
     "ttXplatform": 4,
-    "ttShown": 20
+    "ttShown": 20,
+    "audioReels": 3080,
+    "hooksReadable": 181,
+    "hookValidated": 35,
+    "keywords": [
+      "cinematic travel",
+      "travel film",
+      "cinematic photography",
+      "travel filmmaker",
+      "cinematic b roll",
+      "travel cinematography"
+    ],
+    "trendsAudio": 6,
+    "trendsHook": 4
   },
   "trends": [
     {

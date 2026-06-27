@@ -72,6 +72,15 @@ def main():
     tt_sounds = jload(latest("tiktok_trends_*.json"), []) or []
     kw_scanned = len(jload(latest("keyword_posts_*.json"), []) or [])
 
+    # pipeline counts for the "how it's built" popups
+    hooks = jload(ROOT / "output" / "hook_texts.json", {}) or {}
+    hooks_readable = sum(1 for v in hooks.values() if v.get("hook"))
+    hook_validated = len(jload(latest("hook_trends_*.json"), []) or [])
+    try:
+        from keyword_posts import KEYWORDS as kw_list
+    except Exception:  # noqa: BLE001
+        kw_list = []
+
     prov = {
         "igAccounts": ig_total, "igResolved": ig_resolved,
         "igSeed": ig_seed, "igDiscovered": disc, "igBootstrap": boot,
@@ -84,6 +93,12 @@ def main():
         "audioTracks": len(audio), "audioMulti": audio_multi, "audioShown": len(data.get("soundChart", [])),
         "ttSounds": len(tt_sounds), "ttXplatform": sum(1 for s in tt_sounds if s.get("also_in_ig_niche")),
         "ttShown": len(data.get("tiktokSounds", [])),
+        # pipeline-diagram fields
+        "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
+        "hooksReadable": hooks_readable, "hookValidated": hook_validated,
+        "keywords": kw_list, "tiktokCreators": tt_creators,
+        "trendsAudio": sum(1 for t in data.get("trends", []) if t.get("type") == "audio"),
+        "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),
     }
     data["provenance"] = prov
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))

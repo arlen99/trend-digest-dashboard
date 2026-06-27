@@ -68,6 +68,30 @@ a{color:inherit;text-decoration:none}
 .prov{font-size:11.5px;line-height:1.65;color:var(--muted);max-width:900px;margin-top:15px;border-top:1px solid var(--line2);padding-top:12px}
 .prov b{color:var(--ink);font-weight:600}
 .prov .pl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-right:7px}
+.pl-btn{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);background:none;border:0;cursor:pointer;padding:0;margin-right:7px}
+.pl-btn:hover{text-decoration:underline}
+.mm-overlay{position:fixed;inset:0;background:rgba(6,9,10,.84);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;z-index:80;overflow:auto}
+.mm-overlay.hidden{display:none}
+.mm-card{background:var(--panel);border:1px solid var(--line2);border-radius:16px;max-width:720px;width:100%;padding:26px 28px 30px;position:relative}
+.mm-close{position:absolute;top:13px;right:16px;background:none;border:0;color:var(--muted);font-size:21px;cursor:pointer;line-height:1}
+.mm-title{font-family:'Fraunces',serif;font-size:23px;font-weight:600;color:var(--ink);margin:0 2px 4px 0}
+.mm-sub{font-size:13px;color:var(--muted);margin:0 0 20px;line-height:1.5}
+.pipe{display:flex;flex-direction:column;gap:0;margin:0 auto 6px;max-width:430px}
+.pstep{background:rgba(255,255,255,.035);border:1px solid var(--line2);border-radius:11px;padding:10px 13px;text-align:center}
+.pstep .n{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--teal);line-height:1.1}
+.pstep .l{font-size:12px;color:var(--ink);line-height:1.35}
+.pstep .s{font-size:10.5px;color:var(--muted);margin-top:2px}
+.pstep.hl{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+.parrow{align-self:center;color:var(--muted);font-size:14px;line-height:1;margin:4px 0}
+.msec{margin-top:18px}
+.msec h4{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin:0 0 5px}
+.msec p{font-size:12.5px;line-height:1.6;color:#c9c7c0;margin:0}
+.mstack{display:flex;flex-wrap:wrap;gap:7px}
+.mchip{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);border:1px solid var(--line2);border-radius:6px;padding:4px 8px}
+.mchip b{color:var(--ink);font-weight:600}
+.plane{display:flex;gap:16px;flex-wrap:wrap}
+.plane>div{flex:1;min-width:240px}
+.plane h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin:0 0 9px;text-align:center}
 .trendgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:18px}
 .tcard{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:17px 18px 15px;display:flex;flex-direction:column;gap:9px}
 .tcard-top{display:flex;align-items:center;gap:8px}
@@ -333,6 +357,7 @@ select:hover{border-color:var(--teal)}
   </main>
 </div>
 <div class="modal hidden" id="modal"></div>
+<div class="mm-overlay hidden" id="methodmodal"><div class="mm-card" id="mm-body"></div></div>
 
 <script>const DATA = __DATA__;</script>
 <script>
@@ -365,9 +390,9 @@ $('#genstamp').textContent='Generated '+DATA.generated;
   const n=x=>(x==null?'—':Number(x).toLocaleString());
   const sw=$('#prov-swipe');
   const unres=v.igAccounts-v.igResolved;
-  if(sw) sw.innerHTML=`<span class="pl">Sources</span><b>${n(v.igAccounts)}</b> Instagram accounts tracked (${n(v.igSeed)} seed · ${n(v.igDiscovered)} discovered · ${n(v.igBootstrap)} bootstrapped) → <b>${n(v.igResolved)}</b> resolved &amp; scraped${unres>0?` (${n(unres)} renamed/private/unresolved)`:''}, plus <b>${n(v.tiktokCreators)}</b> TikTok creators. Each run pulls the latest ${v.postsPerIg} posts/account (IG) &amp; ${v.postsPerTt}/creator (TikTok) over a ${v.daysBack}-day window, ranked by outlier score. This board: <b>${n(v.igCurated)}</b> IG + <b>${n(v.tiktokCurated)}</b> TikTok curated top performers + <b>${n(v.keywordFinds)}</b> trending off-seed finds (from ${n(v.keywordScanned)} keyword-scanned), across <b>${n(v.boardAccounts)}</b> creators.`;
+  if(sw) sw.innerHTML=`<button class="pl-btn" data-method="swipe">Sources ▸</button><b>${n(v.igAccounts)}</b> Instagram accounts tracked (${n(v.igSeed)} seed · ${n(v.igDiscovered)} discovered · ${n(v.igBootstrap)} bootstrapped) → <b>${n(v.igResolved)}</b> resolved &amp; scraped${unres>0?` (${n(unres)} renamed/private/unresolved)`:''}, plus <b>${n(v.tiktokCreators)}</b> TikTok creators. Each run pulls the latest ${v.postsPerIg} posts/account (IG) &amp; ${v.postsPerTt}/creator (TikTok) over a ${v.daysBack}-day window, ranked by outlier score. This board: <b>${n(v.igCurated)}</b> IG + <b>${n(v.tiktokCurated)}</b> TikTok curated top performers + <b>${n(v.keywordFinds)}</b> trending off-seed finds (from ${n(v.keywordScanned)} keyword-scanned), across <b>${n(v.boardAccounts)}</b> creators.`;
   const au=$('#prov-audio');
-  if(au) au.innerHTML=`<span class="pl">Sources</span>Niche sound chart scanned <b>${n(v.audioAccounts)}</b> accounts (the resolved set, same as the Swipe File) × ${v.audioReelsPer} recent reels → <b>${n(v.audioTracks)}</b> distinct tracks consolidated by canonical ID (<b>${n(v.audioMulti)}</b> used by ≥2 creators); showing top ${n(v.audioShown)}. TikTok: <b>${n(v.ttSounds)}</b> trending sounds (${n(v.ttXplatform)} also in the IG niche); showing ${n(v.ttShown)}.`;
+  if(au) au.innerHTML=`<button class="pl-btn" data-method="audio">Sources ▸</button>Niche sound chart scanned <b>${n(v.audioAccounts)}</b> accounts (the resolved set, same as the Swipe File) × ${v.audioReelsPer} recent reels → <b>${n(v.audioTracks)}</b> distinct tracks consolidated by canonical ID (<b>${n(v.audioMulti)}</b> used by ≥2 creators); showing top ${n(v.audioShown)}. TikTok: <b>${n(v.ttSounds)}</b> trending sounds (${n(v.ttXplatform)} also in the IG niche); showing ${n(v.ttShown)}.`;
 })();
 
 /* ---- nav ---- */
@@ -407,7 +432,7 @@ $('#pf-toggle').addEventListener('click',e=>{
       ${ex?`<div class="texamples">${ex}</div>`:''}
     </article>`;}).join('');
   const v=DATA.provenance;
-  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<span class="pl">Method</span>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;
+  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;
 })();
 
 /* ========== SWIPE FILE ========== */
@@ -518,6 +543,69 @@ function openPost(url){
 function closeModal(){modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))closeModal();});
+
+/* ---- "how it's built" method popups ---- */
+const mm=$('#methodmodal');
+function pipe(steps){return `<div class="pipe">`+steps.map((s,i)=>
+  `<div class="pstep${s.hl?' hl':''}">${s.n?`<div class="n">${s.n}</div>`:''}<div class="l">${s.l}</div>${s.s?`<div class="s">${s.s}</div>`:''}</div>`
+  +(i<steps.length-1?`<div class="parrow">↓</div>`:'')).join('')+`</div>`;}
+function openMethod(kind){
+  const v=DATA.provenance||{}; const n=x=>(x==null?'—':Number(x).toLocaleString());
+  const stack=`<div class="mstack">`+[
+    ['TikHub','scraping — IG + TikTok posts, search &amp; sounds'],['Apify','original scraper, now a dormant fallback'],
+    ['AudD','audio fingerprinting (names the real song)'],['Deezer','30-second song previews + match check'],
+    ['macOS Vision / Tesseract','on-screen text OCR (free, on-device)'],['ffmpeg','pulls video frames'],
+    ['Claude','curation, vision tagging &amp; trend write-ups'],['GitHub Actions + Vercel','weekly cloud run + hosting']
+  ].map(([a,b])=>`<span class="mchip"><b>${a}</b> ${b}</span>`).join('')+`</div>`;
+  let title,sub,body;
+  if(kind==='swipe'){
+    title='How the Swipe File is built'; sub='From the creators we track down to the posts that are genuinely over-performing.';
+    body=pipe([
+      {n:`${n(v.igAccounts)} + ${n(v.tiktokCreators)}`,l:'Instagram accounts + TikTok creators tracked',s:`${v.igSeed} seed · ${v.igDiscovered} discovered · ${v.igBootstrap} bootstrapped`},
+      {n:n(v.igResolved),l:'reachable &amp; scraped',s:`${v.igAccounts-v.igResolved} handles renamed / private / gone`},
+      {l:`Latest ${v.postsPerIg} posts each, from the last ${v.daysBack} days`},
+      {n:'Outlier Score',l:'every post ranked by it',hl:true},
+      {n:`${n(v.igCurated)} + ${n(v.keywordFinds)}`,l:'hand-picked keepers + ⚡ trending off-seed finds',s:`across ${n(v.boardAccounts)} creators on this board`},
+    ])
+    +`<div class="msec"><h4>What's the Outlier Score?</h4><p>A post's engagement (likes + comments) ÷ that account's <b>own median</b> engagement — measured across the recent posts we scraped from it (up to ${v.postsPerIg} posts from the last ${v.daysBack} days). So <b>10×</b> means it did ten times the account's typical result. It's <b>follower-blind</b>: a 5k-follower creator's breakout outranks a 5M-follower account's average post. We surface what's <i>over-performing</i>, not who's biggest.</p></div>`
+    +`<div class="msec"><h4>The "⚡ new find" off-seed posts</h4><p>Trending posts from creators we <b>don't</b> track. We search TikTok for niche keywords — <i>${(v.keywords||[]).join(', ')}</i> — keep recent ones (≤21 days) that actually got distribution (≥20k views), and rank them by <b>engagement rate</b> (engagement ÷ views), <b>not</b> total views — so a small creator's breakout isn't buried under a big account's traffic.</p></div>`
+    +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
+  } else if(kind==='audio'){
+    title='How the niche sound chart is built'; sub='What the niche is actually scoring to — measured across thousands of reels, not guessed.';
+    body=pipe([
+      {n:n(v.audioAccounts),l:'accounts scanned'},
+      {n:`× ${v.audioReelsPer}`,l:`recent reels each = ${n(v.audioReels)} reels`},
+      {l:'The sound on each reel pulled out'},
+      {n:n(v.audioTracks),l:'distinct tracks — the same song merged across its many "audio IDs"',hl:true},
+      {n:n(v.audioMulti),l:'used by ≥2 different creators (the real signal)'},
+      {n:`Top ${n(v.audioShown)}`,l:'shown · AudD names the song behind "original audio" · Deezer adds 30-sec players'},
+    ])
+    +`<div class="msec"><h4>Why "consolidate"?</h4><p>Instagram splits one song into hundreds of separate "audio" entries — every creator's upload gets its own ID. We merge them back using Instagram's own "same song" key so a track counts <b>once</b>; otherwise a single hit would look like 100 unrelated sounds.</p></div>`
+    +`<div class="msec"><h4>Plus TikTok</h4><p>We also pull TikTok's trending-sounds chart and flag the <b>${v.ttXplatform}</b> sounds already appearing in your Instagram niche — an early cross-platform signal.</p></div>`
+    +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
+  } else {
+    title='How trends are detected'; sub='A trend = a repeatable template many creators copy. Two independent detectors find them.';
+    body=`<div class="plane"><div><h5>♪ Audio trends</h5>`+pipe([
+      {n:n(v.audioTracks),l:'niche sounds'},{l:'those used by ≥3 creators'},
+      {n:n(v.trendsAudio),l:'Claude watches sample reels → writes the card'},
+    ])+`</div><div><h5>✎ Hook trends</h5>`+pipe([
+      {l:'~400 ranked posts'},
+      {n:n(v.hooksReadable),l:'on-screen hook lines, read by OCR from the first ~4 seconds'},
+      {l:'~40 distinct candidate phrases'},
+      {l:'each searched on TikTok (which indexes on-screen text)'},
+      {n:n(v.hookValidated),l:`confirmed niche trends → top ${n(v.trendsHook)} written as cards`,hl:true},
+    ])+`</div></div>`
+    +`<div class="msec"><h4>Why search TikTok?</h4><p>TikTok indexes the <b>text on screen</b>, so searching a hook phrase returns everyone using it — even when only one creator in our scan had it. Instagram has no on-screen-text search, so the hook side runs through TikTok. One sighting in our scan + a TikTok search = a confirmed trend.</p></div>`
+    +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
+  }
+  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close">✕</button><h3 class="mm-title">${title}</h3><p class="mm-sub">${sub}</p>${body}`;
+  mm.classList.remove('hidden'); document.body.style.overflow='hidden';
+  $('#mm-close').onclick=closeMethod;
+}
+function closeMethod(){mm.classList.add('hidden');document.body.style.overflow='';}
+mm.addEventListener('click',e=>{if(e.target===mm)closeMethod();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!mm.classList.contains('hidden'))closeMethod();});
+document.addEventListener('click',e=>{const b=e.target.closest('.pl-btn');if(b)openMethod(b.dataset.method);});
 
 function apply(){
   const fw=$('#f-week').value,ff=$('#f-format').value,fh=$('#f-hook').value,ft=$('#f-trigger').value,fs=$('#f-style').value,
