@@ -154,6 +154,7 @@ select:hover{border-color:var(--teal)}
 .poster{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;vertical-align:top;transition:transform .5s ease;filter:saturate(1.05)}
 .card:hover .poster{transform:scale(1.04)}
 .vid{display:block;width:100%;aspect-ratio:9/16;object-fit:contain;background:#000}
+.embed-frame{display:block;width:100%;aspect-ratio:9/16;border:0;background:#000}
 .vid::-webkit-media-controls-overlay-play-button{display:none!important}
 .vid::-webkit-media-controls-start-playback-button{display:none!important}
 .gallery{position:relative;width:100%;background:#000}
@@ -217,6 +218,7 @@ select:hover{border-color:var(--teal)}
 @media(max-width:760px){.modal-card{grid-template-columns:1fr;max-height:94vh;overflow:auto}}
 .modal-media{background:#000;display:flex;align-items:center;justify-content:center;position:relative;min-height:340px}
 .modal-media video,.modal-media .gimg,.modal-media>img{width:100%;height:100%;max-height:90vh;object-fit:contain;display:block;background:#000}
+.modal-media .embed-frame{width:auto;height:86vh;max-height:86vh;aspect-ratio:9/16;max-width:100%}
 .modal-body{padding:26px;display:flex;flex-direction:column;gap:13px;overflow:auto}
 .modal-close{position:absolute;top:14px;right:14px;z-index:20;width:34px;height:34px;border-radius:50%;border:0;
   background:rgba(0,0,0,.55);color:#fff;font-size:17px;cursor:pointer;backdrop-filter:blur(4px)}
@@ -484,13 +486,13 @@ function card(p){
   const car=p.carousel&&p.carousel.length?p.carousel:null;
   const chips=[...p.hookTypes,...p.triggers,...p.visualStyles].map(t=>`<span class="chip" style="color:${col(t)};border-color:${col(t)}55">${t}</span>`).join('');
   const er=p.engRate==null?'':`<div class="m er"><b>${p.engRate}%</b>ER</div>`;
-  return `<article class="card${saved.has(p.url)?' saved':''}" data-url="${p.url}" data-video="${p.video||''}" data-thumb="${p.thumb}"${car?` data-carousel='${JSON.stringify(car)}'`:''}>
+  return `<article class="card${saved.has(p.url)?' saved':''}" data-url="${p.url}" data-platform="${p.platform||'instagram'}" data-video="${p.video||''}" data-thumb="${p.thumb}"${car?` data-carousel='${JSON.stringify(car)}'`:''}>
     <div class="media">
       ${p.newFind?`<div class="badge alt">${p.trendScore}% <span>ENG RATE</span></div>`:`<div class="badge">${p.outlier}× <span>OUTLIER</span></div>`}
       <div class="savedot">${ICON.saved}</div>
       <div class="fmt${p.ad?' ad':''}">${p.ad?'AD · ':''}${p.format}${car?' · '+car.length:''}</div>
       <div class="scrim"></div>
-      <button class="play" type="button" title="${car?'View gallery':(p.video?'Play in page':'Open on '+(p.platform==='tiktok'?'TikTok':'Instagram'))}">${car?galleryIcon():playIcon()}</button>
+      <button class="play" type="button" title="${car?'View gallery':'Play in page'}">${car?galleryIcon():playIcon()}</button>
       <img class="poster" src="${p.thumb}" alt="@${p.account}" onerror="this.style.display='none'">
     </div>
     <div class="body">
@@ -504,24 +506,42 @@ function card(p){
       ${actionsRow(p,false)}
     </div></article>`;
 }
+function igCode(u){const m=(u||'').match(/\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);return m?m[1]:'';}
+function ttId(u){const m=(u||'').match(/\/video\/(\d+)/);return m?m[1]:'';}
+function injectEmbed(media,src){
+  const f=document.createElement('iframe');f.className='embed-frame';f.src=src;
+  f.setAttribute('allow','autoplay; encrypted-media; clipboard-write; picture-in-picture; fullscreen');
+  f.setAttribute('allowfullscreen','');f.setAttribute('scrolling','no');
+  media.appendChild(f);media.classList.add('playing');
+}
+// Play INLINE — never opens a tab. TikTok + (expired) IG fall back to the platform embed, which never expires.
 function play(card){
   const media=card.querySelector('.media');
-  if(card.dataset.carousel){if(media.classList.contains('playing'))return;const g=document.createElement('div');g.className='gallery';media.appendChild(g);media.classList.add('playing');initGallery(g,JSON.parse(card.dataset.carousel));return;}
-  const v=card.dataset.video;
-  if(!v){window.open(card.dataset.url,'_blank','noopener');return;}
   if(media.classList.contains('playing'))return;
-  const vid=document.createElement('video');vid.className='vid';vid.controls=true;vid.playsInline=true;
-  vid.preload='metadata';vid.poster=card.dataset.thumb||'';vid.src=v;
-  vid.addEventListener('error',()=>{media.classList.remove('playing');vid.remove();window.open(card.dataset.url,'_blank','noopener');});
-  media.appendChild(vid);media.classList.add('playing');vid.play().catch(()=>{});
+  if(card.dataset.carousel){const g=document.createElement('div');g.className='gallery';media.appendChild(g);media.classList.add('playing');initGallery(g,JSON.parse(card.dataset.carousel));return;}
+  const url=card.dataset.url, plat=card.dataset.platform||'instagram';
+  if(plat==='tiktok'){const id=ttId(url);if(id)injectEmbed(media,`https://www.tiktok.com/embed/v2/${id}`);return;}
+  const v=card.dataset.video, code=igCode(url);
+  if(v){
+    const vid=document.createElement('video');vid.className='vid';vid.controls=true;vid.playsInline=true;
+    vid.preload='metadata';vid.poster=card.dataset.thumb||'';vid.src=v;
+    // signed IG URLs expire — on error fall back to the IG embed inline (NOT a new tab)
+    vid.addEventListener('error',()=>{vid.remove();media.classList.remove('playing');if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);});
+    media.appendChild(vid);media.classList.add('playing');vid.play().catch(()=>{});
+    return;
+  }
+  if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);
 }
 /* ---- modal popup ---- */
 function openPost(url){
   const p=posts.find(x=>x.url===url);if(!p)return;
   const chips=[...p.hookTypes,...p.triggers,...p.visualStyles].map(t=>`<span class="chip" style="color:${col(t)};border-color:${col(t)}55">${t}</span>`).join('');
   const er=p.engRate==null?'':`<div class="m er"><b>${p.engRate}%</b>ER</div>`;
+  const ttv=p.platform==='tiktok'?ttId(p.url):'', igc=p.platform!=='tiktok'?igCode(p.url):'';
   const m=(p.carousel&&p.carousel.length)?`<div class="gallery" id="m-gal"></div>`
-    :(p.video?`<video controls autoplay playsinline poster="${p.thumb}" src="${p.video}"></video>`:`<img src="${p.thumb}" alt="@${p.account}">`);
+    :ttv?`<iframe class="embed-frame" src="https://www.tiktok.com/embed/v2/${ttv}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
+    :igc?`<iframe class="embed-frame" src="https://www.instagram.com/reel/${igc}/embed/" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
+    :`<img src="${p.thumb}" alt="@${p.account}">`;
   modal.innerHTML=`<div class="modal-card">
     <div class="modal-media"><button class="modal-close" id="m-close" type="button">✕</button>${m}</div>
     <div class="modal-body">

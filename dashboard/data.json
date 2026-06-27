@@ -876,17 +876,24 @@
       "shares": 28,
       "engRate": 5.5,
       "outlier": 13.74,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "sonido original",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Cultural procession doc — bright daylight, off the core niche.",
       "week": "2026-06-21",
       "date": "2026-06-09",
       "thumb": "thumbs/tt_01_travel_films.bo.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "dillonfilms_",
@@ -900,17 +907,26 @@
       "shares": 35,
       "engRate": 8.7,
       "outlier": 10.43,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV",
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Relatability",
+        "Ego"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Behind-the-scenes creativity pep-talk over a shooting clip.",
       "week": "2026-06-21",
       "date": "2026-06-08",
       "thumb": "thumbs/tt_02_dillonfilms_.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "pov: stop overthinking your creativity shot on the Sony A6700"
     },
     {
       "account": "andyyongfilms",
@@ -924,17 +940,25 @@
       "shares": 260,
       "engRate": 9.8,
       "outlier": 10.15,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Photo hack demo in moody overcast light.",
       "week": "2026-06-21",
       "date": "2026-05-31",
       "thumb": "thumbs/tt_03_andyyongfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "tonyolsenfilm",
@@ -949,16 +973,21 @@
       "engRate": 11.4,
       "outlier": 7.62,
       "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "im god slowed",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Golden-hour waterfall — pure cinematic B-roll.",
       "week": "2026-06-21",
       "date": "2026-06-13",
       "thumb": "thumbs/tt_04_tonyolsenfilm.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "tonyolsenfilm",
@@ -972,17 +1001,26 @@
       "shares": 40,
       "engRate": 15.8,
       "outlier": 6.69,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
       "audio": "Far of to the West",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Epic Faroe cliffs + waterfall, drone reveal.",
       "week": "2026-06-21",
       "date": "2026-06-09",
       "thumb": "thumbs/tt_05_tonyolsenfilm.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "I found Vinland"
     },
     {
       "account": "sedyyfilms",
@@ -996,17 +1034,24 @@
       "shares": 1317,
       "engRate": 27.5,
       "outlier": 6.14,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Carefree leap in an alpine meadow, one-line caption.",
       "week": "2026-06-21",
       "date": "2026-06-15",
       "thumb": "thumbs/tt_06_sedyyfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "absolute freedom."
     },
     {
       "account": "tonyolsenfilm",
@@ -1020,17 +1065,25 @@
       "shares": 103,
       "engRate": 3.1,
       "outlier": 5.96,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Moody/dark"
+      ],
       "audio": "Reflections on a Hero",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Dramatic Faroe cliff-lake aerial.",
       "week": "2026-06-21",
       "date": "2026-06-04",
       "thumb": "thumbs/tt_07_tonyolsenfilm.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "andyyongfilms",
@@ -1044,17 +1097,25 @@
       "shares": 433,
       "engRate": 4.1,
       "outlier": 5.74,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Bright/airy",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Crowd-removal technique demo in a grand atrium.",
       "week": "2026-06-21",
       "date": "2026-06-16",
       "thumb": "thumbs/tt_08_andyyongfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "pierluigibarcaa",
@@ -1068,17 +1129,26 @@
       "shares": 13,
       "engRate": 5.7,
       "outlier": 5.4,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV",
+        "List/Number",
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "suono originale - Pier | Travel Filmaker",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Gear-driven creative-shot tutorial, neon grade.",
       "week": "2026-06-21",
       "date": "2026-06-10",
       "thumb": "thumbs/tt_09_pierluigibarcaa.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "oui.photo",
@@ -1092,17 +1162,25 @@
       "shares": 31,
       "engRate": 10.3,
       "outlier": 4.42,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "sonido original",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple-photographer POV in Paris.",
       "week": "2026-06-21",
       "date": "2026-06-21",
       "thumb": "thumbs/tt_10_oui.photo.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "POV: YOU ARE CAMERA SHY COUPLE & YOUWANTED YOUR PHOTOS FEEL LIKE LOVE IN THE MOVIE SO YOU HIRED ME CO"
     },
     {
       "account": "sedyyfilms",
@@ -1116,17 +1194,26 @@
       "shares": 1017,
       "engRate": 12.6,
       "outlier": 3.86,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Aerial of a dreamlike green islet.",
       "week": "2026-06-21",
       "date": "2026-06-03",
       "thumb": "thumbs/tt_11_sedyyfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "andyyongfilms",
@@ -1140,17 +1227,25 @@
       "shares": 250,
       "engRate": 1.7,
       "outlier": 2.85,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Ego",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Gimbal behind-the-scenes over a city skyline.",
       "week": "2026-06-21",
       "date": "2026-06-10",
       "thumb": "thumbs/tt_12_andyyongfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "Insta360"
     },
     {
       "account": "dylanbub.travel",
@@ -1168,17 +1263,26 @@
       "shares": 73237,
       "engRate": 36.0,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Awe",
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - dylanbub.travel · dylanbub.travels",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Aerial down a sequoia road, reflective voiceover.",
       "week": "2026-06-21",
       "date": "2026-06-10",
       "thumb": "thumbs/kw_01_dylanbub.travel.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "theres a"
     },
     {
       "account": "compassofdivinity",
@@ -1196,17 +1300,25 @@
       "shares": 1483,
       "engRate": 32.9,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - sonypicsathome.ph · Sony Pics At Home Philippines",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Camp under dramatic peaks, aspirational hook.",
       "week": "2026-06-21",
       "date": "2026-06-09",
       "thumb": "thumbs/kw_02_compassofdivinity.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "If you're brave enough to leave behind"
     },
     {
       "account": "thecaptain_1219",
@@ -1224,17 +1336,25 @@
       "shares": 4307,
       "engRate": 32.6,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - thecaptain_1219",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Lone figure overlooking pine ridges, South Dakota.",
       "week": "2026-06-21",
       "date": "2026-06-09",
       "thumb": "thumbs/kw_03_thecaptain_1219.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "_______mikii",
@@ -1252,17 +1372,24 @@
       "shares": 6551,
       "engRate": 31.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - _______mikii",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Candid cultural moment, warm and human.",
       "week": "2026-06-21",
       "date": "2026-06-13",
       "thumb": "thumbs/kw_04________mikii.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "ajho.co",
@@ -1280,17 +1407,25 @@
       "shares": 70366,
       "engRate": 30.0,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - maciejsphotos · maciejlubomski",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple at an Iceland waterfall, escapist caption.",
       "week": "2026-06-21",
       "date": "2026-06-10",
       "thumb": "thumbs/kw_05_ajho.co.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "the urge to disappear to Iceland and come back with pics like this"
     },
     {
       "account": "photo.tonee",
@@ -1309,16 +1444,21 @@
       "engRate": 29.3,
       "outlier": null,
       "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound - photo.tonee · Аня | Фотограф Минск",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Moody studio-lit portrait; off the travel core.",
       "week": "2026-06-21",
       "date": "2026-06-09",
       "thumb": "thumbs/kw_06_photo.tonee.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "hzambra",
@@ -1336,17 +1476,26 @@
       "shares": 106027,
       "engRate": 28.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange",
+        "Bright/airy"
+      ],
       "audio": "original sound - hzambra · Han&Nic",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple on a Dolomites hillside.",
       "week": "2026-06-21",
       "date": "2026-06-18",
       "thumb": "thumbs/kw_07_hzambra.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "mr.manhattan",
@@ -1364,17 +1513,24 @@
       "shares": 2321,
       "engRate": 28.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound - cutl1p · redbeans692",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Framed NYC skyline through a window, silhouettes.",
       "week": "2026-06-21",
       "date": "2026-06-21",
       "thumb": "thumbs/kw_08_mr.manhattan.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "ryanbvisuals",
@@ -1392,17 +1548,26 @@
       "shares": 2831,
       "engRate": 28.2,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
       "audio": "someone new · Arden Jones",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Raja Ampat aerial, teal lagoons.",
       "week": "2026-06-21",
       "date": "2026-06-05",
       "thumb": "thumbs/kw_09_ryanbvisuals.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "sedyyfilms",
@@ -1420,17 +1585,24 @@
       "shares": 1317,
       "engRate": 27.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - sedyyfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Carefree leap in an alpine meadow.",
       "week": "2026-06-21",
       "date": "2026-06-15",
       "thumb": "thumbs/kw_10_sedyyfilms.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": "absolute freedom."
     },
     {
       "account": "avaacostanzo",
@@ -1448,17 +1620,24 @@
       "shares": 90356,
       "engRate": 25.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - avaacostanzo",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Two hikers on a Dolomites trail; 'your sign to go' hook.",
       "week": "2026-06-21",
       "date": "2026-06-06",
       "thumb": "thumbs/kw_11_avaacostanzo.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "asilcinematicfilmes",
@@ -1477,16 +1656,22 @@
       "engRate": 25.5,
       "outlier": null,
       "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "triggers": [
+        "Nostalgia",
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - z7skino",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Golden-hour meadow rest, one-word caption.",
       "week": "2026-06-21",
       "date": "2026-06-05",
       "thumb": "thumbs/kw_12_asilcinematicfilmes.jpg",
       "video": "",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     }
   ],
   "generatedHooks": [

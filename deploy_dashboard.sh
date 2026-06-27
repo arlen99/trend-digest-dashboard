@@ -11,5 +11,7 @@ if git diff --cached --quiet; then
 fi
 git -c user.email="arlentan@gmail.com" -c user.name="Arlen Tan" \
   commit -q -m "Refresh $(date +%F)"
+# absorb any commit the weekly cloud (Actions) bot pushed since, keeping local dashboard
+git pull --no-edit -X ours -q origin main || true
 git push -q origin main
 echo "Pushed to GitHub — Vercel auto-deploys from main (root dir: dashboard/)."
