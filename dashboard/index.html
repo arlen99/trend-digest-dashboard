@@ -446,9 +446,19 @@ const ICON={
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>',
   ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>'};
 const LS={get:k=>{try{return new Set(JSON.parse(localStorage.getItem(k)||'[]'))}catch(e){return new Set()}},set:(k,s)=>localStorage.setItem(k,JSON.stringify([...s]))};
-let saved=LS.get('td_saved'), dismissed=LS.get('td_dismissed');
+let dismissed=LS.get('td_dismissed');
 let platformFilter='all';
-function toggleSave(u){saved.has(u)?saved.delete(u):saved.add(u);LS.set('td_saved',saved);apply();}
+// Saved posts are stored as full SNAPSHOTS (td_saved_v2 = {url: post}), so a saved post
+// stays in your Saved view permanently — even after the weekly refresh rotates it off the board.
+let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'{}')}catch(e){}
+LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
+let saved=new Set(Object.keys(savedData));
+function toggleSave(u){
+  if(savedData[u]){delete savedData[u];}
+  else{const p=posts.find(x=>x.url===u);savedData[u]=p?JSON.parse(JSON.stringify(p)):{url:u};}
+  saved=new Set(Object.keys(savedData));
+  localStorage.setItem('td_saved_v2',JSON.stringify(savedData));apply();
+}
 function toggleDismiss(u){dismissed.has(u)?dismissed.delete(u):dismissed.add(u);LS.set('td_dismissed',dismissed);apply();}
 const modal=$('#modal');
 
@@ -459,7 +469,7 @@ fill('#f-week','Week',uniq('week'));fill('#f-format','Format',uniq('format'));fi
 fill('#f-trigger','Trigger',uniq('triggers'));fill('#f-style','Style',uniq('visualStyles'));
 $('#f-sort').innerHTML=[['outlier','Sort · Outlier'],['views','Sort · Views'],['engRate','Sort · Eng. rate'],['likes','Sort · Likes'],['date','Sort · Newest']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
 
-function playIcon(){return `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" stroke="#fff" stroke-width="2"/><path d="M25 20l16 10-16 10V20z" fill="#fff"/></svg>`;}
+function playIcon(){return `<svg viewBox="0 0 60 60"><path d="M21 15l26 15-26 15V15z" fill="#fff"/></svg>`;}
 function galleryIcon(){return `<svg viewBox="0 0 60 60" fill="none"><rect x="20" y="13" width="27" height="27" rx="5" stroke="#fff" stroke-width="2.5"/><rect x="13" y="20" width="27" height="27" rx="5" fill="#000" stroke="#fff" stroke-width="2.5"/></svg>`;}
 function noteIcon(){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;}
 function audioLine(p){
@@ -535,7 +545,7 @@ function play(card){
 }
 /* ---- modal popup ---- */
 function openPost(url){
-  const p=posts.find(x=>x.url===url);if(!p)return;
+  const p=posts.find(x=>x.url===url)||savedData[url];if(!p)return;
   const chips=[...p.hookTypes,...p.triggers,...p.visualStyles].map(t=>`<span class="chip" style="color:${col(t)};border-color:${col(t)}55">${t}</span>`).join('');
   const er=p.engRate==null?'':`<div class="m er"><b>${p.engRate}%</b>ER</div>`;
   const ttv=p.platform==='tiktok'?ttId(p.url):'', igc=p.platform!=='tiktok'?igCode(p.url):'';
@@ -632,8 +642,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('.pl-btn');if(b)o
 function apply(){
   const fw=$('#f-week').value,ff=$('#f-format').value,fh=$('#f-hook').value,ft=$('#f-trigger').value,fs=$('#f-style').value,
     q=$('#f-search').value.toLowerCase().trim(),sort=$('#f-sort').value,show=$('#f-show').value,from=$('#f-from').value,to=$('#f-to').value;
-  let rows=posts.filter(p=>
-    (show==='all'?true:show==='saved'?saved.has(p.url):show==='dismissed'?dismissed.has(p.url):show==='newfind'?(p.newFind&&!dismissed.has(p.url)):!dismissed.has(p.url))
+  // Saved view draws from snapshots (preferring the live post if it's still on the board)
+  let pool=posts;
+  if(show==='saved'){const cur=new Map(posts.map(p=>[p.url,p]));pool=Object.keys(savedData).map(u=>cur.get(u)||savedData[u]);}
+  let rows=pool.filter(p=>
+    (show==='all'||show==='saved'?true:show==='dismissed'?dismissed.has(p.url):show==='newfind'?(p.newFind&&!dismissed.has(p.url)):!dismissed.has(p.url))
     &&(platformFilter==='all'||(p.platform||'instagram')===platformFilter)
     &&(!fw||p.week===fw)&&(!ff||p.format===ff)&&(!fh||p.hookTypes.includes(fh))&&(!ft||p.triggers.includes(ft))&&(!fs||p.visualStyles.includes(fs))
     &&(!from||(p.date||'')>=from)&&(!to||(p.date||'')<=to)
