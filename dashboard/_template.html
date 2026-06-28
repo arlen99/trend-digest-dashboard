@@ -123,6 +123,9 @@ select:hover{border-color:var(--teal)}
 .reset{background:none;border:0;color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:4px}
 .reset:hover{color:var(--orange)}
 .side-foot{margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:9.5px;line-height:1.6;color:var(--faint);letter-spacing:.04em}
+.syncbtn{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.04em;color:var(--teal);background:none;border:0;padding:0;cursor:pointer}
+.syncbtn:hover{text-decoration:underline}
+#syncstat{color:var(--muted)}
 
 /* ───────── views ───────── */
 .view{animation:fade .35s both}
@@ -309,7 +312,7 @@ select:hover{border-color:var(--teal)}
       <div class="search"><input id="f-search" type="text" placeholder="Search…"></div>
       <div class="frow"><span class="count" id="count"></span><button class="reset" id="reset">Reset</button></div>
     </div>
-    <div class="side-foot">Outlier = engagement ÷ account median.<br>Metrics from Instagram &amp; TikTok via TikHub.<br><span id="genstamp"></span></div>
+    <div class="side-foot">Outlier = engagement ÷ account median.<br>Metrics from Instagram &amp; TikTok via TikHub.<br><button class="syncbtn" onclick="setupSync()">⇄ Sync devices</button> <span id="syncstat">sync off</span><br><span id="genstamp"></span></div>
   </aside>
 
   <main class="main">
@@ -453,13 +456,28 @@ let platformFilter='all';
 let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'{}')}catch(e){}
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
+let accountEdits={};try{accountEdits=JSON.parse(localStorage.getItem('td_account_edits')||'{}')}catch(e){}
+/* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
+let SECRET=localStorage.getItem('td_secret')||'';
+function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));}
+function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',off:'sync off',err:'sync error',bad:'wrong passphrase'}[st]||st;}
+let _pushT;
+function pushState(){saveLocal();apply();if(!SECRET)return;clearTimeout(_pushT);_pushT=setTimeout(()=>{
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits})}).then(r=>setSync(r.ok?'on':(r.status===401?'bad':'err'))).catch(()=>setSync('err'));},700);}
+async function pullState(){if(!SECRET){setSync('off');return;}
+  try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET}});
+    if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
+    const s=await r.json();
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));saveLocal();}
+    setSync('on');apply();
+  }catch(e){setSync('err');}}
+function setupSync(){const p=prompt('Sync passphrase (the EDIT_SECRET you set in Vercel) — syncs bookmarks & accounts across your devices:',SECRET);if(p===null)return;SECRET=p.trim();localStorage.setItem('td_secret',SECRET);pullState();}
 function toggleSave(u){
   if(savedData[u]){delete savedData[u];}
   else{const p=posts.find(x=>x.url===u);savedData[u]=p?JSON.parse(JSON.stringify(p)):{url:u};}
-  saved=new Set(Object.keys(savedData));
-  localStorage.setItem('td_saved_v2',JSON.stringify(savedData));apply();
+  saved=new Set(Object.keys(savedData));pushState();
 }
-function toggleDismiss(u){dismissed.has(u)?dismissed.delete(u):dismissed.add(u);LS.set('td_dismissed',dismissed);apply();}
+function toggleDismiss(u){dismissed.has(u)?dismissed.delete(u):dismissed.add(u);pushState();}
 const modal=$('#modal');
 
 function uniq(key){const s=new Set();posts.forEach(p=>{const v=p[key];(Array.isArray(v)?v:[v]).forEach(x=>x&&s.add(x))});return [...s].sort();}
@@ -668,6 +686,7 @@ $('#grid').addEventListener('click',e=>{
 $('#f-search').addEventListener('input',apply);
 $('#reset').addEventListener('click',()=>{['#f-week','#f-format','#f-hook','#f-trigger','#f-style'].forEach(s=>$(s).value='');$('#f-show').value='active';$('#f-sort').value='outlier';$('#f-from').value='';$('#f-to').value='';$('#f-search').value='';apply();});
 apply();
+pullState();  // hydrate bookmarks/dismissals from the backend (cross-device); no-op if no passphrase set
 
 /* ========== SUMMARY ========== */
 function agg(key){
