@@ -35,6 +35,7 @@ jobs:
         run: |
           set -e
           TODAY=$(date +%F)
+          python3 apply_account_edits.py   # apply dashboard add/removes → accounts.json + tiktok_accounts.json BEFORE scraping
           python3 scrape.py
           python3 tiktok_scrape.py
           python3 keyword_posts.py

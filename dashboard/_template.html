@@ -108,6 +108,30 @@ a{color:inherit;text-decoration:none}
 .thow-l{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:2px}
 .texamples{display:flex;flex-wrap:wrap;gap:9px;margin-top:1px}
 .tnote{font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.4;color:var(--faint);border-left:2px solid var(--line2);padding-left:8px}
+.acct-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:760px){.acct-cols{grid-template-columns:1fr}}
+.acct-col{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:18px}
+.acct-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:13px}
+.acct-h h2{margin:0;font-family:'Fraunces',serif;font-size:19px}
+.acct-n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.acct-add{display:flex;gap:6px;margin-bottom:11px}
+.acct-add input{flex:1;background:rgba(0,0,0,.25);color:var(--ink);border:1px solid var(--line2);border-radius:7px;padding:8px 11px;font:13px 'Hanken Grotesk',sans-serif}
+.acct-add input:focus{outline:none;border-color:var(--teal)}
+.acct-add button{background:var(--teal);color:#0c0d0f;border:0;border-radius:7px;padding:8px 13px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.acct-add button:hover{filter:brightness(1.1)}
+.acct-edits{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:1px}
+.acct-edits:empty{display:none}
+.acct-chip{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 8px;border-radius:5px;border:1px solid;display:inline-flex;align-items:center;gap:5px}
+.acct-chip.add{color:#6bbf8a;border-color:#6bbf8a66;background:#6bbf8a10}
+.acct-chip.rem{color:#e0564b;border-color:#e0564b66;background:#e0564b10;text-decoration:line-through}
+.acct-chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:13px;line-height:1;padding:0}
+.acct-list{display:flex;flex-wrap:wrap;gap:6px;max-height:55vh;overflow:auto;padding-right:4px}
+.acct-row{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:5px 9px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.18)}
+.acct-row.pending-rem{opacity:.45;text-decoration:line-through}
+.acct-x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px;line-height:1}
+.acct-x:hover{color:#e0564b}
+.act.watch{color:var(--teal)}
+.act.watch.on{color:#6bbf8a;cursor:default}
 .badge.alt{background:linear-gradient(135deg,#e8c45a,#ef9b43)}
 .fl-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
 .fld{position:relative}
@@ -293,6 +317,7 @@ select:hover{border-color:var(--teal)}
       <button class="navbtn" data-view="trends"><span class="ic">◎</span> Trend Radar</button>
       <button class="navbtn" data-view="summary"><span class="ic">▤</span> Summary</button>
       <button class="navbtn" data-view="audio"><span class="ic">♪</span> Audio Trends</button>
+      <button class="navbtn" data-view="accounts"><span class="ic">@</span> Accounts</button>
     </nav>
     <div class="filters" id="filters">
       <div class="pf-toggle" id="pf-toggle">
@@ -359,6 +384,25 @@ select:hover{border-color:var(--teal)}
         <div class="tracks" id="tracks"></div>
         <p class="audio-note"></p></div>
     </section>
+    <!-- ACCOUNTS -->
+    <section class="view hidden" id="v-accounts">
+      <div class="vhead"><h1>Reference <em>Accounts</em></h1>
+        <p class="sub">The creator pool every scrape draws from. Add accounts you spot on IG / TikTok; remove ones that have drifted off-niche. Changes apply on the next weekly run and feed into snowballing too. Syncs across devices when you've signed in via ⇄ Sync devices.</p></div>
+      <div class="sec acct-cols">
+        <div class="acct-col">
+          <div class="acct-h"><h2>Instagram</h2><span class="acct-n" id="acct-ig-n">0</span></div>
+          <form class="acct-add" id="acct-ig-form"><input type="text" id="acct-ig-input" placeholder="@handle to add"><button type="submit">+ Add</button></form>
+          <div class="acct-edits" id="acct-ig-edits"></div>
+          <div class="acct-list" id="acct-ig-list"></div>
+        </div>
+        <div class="acct-col">
+          <div class="acct-h"><h2>TikTok</h2><span class="acct-n" id="acct-tt-n">0</span></div>
+          <form class="acct-add" id="acct-tt-form"><input type="text" id="acct-tt-input" placeholder="@handle to add"><button type="submit">+ Add</button></form>
+          <div class="acct-edits" id="acct-tt-edits"></div>
+          <div class="acct-list" id="acct-tt-list"></div>
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 <div class="modal hidden" id="modal"></div>
@@ -417,6 +461,53 @@ $('#pf-toggle').addEventListener('click',e=>{
   platformFilter=b.dataset.pf;apply();
 });
 
+let accountEdits={};try{accountEdits=JSON.parse(localStorage.getItem('td_account_edits')||'{}')}catch(e){}
+
+/* ========== ACCOUNTS PANEL ========== */
+function normHandle(h){return (h||'').trim().replace(/^@/,'').toLowerCase();}
+function inPool(plat,h){const n=normHandle(h);const pool=(DATA.pools&&DATA.pools[plat])||[];if(pool.some(x=>x.toLowerCase()===n))return true;const ed=accountEdits[plat==='ig'?'igAdd':'ttAdd']||[];return ed.some(x=>normHandle(x)===n);}
+function pendingRemoved(plat,h){const ed=accountEdits[plat==='ig'?'igRemove':'ttRemove']||[];const n=normHandle(h);return ed.some(x=>normHandle(x)===n);}
+function ensureEdits(){accountEdits.igAdd=accountEdits.igAdd||[];accountEdits.igRemove=accountEdits.igRemove||[];accountEdits.ttAdd=accountEdits.ttAdd||[];accountEdits.ttRemove=accountEdits.ttRemove||[];}
+function addAccount(plat,h){ensureEdits();const n=normHandle(h);if(!n)return;const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
+  // un-queue any pending removal for the same handle
+  accountEdits[remKey]=accountEdits[remKey].filter(x=>normHandle(x)!==n);
+  if(inPool(plat,n))return;
+  if(!accountEdits[addKey].some(x=>normHandle(x)===n))accountEdits[addKey].push(n);
+  renderAccounts();pushState();}
+function removeAccount(plat,h){ensureEdits();const n=normHandle(h);const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
+  // if it was just a queued add, just drop the add
+  const wasQueued=accountEdits[addKey].some(x=>normHandle(x)===n);
+  accountEdits[addKey]=accountEdits[addKey].filter(x=>normHandle(x)!==n);
+  if(!wasQueued && !accountEdits[remKey].some(x=>normHandle(x)===n))accountEdits[remKey].push(n);
+  renderAccounts();pushState();}
+function undoRemove(plat,h){ensureEdits();const n=normHandle(h);const remKey=plat==='ig'?'igRemove':'ttRemove';
+  accountEdits[remKey]=accountEdits[remKey].filter(x=>normHandle(x)!==n);
+  renderAccounts();pushState();}
+function undoAdd(plat,h){ensureEdits();const n=normHandle(h);const addKey=plat==='ig'?'igAdd':'ttAdd';
+  accountEdits[addKey]=accountEdits[addKey].filter(x=>normHandle(x)!==n);
+  renderAccounts();pushState();}
+function renderAccounts(){ensureEdits();
+  ['ig','tt'].forEach(plat=>{
+    const key=plat==='ig'?'ig':'tiktok';
+    const pool=((DATA.pools&&DATA.pools[key])||[]).slice();
+    const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
+    const adds=accountEdits[addKey]||[], rems=accountEdits[remKey]||[];
+    $('#acct-'+plat+'-n').textContent=(pool.length+adds.length-rems.length)+' tracked  ·  +'+adds.length+' / −'+rems.length+' pending';
+    const eds=adds.map(h=>`<span class="acct-chip add">+ @${h}<button data-undo-add="${plat}" data-h="${h}" type="button">✕</button></span>`).join('')
+      +rems.map(h=>`<span class="acct-chip rem">@${h}<button data-undo-rem="${plat}" data-h="${h}" type="button">↺</button></span>`).join('');
+    $('#acct-'+plat+'-edits').innerHTML=eds;
+    const remSet=new Set(rems.map(x=>normHandle(x)));
+    $('#acct-'+plat+'-list').innerHTML=pool.map(h=>{const pending=remSet.has(normHandle(h));return `<span class="acct-row${pending?' pending-rem':''}">@${h}<button class="acct-x" data-rm="${plat}" data-h="${h}" type="button" title="${pending?'queued for removal':'remove'}">${pending?'↺':'✕'}</button></span>`;}).join('');});}
+['ig','tt'].forEach(plat=>{
+  $('#acct-'+plat+'-form').addEventListener('submit',e=>{e.preventDefault();const inp=$('#acct-'+plat+'-input');addAccount(plat,inp.value);inp.value='';});
+});
+$('#v-accounts').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');if(rm){const plat=rm.dataset.rm,h=rm.dataset.h;pendingRemoved(plat,h)?undoRemove(plat,h):removeAccount(plat,h);return;}
+  const ur=e.target.closest('[data-undo-rem]');if(ur){undoRemove(ur.dataset.undoRem,ur.dataset.h);return;}
+  const ua=e.target.closest('[data-undo-add]');if(ua){undoAdd(ua.dataset.undoAdd,ua.dataset.h);return;}
+});
+renderAccounts();
+
 /* ========== TREND RADAR ========== */
 (function(){
   const trends=DATA.trends||[], tg=$('#trendgrid');
@@ -456,7 +547,7 @@ let platformFilter='all';
 let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'{}')}catch(e){}
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
-let accountEdits={};try{accountEdits=JSON.parse(localStorage.getItem('td_account_edits')||'{}')}catch(e){}
+// accountEdits is declared earlier (before the Accounts panel block) to avoid a TDZ; nothing else to init here
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
 function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));}
@@ -504,9 +595,13 @@ function initGallery(c,imgs){
 }
 function actionsRow(p,inModal){
   const sv=saved.has(p.url),ds=dismissed.has(p.url);
+  const plat=p.platform==='tiktok'?'tt':'ig';
+  const tracked=inPool(plat,p.account);
+  const watch=`<button class="act watch${tracked?' on':''}" data-act="watch" data-plat="${plat}" data-handle="${p.account}" type="button" title="${tracked?'Already in the watchlist':'Add @'+p.account+' to the '+(plat==='tt'?'TikTok':'Instagram')+' watchlist — picked up on the next scrape'}">${tracked?'★ Watching':'+ Watch'}</button>`;
   return `<div class="actions">
     <button class="act save${sv?' on':''}" data-act="save" type="button">${sv?ICON.saved:ICON.save}${sv?'Saved':'Save'}</button>
     ${inModal?'':`<a class="act" data-act="ig" href="${p.url}" target="_blank" rel="noopener">${ICON.ig}${p.platform==='tiktok'?'View TikTok':'View IG'}</a>`}
+    ${watch}
     <button class="act dis" data-act="dismiss" type="button">${ICON.x}${ds?'Restore':'Dismiss'}</button>
   </div>`;
 }
@@ -588,7 +683,9 @@ function openPost(url){
   modal.classList.remove('hidden');document.body.style.overflow='hidden';
   if(p.carousel&&p.carousel.length)initGallery($('#m-gal'),p.carousel);
   $('#m-close').onclick=closeModal;
-  modal.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{(b.dataset.act==='save'?toggleSave:toggleDismiss)(url);openPost(url);}));
+  modal.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.act==='watch'){const plat=b.dataset.plat,h=b.dataset.handle;if(!inPool(plat,h))addAccount(plat,h);openPost(url);return;}
+    (b.dataset.act==='save'?toggleSave:toggleDismiss)(url);openPost(url);}));
 }
 function closeModal(){modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
@@ -678,7 +775,9 @@ function apply(){
 $('#grid').addEventListener('click',e=>{
   const cardEl=e.target.closest('.card');if(!cardEl)return;const url=cardEl.dataset.url;
   const act=e.target.closest('[data-act]');
-  if(act){if(act.dataset.act==='ig')return;e.preventDefault();(act.dataset.act==='save'?toggleSave:toggleDismiss)(url);return;}
+  if(act){if(act.dataset.act==='ig')return;e.preventDefault();
+    if(act.dataset.act==='watch'){const plat=act.dataset.plat,h=act.dataset.handle;if(!inPool(plat,h)){addAccount(plat,h);apply();}return;}
+    (act.dataset.act==='save'?toggleSave:toggleDismiss)(url);return;}
   if(e.target.closest('.play')){play(cardEl);return;}
   if(e.target.closest('.body')){openPost(url);}
 });

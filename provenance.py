@@ -101,6 +101,11 @@ def main():
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),
     }
     data["provenance"] = prov
+    # expose the live reference pools so the dashboard Accounts panel can render + edit them
+    data["pools"] = {
+        "ig": sorted(acc.get("accounts", []), key=str.lower),
+        "tiktok": sorted(tt_acc.get("accounts", []), key=str.lower),
+    }
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print("Injected provenance:", json.dumps(prov))
 
