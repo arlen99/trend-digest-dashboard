@@ -112,14 +112,17 @@ def main():
     # displayed posts that are single videos (skip carousels/photos)
     vids = [p for p in data["posts"] if p.get("platform") == "tiktok"
             or (p.get("format") == "Reel" and not p.get("carousel"))]
-    keep_paths, ok, fail = set(), 0, 0
+    ok, fail, kept = 0, 0, 0
     for p in vids:
         plat = p.get("platform", "instagram")
         code = tt_id(p["url"]) if plat == "tiktok" else ig_code(p["url"])
         if not code:
             continue
+        # already self-hosted on Blob? keep it — Blob URLs never expire, so no re-fetch
+        if "blob.vercel-storage" in (p.get("video") or ""):
+            kept += 1
+            continue
         pathname = f"videos/{plat}_{code}.mp4"
-        keep_paths.add(pathname)
         try:
             src = fresh_source(p)
             if not src:
@@ -134,13 +137,11 @@ def main():
             fail += 1
             print(f"  ✗ {plat} @{p.get('account')}: {str(e)[:50]}")
         time.sleep(0.2)
-    # prune blobs no longer referenced
-    existing = blob_list()
-    stale = [b["url"] for b in existing if b["pathname"] not in keep_paths]
-    blob_delete(stale)
+    # NO pruning — videos are kept PERMANENTLY so saved posts always play natively (no embed).
+    total = len(blob_list())
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
-    print(f"\nSelf-hosted {ok} videos ({fail} failed), pruned {len(stale)} stale. "
-          f"Blob now holds {len(keep_paths)} videos.")
+    print(f"\nSelf-hosted {ok} new ({kept} already hosted, {fail} failed). "
+          f"Blob now holds {total} videos (kept permanently).")
 
 
 if __name__ == "__main__":
