@@ -130,8 +130,9 @@ a{color:inherit;text-decoration:none}
 .acct-row.pending-rem{opacity:.45;text-decoration:line-through}
 .acct-x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px;line-height:1}
 .acct-x:hover{color:#e0564b}
-.act.watch{color:var(--teal)}
-.act.watch.on{color:#6bbf8a;cursor:default}
+.acct-link{color:inherit;text-decoration:none;border-bottom:1px dashed transparent;transition:.15s}
+.acct-link:hover{color:var(--teal);border-bottom-color:var(--teal)}
+.acct .acct-link{color:var(--ink)}
 .badge.alt{background:linear-gradient(135deg,#e8c45a,#ef9b43)}
 .fl-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
 .fld{position:relative}
@@ -462,18 +463,27 @@ $('#pf-toggle').addEventListener('click',e=>{
 });
 
 let accountEdits={};try{accountEdits=JSON.parse(localStorage.getItem('td_account_edits')||'{}')}catch(e){}
+function platOf(p){return p.platform==='tiktok'?'tt':'ig';}
+function profileURL(plat,h){h=(h||'').replace(/^@/,'');return plat==='tt'?`https://www.tiktok.com/@${h}`:`https://www.instagram.com/${h}/`;}
+function accountLink(plat,h){return `<a class="acct-link" href="${profileURL(plat,h)}" target="_blank" rel="noopener">@${h}</a>`;}
+async function verifyHandle(plat,h){
+  if(!SECRET)return{ok:true,handle:h,unverified:true}; // graceful: if no sync passphrase, can't call the backend — accept it
+  try{const r=await fetch(`/api/verify?plat=${plat}&handle=${encodeURIComponent(h)}`,{headers:{'X-Edit-Secret':SECRET}});
+    if(!r.ok)return{ok:false,reason:'http_'+r.status};return await r.json();}catch(e){return{ok:false,reason:'network'};}}
 
 /* ========== ACCOUNTS PANEL ========== */
 function normHandle(h){return (h||'').trim().replace(/^@/,'').toLowerCase();}
 function inPool(plat,h){const n=normHandle(h);const pool=(DATA.pools&&DATA.pools[plat])||[];if(pool.some(x=>x.toLowerCase()===n))return true;const ed=accountEdits[plat==='ig'?'igAdd':'ttAdd']||[];return ed.some(x=>normHandle(x)===n);}
 function pendingRemoved(plat,h){const ed=accountEdits[plat==='ig'?'igRemove':'ttRemove']||[];const n=normHandle(h);return ed.some(x=>normHandle(x)===n);}
 function ensureEdits(){accountEdits.igAdd=accountEdits.igAdd||[];accountEdits.igRemove=accountEdits.igRemove||[];accountEdits.ttAdd=accountEdits.ttAdd||[];accountEdits.ttRemove=accountEdits.ttRemove||[];}
-function addAccount(plat,h){ensureEdits();const n=normHandle(h);if(!n)return;const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
-  // un-queue any pending removal for the same handle
+async function addAccount(plat,h,{verify=true}={}){ensureEdits();const n=normHandle(h);if(!n)return{ok:false,reason:'empty'};
+  const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
   accountEdits[remKey]=accountEdits[remKey].filter(x=>normHandle(x)!==n);
-  if(inPool(plat,n))return;
+  if(inPool(plat,n)){renderAccounts();return{ok:true,already:true};}
+  if(verify){setSync('checking');const v=await verifyHandle(plat,n);setSync(SECRET?'on':'off');
+    if(!v.ok){alert(`Could not verify @${n} on ${plat==='tt'?'TikTok':'Instagram'}.\nReason: ${v.reason}\n\nNot added.`);return v;}}
   if(!accountEdits[addKey].some(x=>normHandle(x)===n))accountEdits[addKey].push(n);
-  renderAccounts();pushState();}
+  renderAccounts();pushState();return{ok:true};}
 function removeAccount(plat,h){ensureEdits();const n=normHandle(h);const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
   // if it was just a queued add, just drop the add
   const wasQueued=accountEdits[addKey].some(x=>normHandle(x)===n);
@@ -493,13 +503,19 @@ function renderAccounts(){ensureEdits();
     const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
     const adds=accountEdits[addKey]||[], rems=accountEdits[remKey]||[];
     $('#acct-'+plat+'-n').textContent=(pool.length+adds.length-rems.length)+' tracked  ·  +'+adds.length+' / −'+rems.length+' pending';
-    const eds=adds.map(h=>`<span class="acct-chip add">+ @${h}<button data-undo-add="${plat}" data-h="${h}" type="button">✕</button></span>`).join('')
-      +rems.map(h=>`<span class="acct-chip rem">@${h}<button data-undo-rem="${plat}" data-h="${h}" type="button">↺</button></span>`).join('');
+    const eds=adds.map(h=>`<span class="acct-chip add">+ ${accountLink(plat,h)}<button data-undo-add="${plat}" data-h="${h}" type="button">✕</button></span>`).join('')
+      +rems.map(h=>`<span class="acct-chip rem">${accountLink(plat,h)}<button data-undo-rem="${plat}" data-h="${h}" type="button">↺</button></span>`).join('');
     $('#acct-'+plat+'-edits').innerHTML=eds;
     const remSet=new Set(rems.map(x=>normHandle(x)));
-    $('#acct-'+plat+'-list').innerHTML=pool.map(h=>{const pending=remSet.has(normHandle(h));return `<span class="acct-row${pending?' pending-rem':''}">@${h}<button class="acct-x" data-rm="${plat}" data-h="${h}" type="button" title="${pending?'queued for removal':'remove'}">${pending?'↺':'✕'}</button></span>`;}).join('');});}
+    $('#acct-'+plat+'-list').innerHTML=pool.map(h=>{const pending=remSet.has(normHandle(h));return `<span class="acct-row${pending?' pending-rem':''}">${accountLink(plat,h)}<button class="acct-x" data-rm="${plat}" data-h="${h}" type="button" title="${pending?'queued for removal':'remove'}">${pending?'↺':'✕'}</button></span>`;}).join('');});}
 ['ig','tt'].forEach(plat=>{
-  $('#acct-'+plat+'-form').addEventListener('submit',e=>{e.preventDefault();const inp=$('#acct-'+plat+'-input');addAccount(plat,inp.value);inp.value='';});
+  $('#acct-'+plat+'-form').addEventListener('submit',async e=>{e.preventDefault();
+    const inp=$('#acct-'+plat+'-input'),btn=e.target.querySelector('button[type="submit"]');
+    const v=inp.value;if(!v.trim())return;
+    btn.disabled=true;const orig=btn.textContent;btn.textContent='Verifying…';
+    const r=await addAccount(plat,v);
+    btn.disabled=false;btn.textContent=orig;
+    if(r&&r.ok)inp.value='';});
 });
 $('#v-accounts').addEventListener('click',e=>{
   const rm=e.target.closest('[data-rm]');if(rm){const plat=rm.dataset.rm,h=rm.dataset.h;pendingRemoved(plat,h)?undoRemove(plat,h):removeAccount(plat,h);return;}
@@ -595,15 +611,27 @@ function initGallery(c,imgs){
 }
 function actionsRow(p,inModal){
   const sv=saved.has(p.url),ds=dismissed.has(p.url);
-  const plat=p.platform==='tiktok'?'tt':'ig';
-  const tracked=inPool(plat,p.account);
-  const watch=`<button class="act watch${tracked?' on':''}" data-act="watch" data-plat="${plat}" data-handle="${p.account}" type="button" title="${tracked?'Already in the watchlist':'Add @'+p.account+' to the '+(plat==='tt'?'TikTok':'Instagram')+' watchlist — picked up on the next scrape'}">${tracked?'★ Watching':'+ Watch'}</button>`;
   return `<div class="actions">
     <button class="act save${sv?' on':''}" data-act="save" type="button">${sv?ICON.saved:ICON.save}${sv?'Saved':'Save'}</button>
     ${inModal?'':`<a class="act" data-act="ig" href="${p.url}" target="_blank" rel="noopener">${ICON.ig}${p.platform==='tiktok'?'View TikTok':'View IG'}</a>`}
-    ${watch}
     <button class="act dis" data-act="dismiss" type="button">${ICON.x}${ds?'Restore':'Dismiss'}</button>
   </div>`;
+}
+/* ---- Save & Dismiss confirms (handle account-watchlist side-effect) ---- */
+async function saveWithConfirm(p){
+  toggleSave(p.url); // optimistic — save the post
+  if(!saved.has(p.url))return; // unsaving: just unsave
+  const plat=platOf(p);
+  if(inPool(plat,p.account))return;
+  if(confirm(`Saved.\n\nAlso add @${p.account} to your ${plat==='tt'?'TikTok':'Instagram'} watchlist?\n(Picked up on the next scrape.)`))
+    await addAccount(plat,p.account);
+}
+function dismissWithConfirm(p){
+  if(dismissed.has(p.url)){toggleDismiss(p.url);return;} // restoring — no question
+  const plat=platOf(p), tracked=inPool(plat,p.account);
+  const both=tracked && confirm(`Dismiss this post.\n\nAlso REMOVE @${p.account} from your ${plat==='tt'?'TikTok':'Instagram'} watchlist?\n(Won't be scraped on future runs.)`);
+  toggleDismiss(p.url);
+  if(both)removeAccount(plat,p.account);
 }
 function card(p){
   const car=p.carousel&&p.carousel.length?p.carousel:null;
@@ -619,7 +647,7 @@ function card(p){
       <img class="poster" src="${p.thumb}" alt="@${p.account}" onerror="this.style.display='none'">
     </div>
     <div class="body">
-      <div class="acct"><span class="h">@${p.account}</span><span class="wk">${fmtDate(p.date)}</span></div>
+      <div class="acct"><span class="h">${accountLink(platOf(p),p.account)}</span><span class="wk">${fmtDate(p.date)}</span></div>
       <div class="hook">${p.hook}</div>
       ${p.videoText?`<div class="vtext"><span class="lab">On-screen</span><span class="tx">${p.videoText}</span></div>`:''}
       <div class="metrics"><div class="m"><b>${fmtN(p.views)}</b>views</div><div class="m"><b>${fmtN(p.likes)}</b>likes</div><div class="m"><b>${fmtN(p.comments)}</b>comments</div>${er}</div>
@@ -670,7 +698,7 @@ function openPost(url){
   modal.innerHTML=`<div class="modal-card">
     <div class="modal-media"><button class="modal-close" id="m-close" type="button">✕</button>${m}</div>
     <div class="modal-body">
-      <div class="acct"><span class="h">@${p.account}</span><span class="wk">${fmtDate(p.date)} · ${p.newFind?p.trendScore+'% eng rate':p.outlier+'× outlier'}</span></div>
+      <div class="acct"><span class="h">${accountLink(platOf(p),p.account)}</span><span class="wk">${fmtDate(p.date)} · ${p.newFind?p.trendScore+'% eng rate':p.outlier+'× outlier'}</span></div>
       <div class="hook">${p.hook}</div>
       ${p.videoText?`<div class="vtext"><span class="lab">On-screen</span><span class="tx">${p.videoText}</span></div>`:''}
       <div class="metrics"><div class="m"><b>${fmtN(p.views)}</b>views</div><div class="m"><b>${fmtN(p.likes)}</b>likes</div><div class="m"><b>${fmtN(p.comments)}</b>comments</div>${er}</div>
@@ -683,9 +711,11 @@ function openPost(url){
   modal.classList.remove('hidden');document.body.style.overflow='hidden';
   if(p.carousel&&p.carousel.length)initGallery($('#m-gal'),p.carousel);
   $('#m-close').onclick=closeModal;
-  modal.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{
-    if(b.dataset.act==='watch'){const plat=b.dataset.plat,h=b.dataset.handle;if(!inPool(plat,h))addAccount(plat,h);openPost(url);return;}
-    (b.dataset.act==='save'?toggleSave:toggleDismiss)(url);openPost(url);}));
+  modal.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',async()=>{
+    const pp=posts.find(x=>x.url===url)||savedData[url];if(!pp)return;
+    if(b.dataset.act==='save')await saveWithConfirm(pp);
+    else if(b.dataset.act==='dismiss')dismissWithConfirm(pp);
+    openPost(url);}));
 }
 function closeModal(){modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
@@ -776,9 +806,12 @@ $('#grid').addEventListener('click',e=>{
   const cardEl=e.target.closest('.card');if(!cardEl)return;const url=cardEl.dataset.url;
   const act=e.target.closest('[data-act]');
   if(act){if(act.dataset.act==='ig')return;e.preventDefault();
-    if(act.dataset.act==='watch'){const plat=act.dataset.plat,h=act.dataset.handle;if(!inPool(plat,h)){addAccount(plat,h);apply();}return;}
-    (act.dataset.act==='save'?toggleSave:toggleDismiss)(url);return;}
+    const p=posts.find(x=>x.url===url)||savedData[url];if(!p)return;
+    if(act.dataset.act==='save')saveWithConfirm(p);
+    else if(act.dataset.act==='dismiss')dismissWithConfirm(p);
+    return;}
   if(e.target.closest('.play')){play(cardEl);return;}
+  if(e.target.closest('a'))return; // let hyperlinked @handles open the profile, not the modal
   if(e.target.closest('.body')){openPost(url);}
 });
 ['#f-show','#f-week','#f-format','#f-hook','#f-trigger','#f-style','#f-sort','#f-from','#f-to'].forEach(s=>$(s).addEventListener('change',apply));
