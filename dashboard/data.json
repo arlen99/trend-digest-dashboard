@@ -2718,8 +2718,14 @@
     "ttXplatform": 8,
     "ttShown": 20,
     "audioReels": 3040,
+    "hooksOcrd": 234,
     "hooksReadable": 181,
     "hookValidated": 16,
+    "hookPlats": [
+      "Instagram"
+    ],
+    "hookMinNiche": 2,
+    "hookMinLikes": 10000,
     "keywords": [
       "cinematic travel",
       "travel film",

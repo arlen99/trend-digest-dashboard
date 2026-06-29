@@ -74,7 +74,15 @@ def main():
 
     # pipeline counts for the "how it's built" popups
     hooks = jload(ROOT / "output" / "hook_texts.json", {}) or {}
+    hooks_ocrd = len(hooks)
     hooks_readable = sum(1 for v in hooks.values() if v.get("hook"))
+    # which platforms got OCR'd (today: IG-only, since the TikTok web endpoint strips video URLs)
+    hook_url_strs = " ".join((v.get("url") or "") for v in hooks.values())
+    hook_plats = []
+    if "instagram.com" in hook_url_strs:
+        hook_plats.append("Instagram")
+    if "tiktok.com" in hook_url_strs:
+        hook_plats.append("TikTok")
     hook_validated = len(jload(latest("hook_trends_*.json"), []) or [])
     try:
         from keyword_posts import KEYWORDS as kw_list
@@ -95,7 +103,8 @@ def main():
         "ttShown": len(data.get("tiktokSounds", [])),
         # pipeline-diagram fields
         "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
-        "hooksReadable": hooks_readable, "hookValidated": hook_validated,
+        "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hookValidated": hook_validated,
+        "hookPlats": hook_plats, "hookMinNiche": 2, "hookMinLikes": 10000,
         "keywords": kw_list, "tiktokCreators": tt_creators,
         "trendsAudio": sum(1 for t in data.get("trends", []) if t.get("type") == "audio"),
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),

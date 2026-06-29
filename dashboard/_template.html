@@ -803,17 +803,21 @@ function openMethod(kind){
     +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
   } else {
     title='How trends are detected'; sub='A trend = a repeatable template many creators copy. Two independent detectors find them.';
+    const platStr=(v.hookPlats||['Instagram']).join(' + ');
     body=`<div class="plane"><div><h5>♪ Audio trends</h5>`+pipe([
-      {n:n(v.audioTracks),l:'niche sounds'},{l:'those used by ≥3 creators'},
-      {n:n(v.trendsAudio),l:'Claude watches sample reels → writes the card'},
+      {n:n(v.audioTracks),l:'niche sounds (consolidated across audio IDs)'},
+      {l:`those used by ≥3 niche creators (from the ${n(v.audioAccounts)}-account scan)`},
+      {n:n(v.trendsAudio),l:'Claude watches sample reels → writes the card',hl:true},
     ])+`</div><div><h5>✎ Hook trends</h5>`+pipe([
-      {l:'~400 ranked posts'},
-      {n:n(v.hooksReadable),l:'on-screen hook lines, read by OCR from the first ~4 seconds'},
-      {l:'~40 distinct candidate phrases'},
-      {l:'each searched on TikTok (which indexes on-screen text)'},
-      {n:n(v.hookValidated),l:`confirmed niche trends → top ${n(v.trendsHook)} written as cards`,hl:true},
+      {n:n(v.audioReels),l:`recent reels we scanned (${platStr})`},
+      {n:n(v.hooksOcrd),l:`of those, the ones we OCR'd for an on-screen hook (top performers + recent activity)`},
+      {n:n(v.hooksReadable),l:'had readable hook text in the first ~4 seconds'},
+      {l:'each distinct phrase → searched on TikTok'},
+      {n:n(v.hookValidated),l:`returned ≥${v.hookMinNiche} niche-relevant results &amp; ≥10K max likes → "confirmed trend"`,hl:true},
+      {n:n(v.trendsHook),l:'Claude writes the top ones as cards'},
     ])+`</div></div>`
-    +`<div class="msec"><h4>Why search TikTok?</h4><p>TikTok indexes the <b>text on screen</b>, so searching a hook phrase returns everyone using it — even when only one creator in our scan had it. Instagram has no on-screen-text search, so the hook side runs through TikTok. One sighting in our scan + a TikTok search = a confirmed trend.</p></div>`
+    +`<div class="msec"><h4>What "confirmed" actually means here</h4><p>We don't gate on "≥N distinct accounts in our scan" — top performers rarely overlap. Instead, we OCR <b>one</b> hook from our scan, then <b>TikTok-search the exact phrase</b>. A hook is confirmed when those search results are clearly niche (≥${v.hookMinNiche} of the ~20 results match the niche regex) <i>and</i> show real distribution (top result ≥10K likes). Same hook used over different audio still counts — the phrase is the anchor, not the sound.</p></div>`
+    +`<div class="msec"><h4>Why search TikTok &amp; not Instagram?</h4><p>TikTok indexes the <b>on-screen text</b> of every video server-side, so searching a phrase returns everyone using it. Instagram has no equivalent — its search only matches captions and hashtags, not the text overlaid in the video. So the hook side runs through TikTok, even though our OCR currently reads <b>${platStr}</b> reels. (Adding TikTok to the OCR side is on the list — TikHub's web endpoint strips the video URL, so it'd need an extra fetch per post.)</p></div>`
     +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
   }
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close">✕</button><h3 class="mm-title">${title}</h3><p class="mm-sub">${sub}</p>${body}`;
@@ -869,8 +873,15 @@ function apply(){
   rows.sort((a,b)=>sort==='date'?(''+(b.date||'')).localeCompare(''+(a.date||'')):(b[sort]??-1)-(a[sort]??-1));
   $('#count').innerHTML=`<b>${rows.length}</b> shown · ${saved.size}★ · ${dismissed.size}✕`;
   const grid=$('#grid');
+  // Fingerprint the row set so background sync pulls don't tear the grid down when nothing changed
+  const fp=rows.map(r=>r.url+'|'+(saved.has(r.url)?'s':'')+(dismissed.has(r.url)?'d':'')).join(',');
+  if(grid.dataset.fp===fp)return;
+  const wasFresh=!grid.dataset.fp;
+  grid.dataset.fp=fp;
   grid.innerHTML=rows.length?rows.map(card).join(''):`<div class="empty">No posts match these filters.</div>`;
-  grid.querySelectorAll('.card').forEach((c,i)=>c.style.animationDelay=(Math.min(i,12)*40)+'ms');
+  // only stagger the initial reveal — subsequent re-renders (filter changes etc.) shouldn't ripple
+  if(wasFresh)grid.querySelectorAll('.card').forEach((c,i)=>c.style.animationDelay=(Math.min(i,12)*40)+'ms');
+  else grid.querySelectorAll('.card').forEach(c=>{c.style.animation='none';c.style.animationDelay='0ms';});
 }
 $('#grid').addEventListener('click',e=>{
   const cardEl=e.target.closest('.card');if(!cardEl)return;const url=cardEl.dataset.url;
