@@ -130,9 +130,24 @@ a{color:inherit;text-decoration:none}
 .acct-row.pending-rem{opacity:.45;text-decoration:line-through}
 .acct-x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px;line-height:1}
 .acct-x:hover{color:#e0564b}
-.acct-link{color:inherit;text-decoration:none;border-bottom:1px dashed transparent;transition:.15s}
+.acct-link{color:inherit;text-decoration:none;border-bottom:1px dashed transparent;transition:.15s;background:none;border-top:0;border-left:0;border-right:0;padding:0;font:inherit;cursor:pointer}
 .acct-link:hover{color:var(--teal);border-bottom-color:var(--teal)}
 .acct .acct-link{color:var(--ink)}
+.pp-card{max-width:520px}
+.pp-head{display:flex;gap:14px;align-items:center;margin-bottom:8px}
+.pp-av{width:64px;height:64px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);object-fit:cover;flex:none}
+.pp-name{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--ink);margin:0;line-height:1.15}
+.pp-handle{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:2px 0 0}
+.pp-stats{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:4px 0 0}
+.pp-stats b{color:var(--ink)}
+.pp-bio{font-size:13px;line-height:1.55;color:#c9c7c0;margin:10px 0 6px;white-space:pre-wrap}
+.pp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)}
+.pp-actions button,.pp-actions a{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:none;color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.pp-actions .primary{background:var(--teal);color:#0c0d0f;border-color:var(--teal)}
+.pp-actions button:hover,.pp-actions a:hover{border-color:var(--teal);color:var(--teal)}
+.pp-actions .primary:hover{color:#0c0d0f;filter:brightness(1.1)}
+.pp-actions .danger:hover{color:#e0564b;border-color:#e0564b}
+.pp-spin{padding:24px;text-align:center;color:var(--muted);font-size:13px}
 .badge.alt{background:linear-gradient(135deg,#e8c45a,#ef9b43)}
 .fl-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
 .fld{position:relative}
@@ -465,7 +480,8 @@ $('#pf-toggle').addEventListener('click',e=>{
 let accountEdits={};try{accountEdits=JSON.parse(localStorage.getItem('td_account_edits')||'{}')}catch(e){}
 function platOf(p){return p.platform==='tiktok'?'tt':'ig';}
 function profileURL(plat,h){h=(h||'').replace(/^@/,'');return plat==='tt'?`https://www.tiktok.com/@${h}`:`https://www.instagram.com/${h}/`;}
-function accountLink(plat,h){return `<a class="acct-link" href="${profileURL(plat,h)}" target="_blank" rel="noopener">@${h}</a>`;}
+// @handles open an in-dashboard PREVIEW popup instead of a new tab (a true iframe profile isn't possible — IG blocks framing with X-Frame-Options: DENY).
+function accountLink(plat,h){return `<button class="acct-link" type="button" data-acct="${h}" data-plat="${plat}">@${h}</button>`;}
 async function verifyHandle(plat,h){
   if(!SECRET)return{ok:true,handle:h,unverified:true}; // graceful: if no sync passphrase, can't call the backend — accept it
   try{const r=await fetch(`/api/verify?plat=${plat}&handle=${encodeURIComponent(h)}`,{headers:{'X-Edit-Secret':SECRET}});
@@ -476,12 +492,14 @@ function normHandle(h){return (h||'').trim().replace(/^@/,'').toLowerCase();}
 function inPool(plat,h){const n=normHandle(h);const pool=(DATA.pools&&DATA.pools[plat])||[];if(pool.some(x=>x.toLowerCase()===n))return true;const ed=accountEdits[plat==='ig'?'igAdd':'ttAdd']||[];return ed.some(x=>normHandle(x)===n);}
 function pendingRemoved(plat,h){const ed=accountEdits[plat==='ig'?'igRemove':'ttRemove']||[];const n=normHandle(h);return ed.some(x=>normHandle(x)===n);}
 function ensureEdits(){accountEdits.igAdd=accountEdits.igAdd||[];accountEdits.igRemove=accountEdits.igRemove||[];accountEdits.ttAdd=accountEdits.ttAdd||[];accountEdits.ttRemove=accountEdits.ttRemove||[];}
-async function addAccount(plat,h,{verify=true}={}){ensureEdits();const n=normHandle(h);if(!n)return{ok:false,reason:'empty'};
+async function addAccount(plat,h,{verify=true,silent=false}={}){ensureEdits();const n=normHandle(h);if(!n)return{ok:false,reason:'empty'};
   const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
+  // un-queue any pending removal
+  const wasPendingRem=accountEdits[remKey].some(x=>normHandle(x)===n);
   accountEdits[remKey]=accountEdits[remKey].filter(x=>normHandle(x)!==n);
-  if(inPool(plat,n)){renderAccounts();return{ok:true,already:true};}
+  if(inPool(plat,n)){renderAccounts();if(!silent)alert(`@${n} is already in your ${plat==='tt'?'TikTok':'Instagram'} watchlist${wasPendingRem?' (removal cancelled).':'.'}`);return{ok:true,already:true};}
   if(verify){setSync('checking');const v=await verifyHandle(plat,n);setSync(SECRET?'on':'off');
-    if(!v.ok){alert(`Could not verify @${n} on ${plat==='tt'?'TikTok':'Instagram'}.\nReason: ${v.reason}\n\nNot added.`);return v;}}
+    if(!v.ok){if(!silent)alert(`Could not verify @${n} on ${plat==='tt'?'TikTok':'Instagram'}.\nReason: ${v.reason}\n\nNot added.`);return v;}}
   if(!accountEdits[addKey].some(x=>normHandle(x)===n))accountEdits[addKey].push(n);
   renderAccounts();pushState();return{ok:true};}
 function removeAccount(plat,h){ensureEdits();const n=normHandle(h);const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
@@ -784,6 +802,35 @@ mm.addEventListener('click',e=>{if(e.target===mm)closeMethod();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!mm.classList.contains('hidden'))closeMethod();});
 document.addEventListener('click',e=>{const b=e.target.closest('.pl-btn');if(b)openMethod(b.dataset.method);});
 
+/* ---- profile preview popup (in-dashboard, since IG/TikTok block iframe embedding) ---- */
+async function openProfile(plat,h){
+  h=normHandle(h);if(!h)return;
+  const profUrl=profileURL(plat,h), tracked=inPool(plat,h);
+  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
+    <h3 class="mm-title">@${h}</h3><div class="pp-spin">Loading profile…</div>`;
+  mm.classList.remove('hidden');document.body.style.overflow='hidden';$('#mm-close').onclick=closeMethod;
+  let v={ok:false,reason:SECRET?'fetching':'no_passphrase'};
+  if(SECRET){v=await verifyHandle(plat,h);}
+  const platLabel=plat==='tt'?'TikTok':'Instagram';
+  const head=v.ok?`<div class="pp-head">
+      ${v.avatar?`<img class="pp-av" src="${v.avatar}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`:`<div class="pp-av"></div>`}
+      <div><h3 class="pp-name">${v.displayName||'@'+h}${v.verified?' ✓':''}</h3>
+        <p class="pp-handle">@${h} · ${platLabel}</p>
+        ${v.followers!=null?`<p class="pp-stats"><b>${Number(v.followers).toLocaleString()}</b> followers</p>`:''}</div></div>
+      ${v.bio?`<p class="pp-bio">${v.bio}</p>`:''}`
+    :v.reason==='no_passphrase'?`<div class="pp-spin">Click ⇄ Sync devices and enter your passphrase to preview profiles in-dashboard.</div>`
+    :`<div class="pp-spin">Couldn't load this profile (reason: ${v.reason}).</div>`;
+  const watchBtn=tracked
+    ? `<button class="danger" data-pp-remove="1">✕ Remove from watchlist</button>`
+    : `<button class="primary" data-pp-add="1">★ Add to watchlist</button>`;
+  const actions=`<div class="pp-actions">${watchBtn}<a href="${profUrl}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
+  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button><div class="pp-card">${head}${actions}</div>`;
+  $('#mm-close').onclick=closeMethod;
+  const add=$('#mm-body [data-pp-add]'); if(add)add.onclick=async()=>{const r=await addAccount(plat,h);if(r&&r.ok&&!r.already){closeMethod();}else if(r&&r.already){openProfile(plat,h);} };
+  const rem=$('#mm-body [data-pp-remove]'); if(rem)rem.onclick=()=>{removeAccount(plat,h);openProfile(plat,h);};
+}
+document.addEventListener('click',e=>{const b=e.target.closest('.acct-link');if(b){e.preventDefault();e.stopPropagation();openProfile(b.dataset.plat,b.dataset.acct);}});
+
 function apply(){
   const fw=$('#f-week').value,ff=$('#f-format').value,fh=$('#f-hook').value,ft=$('#f-trigger').value,fs=$('#f-style').value,
     q=$('#f-search').value.toLowerCase().trim(),sort=$('#f-sort').value,show=$('#f-show').value,from=$('#f-from').value,to=$('#f-to').value;
@@ -811,7 +858,9 @@ $('#grid').addEventListener('click',e=>{
     else if(act.dataset.act==='dismiss')dismissWithConfirm(p);
     return;}
   if(e.target.closest('.play')){play(cardEl);return;}
-  if(e.target.closest('a'))return; // let hyperlinked @handles open the profile, not the modal
+  if(e.target.closest('a'))return; // external links handle themselves
+  const al=e.target.closest('.acct-link');
+  if(al){e.preventDefault();openProfile(al.dataset.plat,al.dataset.acct);return;} // @handle → in-dashboard preview popup
   if(e.target.closest('.body')){openPost(url);}
 });
 ['#f-show','#f-week','#f-format','#f-hook','#f-trigger','#f-style','#f-sort','#f-from','#f-to'].forEach(s=>$(s).addEventListener('change',apply));

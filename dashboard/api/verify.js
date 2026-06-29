@@ -30,23 +30,27 @@ function deepFind(o, key) {
 async function verifyIG(handle, token) {
   const { status, json } = await tikhub(`/api/v1/instagram/v1/fetch_user_info_by_username?username=${encodeURIComponent(handle)}`, token);
   if (status !== 200 || !json) return { ok: false, reason: "lookup_failed" };
-  const data = json.data || json;
-  // bogus handles come back with status:"fail" + errorMessage; valid ones nest user under data.data
-  if (data && (data.status === "fail" || data.errorMessage)) return { ok: false, reason: "not_found" };
-  const pk = deepFind(data, "pk") || deepFind(data, "id");
-  if (!pk) return { ok: false, reason: "not_found" };
-  return { ok: true, handle, displayName: deepFind(data, "full_name") || "", followers: deepFind(data, "follower_count") || null };
+  // Validity is decided by ONE signal: does TikHub return a numeric pk anywhere in the payload?
+  // (Valid responses can contain harmless empty `errorMessage` fields too, so don't gate on those.)
+  const pk = deepFind(json, "pk") || deepFind(json, "id");
+  if (!pk || !/^\d+$/.test(String(pk))) return { ok: false, reason: "not_found" };
+  return { ok: true, handle, displayName: deepFind(json, "full_name") || "", followers: deepFind(json, "follower_count") || null,
+           bio: deepFind(json, "biography") || "", avatar: deepFind(json, "profile_pic_url_hd") || deepFind(json, "profile_pic_url") || "",
+           verified: !!deepFind(json, "is_verified"), pk: String(pk) };
 }
 
 async function verifyTT(handle, token) {
   const { status, json } = await tikhub(`/api/v1/tiktok/app/v3/handler_user_profile?unique_id=${encodeURIComponent(handle)}`, token);
   if (status === 400) return { ok: false, reason: "not_found" };
   if (status !== 200 || !json) return { ok: false, reason: "lookup_failed" };
-  // success-shaped response carries the user; absence = not found
-  const data = json.data || json;
-  const found = deepFind(data, "unique_id") || deepFind(data, "uniqueId") || deepFind(data, "sec_uid") || deepFind(data, "secUid");
+  const found = deepFind(json, "unique_id") || deepFind(json, "uniqueId") || deepFind(json, "sec_uid") || deepFind(json, "secUid");
   if (!found) return { ok: false, reason: "not_found" };
-  return { ok: true, handle, displayName: deepFind(data, "nickname") || "", followers: deepFind(data, "follower_count") || deepFind(data, "followerCount") || null };
+  const av = deepFind(json, "avatar_larger") || deepFind(json, "avatar_thumb") || deepFind(json, "avatarLarger") || {};
+  return { ok: true, handle, displayName: deepFind(json, "nickname") || "",
+           followers: deepFind(json, "follower_count") || deepFind(json, "followerCount") || null,
+           bio: deepFind(json, "signature") || "", verified: !!deepFind(json, "verification_type"),
+           avatar: (av && av.url_list && av.url_list[0]) || deepFind(json, "avatar") || "",
+           secUid: deepFind(json, "sec_uid") || deepFind(json, "secUid") || "" };
 }
 
 module.exports = async (req, res) => {
