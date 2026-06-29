@@ -641,21 +641,38 @@ function actionsRow(p,inModal){
     <button class="act dis" data-act="dismiss" type="button">${ICON.x}${ds?'Restore':'Dismiss'}</button>
   </div>`;
 }
+/* ---- In-app Yes/No confirm — replaces browser confirm(), reuses #methodmodal ---- */
+function appConfirm({title,body,yes='Yes',no='No'}){
+  return new Promise(resolve=>{
+    $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
+      <h3 class="mm-title">${title}</h3><p class="mm-sub">${body}</p>
+      <div class="pp-actions" style="justify-content:flex-end">
+        <button id="mm-no" type="button">${no}</button>
+        <button id="mm-yes" class="primary" type="button">${yes}</button>
+      </div>`;
+    mm.classList.remove('hidden');document.body.style.overflow='hidden';
+    const done=v=>{closeMethod();resolve(v);};
+    $('#mm-close').onclick=()=>done(false);
+    $('#mm-no').onclick=()=>done(false);
+    $('#mm-yes').onclick=()=>done(true);
+  });
+}
 /* ---- Save & Dismiss confirms (handle account-watchlist side-effect) ---- */
 async function saveWithConfirm(p){
-  toggleSave(p.url); // optimistic — save the post
-  if(!saved.has(p.url))return; // unsaving: just unsave
-  const plat=platOf(p);
-  if(inPool(plat,p.account))return;
-  if(confirm(`Saved.\n\nAlso add @${p.account} to your ${plat==='tt'?'TikTok':'Instagram'} watchlist?\n(Picked up on the next scrape.)`))
-    await addAccount(plat,p.account);
+  const wasSaved=saved.has(p.url);
+  toggleSave(p.url); // optimistic — toggle save
+  if(wasSaved)return; // we just unsaved — no prompt
+  const plat=platOf(p); if(inPool(plat,p.account))return; // already tracked — no prompt
+  const yes=await appConfirm({title:'Saved.',body:`Also add @${p.account} to your ${plat==='tt'?'TikTok':'Instagram'} watchlist? It'll be picked up on the next scrape.`,yes:'Add to watchlist',no:'Just save'});
+  if(yes)await addAccount(plat,p.account,{silent:true});
 }
-function dismissWithConfirm(p){
-  if(dismissed.has(p.url)){toggleDismiss(p.url);return;} // restoring — no question
+async function dismissWithConfirm(p){
+  if(dismissed.has(p.url)){toggleDismiss(p.url);return;} // restoring — no prompt
   const plat=platOf(p), tracked=inPool(plat,p.account);
-  const both=tracked && confirm(`Dismiss this post.\n\nAlso REMOVE @${p.account} from your ${plat==='tt'?'TikTok':'Instagram'} watchlist?\n(Won't be scraped on future runs.)`);
   toggleDismiss(p.url);
-  if(both)removeAccount(plat,p.account);
+  if(!tracked)return; // not in watchlist — no prompt
+  const yes=await appConfirm({title:'Dismissed.',body:`Also REMOVE @${p.account} from your ${plat==='tt'?'TikTok':'Instagram'} watchlist? It won't be scraped on future runs.`,yes:'Remove from watchlist',no:'Just dismiss'});
+  if(yes)removeAccount(plat,p.account);
 }
 function card(p){
   const car=p.carousel&&p.carousel.length?p.carousel:null;
