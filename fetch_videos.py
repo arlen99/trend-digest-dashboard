@@ -137,11 +137,51 @@ def main():
             fail += 1
             print(f"  ✗ {plat} @{p.get('account')}: {str(e)[:50]}")
         time.sleep(0.2)
+
+    # ---- ALSO self-host example/sample reels referenced by Trend Radar cards + Audio chart,
+    # so the in-app popup plays natively instead of falling back to the platform embed.
+    ex_urls = set()
+    for t in data.get("trends", []):
+        for u in (t.get("examples") or []):
+            ex_urls.add(u)
+    for s in data.get("soundChart", []):
+        for u in (s.get("samples") or []):
+            ex_urls.add(u)
+    video_map = data.get("videos", {}) or {}
+    # any URL already in the post pool? reuse its Blob URL — no re-fetch
+    by_url = {p["url"]: p.get("video", "") for p in data["posts"] if "blob.vercel-storage" in (p.get("video") or "")}
+    ex_ok = ex_kept = ex_fail = 0
+    for url in ex_urls:
+        if url in video_map and "blob.vercel-storage" in video_map[url]:
+            ex_kept += 1; continue
+        if url in by_url:
+            video_map[url] = by_url[url]; ex_kept += 1; continue
+        plat = "tiktok" if "tiktok.com" in url else "instagram"
+        code = tt_id(url) if plat == "tiktok" else ig_code(url)
+        if not code:
+            continue
+        pathname = f"videos/{plat}_{code}.mp4"
+        try:
+            src = fresh_source({"platform": plat, "url": url})
+            if not src:
+                ex_fail += 1; continue
+            mp4 = download(src)
+            if len(mp4) < 5000:
+                ex_fail += 1; continue
+            video_map[url] = blob_put(pathname, mp4); ex_ok += 1
+            print(f"  ✓ EX {plat:9} {url.split('/')[-2][:14]:<14} {len(mp4)//1024:>5}KB")
+        except Exception as e:  # noqa: BLE001
+            ex_fail += 1
+            print(f"  ✗ EX {plat} {url[-18:]}: {str(e)[:50]}")
+        time.sleep(0.2)
+    data["videos"] = video_map
+
     # NO pruning — videos are kept PERMANENTLY so saved posts always play natively (no embed).
     total = len(blob_list())
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
-    print(f"\nSelf-hosted {ok} new ({kept} already hosted, {fail} failed). "
-          f"Blob now holds {total} videos (kept permanently).")
+    print(f"\nBoard posts: {ok} new, {kept} kept, {fail} failed."
+          f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed."
+          f"\nBlob now holds {total} videos (kept permanently).")
 
 
 if __name__ == "__main__":

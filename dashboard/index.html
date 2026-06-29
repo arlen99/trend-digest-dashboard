@@ -63,7 +63,9 @@ a{color:inherit;text-decoration:none}
 .trk .static-ic{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:15px}
 .reels{display:flex;flex-wrap:wrap;gap:9px;margin-top:5px}
 .lk.reel{font-size:10.5px;opacity:.65}
-button.lk{font:inherit;font-family:'JetBrains Mono',monospace;cursor:pointer;text-align:left}
+/* Match the original <a class="lk"> styling exactly (otherwise <button> picks up browser defaults). */
+button.lk{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--line2);border-radius:7px;padding:5px 9px;white-space:nowrap;transition:.15s;cursor:pointer}
+button.lk.reel{font-size:10.5px;opacity:.65}
 button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .lk.dl{cursor:pointer;background:none;border:1px solid var(--teal);border-radius:6px;color:var(--teal);font:inherit;padding:3px 8px;transition:.15s}
 .lk.dl:hover{background:var(--teal);color:#0c0d0f}
@@ -869,12 +871,18 @@ function openReelPopup(url){
   if(onBoard){openPost(url);return;}
   const plat=url.includes('tiktok.com')?'tiktok':'instagram';
   const code=igCode(url),id=ttId(url);
+  // Prefer the self-hosted Blob video (native, durable, no embed chrome) if we have one for this URL.
+  const blobVid=(DATA.videos||{})[url];
   const embedSrc=plat==='tiktok'&&id?`https://www.tiktok.com/embed/v2/${id}`:(code?`https://www.instagram.com/reel/${code}/embed/`:'');
   const platLabel=plat==='tiktok'?'TikTok':'Instagram';
+  const media=blobVid
+    ? `<video controls autoplay playsinline src="${blobVid}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
+    : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
+  const sub=blobVid?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
     <h3 class="mm-title">Example reel</h3>
-    <p class="mm-sub">This reel isn't curated on the board — playing the platform embed directly.</p>
-    <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`}</div>
+    <p class="mm-sub">${sub}</p>
+    <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
     <div class="pp-actions"><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
   mm.classList.remove('hidden');document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
