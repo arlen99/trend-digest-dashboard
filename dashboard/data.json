@@ -865,52 +865,35 @@
       "platform": "instagram"
     },
     {
-      "account": "tonyolsenfilm",
-      "url": "https://www.tiktok.com/@tonyolsenfilm/video/7649305820550712589",
-      "platform": "tiktok",
-      "hook": "Vinland  #travel #vinland #cinematic",
-      "format": "TikTok",
-      "views": 25000,
-      "likes": 5363,
-      "comments": 65,
-      "shares": 603,
-      "engRate": 24.1,
-      "outlier": 42.62,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "Far of to the West",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-09",
-      "thumb": "thumbs/tt_01_tonyolsenfilm.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649305820550712589.mp4",
-      "carousel": []
-    },
-    {
       "account": "travel_films.bo",
       "url": "https://www.tiktok.com/@travel_films.bo/video/7649198150397316374",
       "platform": "tiktok",
       "hook": "Procesión en honor al Tatita Señor  Jesús del Gran Poder 2026 ..!!        #lapaz_bolivia🇧🇴 #granpoderlapazbolivia🇧🇴 #festividadjesusdegranpoder2026 #morenadaintocables #bolivia",
       "format": "TikTok",
-      "views": 17400,
-      "likes": 917,
+      "views": 17100,
+      "likes": 901,
       "comments": 19,
-      "shares": 30,
-      "engRate": 5.6,
-      "outlier": 14.0,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "shares": 28,
+      "engRate": 5.5,
+      "outlier": 13.74,
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "sonido original",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Cultural procession doc — bright daylight, off the core niche.",
       "week": "2026-06-21",
       "date": "2026-06-09",
-      "thumb": "thumbs/tt_02_travel_films.bo.jpg",
+      "thumb": "thumbs/tt_01_travel_films.bo.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649198150397316374.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "dillonfilms_",
@@ -918,23 +901,32 @@
       "platform": "tiktok",
       "hook": "just create  #cinematic #filmmaker #sonya6700 #colorgrading #sonyalpha",
       "format": "TikTok",
-      "views": 20000,
-      "likes": 1714,
+      "views": 18300,
+      "likes": 1536,
       "comments": 30,
-      "shares": 38,
-      "engRate": 8.9,
-      "outlier": 10.27,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "shares": 35,
+      "engRate": 8.7,
+      "outlier": 10.43,
+      "hookTypes": [
+        "POV",
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Relatability",
+        "Ego"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Behind-the-scenes creativity pep-talk over a shooting clip.",
       "week": "2026-06-21",
       "date": "2026-06-08",
-      "thumb": "thumbs/tt_03_dillonfilms_.jpg",
+      "thumb": "thumbs/tt_02_dillonfilms_.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7648997460064341281.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "pov: stop overthinking your creativity shot on the Sony A6700"
     },
     {
       "account": "andyyongfilms",
@@ -942,23 +934,31 @@
       "platform": "tiktok",
       "hook": "Creative HACK for taking photos in bad lighting - especially in the harsh afternoon sun @evan kohli  #photography #phototips #photoshoot #learning",
       "format": "TikTok",
-      "views": 64300,
-      "likes": 6074,
+      "views": 56800,
+      "likes": 5298,
       "comments": 30,
-      "shares": 301,
-      "engRate": 10.0,
-      "outlier": 7.68,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "shares": 260,
+      "engRate": 9.8,
+      "outlier": 10.15,
+      "hookTypes": [
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Photo hack demo in moody overcast light.",
       "week": "2026-06-21",
       "date": "2026-05-31",
-      "thumb": "thumbs/tt_04_andyyongfilms.jpg",
+      "thumb": "thumbs/tt_03_andyyongfilms.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7646025257274608914.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "tonyolsenfilm",
@@ -966,47 +966,61 @@
       "platform": "tiktok",
       "hook": "(no caption)",
       "format": "TikTok",
-      "views": 9472,
-      "likes": 991,
-      "comments": 12,
-      "shares": 73,
+      "views": 9030,
+      "likes": 949,
+      "comments": 11,
+      "shares": 69,
       "engRate": 11.4,
-      "outlier": 7.6,
+      "outlier": 7.62,
       "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "im god slowed",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Golden-hour waterfall — pure cinematic B-roll.",
       "week": "2026-06-21",
       "date": "2026-06-13",
-      "thumb": "thumbs/tt_05_tonyolsenfilm.jpg",
+      "thumb": "thumbs/tt_04_tonyolsenfilm.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7650920645815029006.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
-      "account": "pierluigibarcaa",
-      "url": "https://www.tiktok.com/@pierluigibarcaa/video/7649675098638781698",
+      "account": "tonyolsenfilm",
+      "url": "https://www.tiktok.com/@tonyolsenfilm/video/7649305820550712589",
       "platform": "tiktok",
-      "hook": "3 creative POV shots. 1 Magic Arm. Endless possibilities. 🚀 In this video, I’ll show you three camera angles that have improved my workflow and that you can easily recreate yourself. 🎥✨ #magicarm #smallrig #pov #povreels #creativeshots  @SmallRigDirect",
+      "hook": "Vinland  #travel #vinland #cinematic",
       "format": "TikTok",
-      "views": 4547,
-      "likes": 235,
-      "comments": 3,
-      "shares": 14,
-      "engRate": 5.5,
-      "outlier": 7.1,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "suono originale - Pier | Travel Filmaker",
+      "views": 5722,
+      "likes": 850,
+      "comments": 13,
+      "shares": 40,
+      "engRate": 15.8,
+      "outlier": 6.69,
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
+      "audio": "Far of to the West",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Epic Faroe cliffs + waterfall, drone reveal.",
       "week": "2026-06-21",
-      "date": "2026-06-10",
-      "thumb": "thumbs/tt_06_pierluigibarcaa.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649675098638781698.mp4",
-      "carousel": []
+      "date": "2026-06-09",
+      "thumb": "thumbs/tt_05_tonyolsenfilm.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649305820550712589.mp4",
+      "carousel": [],
+      "videoText": "I found Vinland"
     },
     {
       "account": "sedyyfilms",
@@ -1014,23 +1028,62 @@
       "platform": "tiktok",
       "hook": "peak life experience  #travel #lifestyle #dolomites #alps #cinematic",
       "format": "TikTok",
-      "views": 59000,
-      "likes": 14300,
-      "comments": 87,
-      "shares": 1425,
-      "engRate": 26.8,
-      "outlier": 5.55,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "views": 52000,
+      "likes": 12900,
+      "comments": 78,
+      "shares": 1317,
+      "engRate": 27.5,
+      "outlier": 6.14,
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Carefree leap in an alpine meadow, one-line caption.",
       "week": "2026-06-21",
       "date": "2026-06-15",
-      "thumb": "thumbs/tt_07_sedyyfilms.jpg",
+      "thumb": "thumbs/tt_06_sedyyfilms.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7651577559729163542.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "absolute freedom."
+    },
+    {
+      "account": "tonyolsenfilm",
+      "url": "https://www.tiktok.com/@tonyolsenfilm/video/7647491366892637453",
+      "platform": "tiktok",
+      "hook": "Lake over the ocean in the Faroe Islands",
+      "format": "TikTok",
+      "views": 25600,
+      "likes": 697,
+      "comments": 4,
+      "shares": 103,
+      "engRate": 3.1,
+      "outlier": 5.96,
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Moody/dark"
+      ],
+      "audio": "Reflections on a Hero",
+      "audioDetected": false,
+      "notes": "Dramatic Faroe cliff-lake aerial.",
+      "week": "2026-06-21",
+      "date": "2026-06-04",
+      "thumb": "thumbs/tt_07_tonyolsenfilm.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7647491366892637453.mp4",
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "andyyongfilms",
@@ -1038,23 +1091,64 @@
       "platform": "tiktok",
       "hook": "How to REMOVE crowds without AI 📸 ✍️ Hold your phone still with Live enabled ➡️ Take the pic ➡️ Open in gallery, tap Live and select long exposure Edited with my mobile preset (link in bio) . #photography #mobilephotography #tips #phototips #phototricks",
       "format": "TikTok",
-      "views": 94900,
-      "likes": 3606,
-      "comments": 22,
-      "shares": 527,
-      "engRate": 4.4,
-      "outlier": 4.99,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "views": 76100,
+      "likes": 2708,
+      "comments": 17,
+      "shares": 433,
+      "engRate": 4.1,
+      "outlier": 5.74,
+      "hookTypes": [
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Bright/airy",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Crowd-removal technique demo in a grand atrium.",
       "week": "2026-06-21",
       "date": "2026-06-16",
       "thumb": "thumbs/tt_08_andyyongfilms.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7651979386769476871.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
+    },
+    {
+      "account": "pierluigibarcaa",
+      "url": "https://www.tiktok.com/@pierluigibarcaa/video/7649675098638781698",
+      "platform": "tiktok",
+      "hook": "3 creative POV shots. 1 Magic Arm. Endless possibilities. 🚀 In this video, I’ll show you three camera angles that have improved my workflow and that you can easily recreate yourself. 🎥✨ #magicarm #smallrig #pov #povreels #creativeshots  @SmallRigDirect",
+      "format": "TikTok",
+      "views": 4012,
+      "likes": 211,
+      "comments": 3,
+      "shares": 13,
+      "engRate": 5.7,
+      "outlier": 5.4,
+      "hookTypes": [
+        "POV",
+        "List/Number",
+        "Tutorial/How-to"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
+      "audio": "suono originale - Pier | Travel Filmaker",
+      "audioDetected": false,
+      "notes": "Gear-driven creative-shot tutorial, neon grade.",
+      "week": "2026-06-21",
+      "date": "2026-06-10",
+      "thumb": "thumbs/tt_09_pierluigibarcaa.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649675098638781698.mp4",
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "oui.photo",
@@ -1062,47 +1156,31 @@
       "platform": "tiktok",
       "hook": "Cinematic couple photographer in Paris 📸#parisphotographer #cinematicphotographer #storytellingphotographer #engagementparis #cinematic",
       "format": "TikTok",
-      "views": 6171,
-      "likes": 591,
+      "views": 5931,
+      "likes": 573,
       "comments": 6,
-      "shares": 33,
-      "engRate": 10.2,
-      "outlier": 4.52,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "shares": 31,
+      "engRate": 10.3,
+      "outlier": 4.42,
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "sonido original",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple-photographer POV in Paris.",
       "week": "2026-06-21",
       "date": "2026-06-21",
-      "thumb": "thumbs/tt_09_oui.photo.jpg",
+      "thumb": "thumbs/tt_10_oui.photo.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7653793257666759969.mp4",
-      "carousel": []
-    },
-    {
-      "account": "cinematictravelcontent",
-      "url": "https://www.tiktok.com/@cinematictravelcontent/video/7653742017964559629",
-      "platform": "tiktok",
-      "hook": "Some day we'll be back in Japan..... Camera: Sony a7iii Sony Fx3 Lens Used: Sigma ART 28-105mm f2.8 Sony 24-105mm F4 Sony GM 16-35mm F2.8 Sony GM II 70-200mm F2.8 Edit/Colorgrading: DaVinci Resolve #traveltiktok #davinciresolve #cinematic#colorgrading #thingstodo #sony #japan #shinjuku #tokyo #asakusa #shibuya #roppongi #tokyotower #japanaesthetic #osaka #dotonbori #kyoto #mtfuji",
-      "format": "TikTok",
-      "views": 6383,
-      "likes": 592,
-      "comments": 12,
-      "shares": 35,
-      "engRate": 10.0,
-      "outlier": 4.02,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - Cinematic Travel Content",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-21",
-      "thumb": "thumbs/tt_10_cinematictravelcontent.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7653742017964559629.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "POV: YOU ARE CAMERA SHY COUPLE & YOUWANTED YOUR PHOTOS FEEL LIKE LOVE IN THE MOVIE SO YOU HIRED ME CO"
     },
     {
       "account": "sedyyfilms",
@@ -1110,47 +1188,64 @@
       "platform": "tiktok",
       "hook": "this place is out of a dream #travel #lifestyle #couples #france #cinematic",
       "format": "TikTok",
-      "views": 79800,
-      "likes": 8747,
-      "comments": 101,
-      "shares": 1147,
-      "engRate": 12.5,
-      "outlier": 3.51,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "views": 71300,
+      "likes": 7874,
+      "comments": 96,
+      "shares": 1017,
+      "engRate": 12.6,
+      "outlier": 3.86,
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Bright/airy"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Aerial of a dreamlike green islet.",
       "week": "2026-06-21",
       "date": "2026-06-03",
       "thumb": "thumbs/tt_11_sedyyfilms.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7647160105854684419.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
-      "account": "pierluigibarcaa",
-      "url": "https://www.tiktok.com/@pierluigibarcaa/video/7650443651298004247",
+      "account": "andyyongfilms",
+      "url": "https://www.tiktok.com/@andyyongfilms/video/7649751729021455624",
       "platform": "tiktok",
-      "hook": "You have to know these 3 stabilization modes in Sony cameras.⤵️ OFF :  Turn off the SteadyShot function when recording video footage. Set this option when using a tripod. STD:  Turns on SteadyShot while recording movies. Suitable for stable movie recording. The recorded image uses the lens’s full angle of view. ACT: Provides more effective SteadyShot stabilization while recording movies. The recorded image is slightly cropped compared to the lens’s full angle of view. D.ACT:  Provides more effective SteadyShot stabilization while recording movies than Active mode. The recorded image is more cropped than in Active mode. Ideal for shooting videos while hiking in the mountains, for example. #sonya7v #sonyalpha #sonycamera #stabilization #steadyshot  @Sony @Sony Alpha",
+      "hook": "Filming content has never felt this easy. The new Insta360 Luna combines a Leica Summicron lens and 1\" 8K sensor for stunning image quality, while the Triple AI Chip helps capture cleaner shots even after dark. The detachable touchscreen gives me freedom to frame from anywhere, and Deep Track 5.0 with Zoom Tracking keeps me perfectly in frame without needing someone behind the camera. Small setup. Serious results. Check out my link in bio! #Insta360 #Insta360LunaUltra #gimbalcamera #photography #tech @insta360 official",
       "format": "TikTok",
-      "views": 2908,
-      "likes": 120,
-      "comments": 2,
-      "shares": 2,
-      "engRate": 4.3,
-      "outlier": 3.49,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "audio originale",
+      "views": 92200,
+      "likes": 1301,
+      "comments": 17,
+      "shares": 250,
+      "engRate": 1.7,
+      "outlier": 2.85,
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Ego",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
+      "audio": "original sound - Andyyongfilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Gimbal behind-the-scenes over a city skyline.",
       "week": "2026-06-21",
-      "date": "2026-06-12",
-      "thumb": "thumbs/tt_12_pierluigibarcaa.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7650443651298004247.mp4",
-      "carousel": []
+      "date": "2026-06-10",
+      "thumb": "thumbs/tt_12_andyyongfilms.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649751729021455624.mp4",
+      "carousel": [],
+      "videoText": "Insta360"
     },
     {
       "account": "dylanbub.travel",
@@ -1159,110 +1254,35 @@
       "lane": "keyword",
       "newFind": true,
       "source": "keyword:cinematic travel",
-      "trendScore": 35.2,
+      "trendScore": 36.0,
       "hook": "Live in the moment :) Out in sequoia it was hard not live in the moment, such a beautiful place I find myself coming back to again and again. • • • #sequoia #travelfilmmaker #travelfilm #travellife #adventurefilm",
       "format": "TikTok",
-      "views": 2290436,
-      "likes": 731402,
-      "comments": 992,
-      "shares": 74632,
-      "engRate": 35.2,
+      "views": 2185345,
+      "likes": 712169,
+      "comments": 961,
+      "shares": 73237,
+      "engRate": 36.0,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Awe",
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - dylanbub.travel · dylanbub.travels",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Aerial down a sequoia road, reflective voiceover.",
       "week": "2026-06-21",
       "date": "2026-06-10",
       "thumb": "thumbs/kw_01_dylanbub.travel.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649568308152274207.mp4",
-      "carousel": []
-    },
-    {
-      "account": "marcoandflo",
-      "url": "https://www.tiktok.com/@marcoandflo/video/7654553049481973025",
-      "platform": "tiktok",
-      "lane": "keyword",
-      "newFind": true,
-      "source": "keyword:cinematic travel",
-      "trendScore": 34.5,
-      "hook": "Edinburgh is one of the most atmospheric cities in Europe. 🏴✨ Capital of Scotland, it’s a city shaped by medieval streets, volcanic hills, dramatic viewpoints and centuries of history. Its Old Town and New Town are both part of a UNESCO World Heritage Site, showing two very different sides of the city: the dark, narrow closes of the Old Town and the elegant Georgian architecture of the New Town. The castle dominates the skyline from Castle Rock, while the Royal Mile connects some of the most historic parts of the city. Around every corner you find stone façades, hidden courtyards, old pubs, bookshops and viewpoints that make Edinburgh feel almost cinematic. Places like Victoria Street, Dean Village, Calton Hill, The Vennel and Circus Lane show why this city is so special: it’s not just beautiful, it has character. Edinburgh is moody, elegant, literary, historic and unforgettable — one of those places that feels different from anywhere else in the UK. 🖤 #Edinburgh #Scotland #VisitScotland #EdinburghCastle #EuropeTravel",
-      "format": "TikTok",
-      "views": 1426065,
-      "likes": 452220,
-      "comments": 1093,
-      "shares": 39021,
-      "engRate": 34.5,
-      "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - marcoandflo · Giuseppe Marco D’Isanto 🇮🇹",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-23",
-      "thumb": "thumbs/kw_02_marcoandflo.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7654553049481973025.mp4",
-      "carousel": []
-    },
-    {
-      "account": "logan_august",
-      "url": "https://www.tiktok.com/@logan_august/video/7653715735448980766",
-      "platform": "tiktok",
-      "lane": "keyword",
-      "newFind": true,
-      "source": "keyword:travel film",
-      "trendScore": 34.0,
-      "hook": "frames from backpacking the tetons. #travel #backpacking #grandtetonnationalpark",
-      "format": "TikTok",
-      "views": 230853,
-      "likes": 74585,
-      "comments": 90,
-      "shares": 3878,
-      "engRate": 34.0,
-      "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - logan_august · logan august",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-21",
-      "thumb": "thumbs/kw_03_logan_august.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7653715735448980766.mp4",
-      "carousel": []
-    },
-    {
-      "account": "fynnhieber",
-      "url": "https://www.tiktok.com/@fynnhieber/video/7652049148753104161",
-      "platform": "tiktok",
-      "lane": "keyword",
-      "newFind": true,
-      "source": "keyword:travel film",
-      "trendScore": 33.6,
-      "hook": "There is so much to explore on this planet. Go out and discover it! #Hiking #dolomites #camera #mountains #alps",
-      "format": "TikTok",
-      "views": 353706,
-      "likes": 109403,
-      "comments": 288,
-      "shares": 9099,
-      "engRate": 33.6,
-      "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - fynnhieber",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-16",
-      "thumb": "thumbs/kw_04_fynnhieber.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652049148753104161.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "theres a"
     },
     {
       "account": "compassofdivinity",
@@ -1271,26 +1291,34 @@
       "lane": "keyword",
       "newFind": true,
       "source": "keyword:travel film",
-      "trendScore": 32.1,
+      "trendScore": 32.9,
       "hook": "my fav movie! so many lessons ⋆.˚𖦹 #moodboard #pinterest #travel #affirmations #eatpraylove",
       "format": "TikTok",
-      "views": 150854,
-      "likes": 46695,
-      "comments": 69,
-      "shares": 1700,
-      "engRate": 32.1,
+      "views": 135486,
+      "likes": 43054,
+      "comments": 66,
+      "shares": 1483,
+      "engRate": 32.9,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - sonypicsathome.ph · Sony Pics At Home Philippines",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Camp under dramatic peaks, aspirational hook.",
       "week": "2026-06-21",
       "date": "2026-06-09",
-      "thumb": "thumbs/kw_05_compassofdivinity.jpg",
+      "thumb": "thumbs/kw_02_compassofdivinity.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649543549339454750.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "If you're brave enough to leave behind"
     },
     {
       "account": "thecaptain_1219",
@@ -1298,27 +1326,35 @@
       "platform": "tiktok",
       "lane": "keyword",
       "newFind": true,
-      "source": "keyword:travel cinematography",
-      "trendScore": 31.8,
+      "source": "keyword:cinematic travel",
+      "trendScore": 32.6,
       "hook": "My journey through South Dakota and Wyoming. Shot on the @Sony a7S III and the @BlazarLens Viper 35mm. Color graded in Davinci Resolve Studio. #cinematography #colorgrading #travel #roadtrip",
       "format": "TikTok",
-      "views": 238308,
-      "likes": 70823,
-      "comments": 321,
-      "shares": 4684,
-      "engRate": 31.8,
+      "views": 215217,
+      "likes": 65548,
+      "comments": 305,
+      "shares": 4307,
+      "engRate": 32.6,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - thecaptain_1219",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Lone figure overlooking pine ridges, South Dakota.",
       "week": "2026-06-21",
       "date": "2026-06-09",
-      "thumb": "thumbs/kw_06_thecaptain_1219.jpg",
+      "thumb": "thumbs/kw_03_thecaptain_1219.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649442583034236173.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "_______mikii",
@@ -1326,27 +1362,34 @@
       "platform": "tiktok",
       "lane": "keyword",
       "newFind": true,
-      "source": "keyword:travel film",
-      "trendScore": 31.1,
+      "source": "keyword:travel cinematography",
+      "trendScore": 31.5,
       "hook": "To put it simply, I think the women of Buscalan are baddies 🇵🇭  Full film on my YouTube channel next week 🫶🏻 Of course none of this would be fun without @matt.geo who so kindly helped me film and let me play with his drone. Always a fun trip with the Silly Explorers club 🤓 #philippines #buscalan #traveltok #cinematic #cinematography",
       "format": "TikTok",
-      "views": 485904,
-      "likes": 143978,
-      "comments": 318,
-      "shares": 6860,
-      "engRate": 31.1,
+      "views": 457945,
+      "likes": 137275,
+      "comments": 310,
+      "shares": 6551,
+      "engRate": 31.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - _______mikii",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Candid cultural moment, warm and human.",
       "week": "2026-06-21",
       "date": "2026-06-13",
-      "thumb": "thumbs/kw_07________mikii.jpg",
+      "thumb": "thumbs/kw_04________mikii.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7650859429772004629.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "ajho.co",
@@ -1355,110 +1398,104 @@
       "lane": "keyword",
       "newFind": true,
       "source": "keyword:cinematic travel",
-      "trendScore": 29.5,
+      "trendScore": 30.0,
       "hook": "Iceland landscape mogs hard #cinematic #filmmaking #iceland #icelandadventure #icelandtrip",
       "format": "TikTok",
-      "views": 3240855,
-      "likes": 884746,
-      "comments": 805,
-      "shares": 72058,
-      "engRate": 29.5,
+      "views": 3125357,
+      "likes": 865188,
+      "comments": 786,
+      "shares": 70366,
+      "engRate": 30.0,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark",
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - maciejsphotos · maciejlubomski",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple at an Iceland waterfall, escapist caption.",
       "week": "2026-06-21",
       "date": "2026-06-10",
-      "thumb": "thumbs/kw_08_ajho.co.jpg",
+      "thumb": "thumbs/kw_05_ajho.co.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649769615391919381.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": "the urge to disappear to Iceland and come back with pics like this"
     },
     {
-      "account": "cam.filmz",
-      "url": "https://www.tiktok.com/@cam.filmz/video/7653575150129990943",
+      "account": "photo.tonee",
+      "url": "https://www.tiktok.com/@photo.tonee/video/7649402843434142997",
       "platform": "tiktok",
       "lane": "keyword",
       "newFind": true,
-      "source": "keyword:cinematic travel",
-      "trendScore": 29.5,
-      "hook": "I love it in the Tetons  - #travel #cinematic #Summer #camfilmz",
+      "source": "keyword:cinematic photography",
+      "trendScore": 29.3,
+      "hook": "для конкурса @vsemnesladko  не опять а снова! #cinematography #photography #cinematic #fypシ゚ #рекомендации #фотограф #чувства #несладко #nesladko",
       "format": "TikTok",
-      "views": 213876,
-      "likes": 61111,
-      "comments": 57,
-      "shares": 1931,
-      "engRate": 29.5,
+      "views": 37246,
+      "likes": 10425,
+      "comments": 150,
+      "shares": 328,
+      "engRate": 29.3,
       "outlier": null,
       "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - cam.filmz · cam.filmz 🏔️",
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
+      "audio": "original sound - photo.tonee · Аня | Фотограф Минск",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Moody studio-lit portrait; off the travel core.",
       "week": "2026-06-21",
-      "date": "2026-06-20",
-      "thumb": "thumbs/kw_09_cam.filmz.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7653575150129990943.mp4",
-      "carousel": []
+      "date": "2026-06-09",
+      "thumb": "thumbs/kw_06_photo.tonee.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649402843434142997.mp4",
+      "carousel": [],
+      "videoText": ""
     },
     {
-      "account": "jwhit002",
-      "url": "https://www.tiktok.com/@jwhit002/video/7651720536434806018",
+      "account": "hzambra",
+      "url": "https://www.tiktok.com/@hzambra/video/7652748201878916373",
       "platform": "tiktok",
       "lane": "keyword",
       "newFind": true,
-      "source": "keyword:cinematic travel",
-      "trendScore": 29.2,
-      "hook": "Golden hour on the canal 🇮🇹🌅 #veniceitaly #travelaesthetic #grandcanal #cinematictravel #pov",
+      "source": "keyword:travel filmmaker",
+      "trendScore": 28.5,
+      "hook": "You’ll find us here #dolomites #fujifilm",
       "format": "TikTok",
-      "views": 176848,
-      "likes": 38999,
-      "comments": 34,
-      "shares": 12542,
-      "engRate": 29.2,
+      "views": 3911981,
+      "likes": 1005423,
+      "comments": 1905,
+      "shares": 106027,
+      "engRate": 28.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "Futile Devices · user48292884839293",
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust",
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange",
+        "Bright/airy"
+      ],
+      "audio": "original sound - hzambra · Han&Nic",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple on a Dolomites hillside.",
       "week": "2026-06-21",
-      "date": "2026-06-15",
-      "thumb": "thumbs/kw_10_jwhit002.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7651720536434806018.mp4",
-      "carousel": []
-    },
-    {
-      "account": "ellamochizuki",
-      "url": "https://www.tiktok.com/@ellamochizuki/video/7652344690297163039",
-      "platform": "tiktok",
-      "lane": "keyword",
-      "newFind": true,
-      "source": "keyword:cinematic travel",
-      "trendScore": 28.8,
-      "hook": "Gotta love the Oregon coast 🌊☺️ #oregoncoast #pnw #cinematic #videoedit #videography",
-      "format": "TikTok",
-      "views": 1751642,
-      "likes": 473411,
-      "comments": 741,
-      "shares": 29514,
-      "engRate": 28.8,
-      "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - ellamochizuki · Ella Mochizuki",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-06-21",
-      "date": "2026-06-17",
-      "thumb": "thumbs/kw_11_ellamochizuki.jpg",
-      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652344690297163039.mp4",
-      "carousel": []
+      "date": "2026-06-18",
+      "thumb": "thumbs/kw_07_hzambra.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652748201878916373.mp4",
+      "carousel": [],
+      "videoText": ""
     },
     {
       "account": "mr.manhattan",
@@ -1466,27 +1503,175 @@
       "platform": "tiktok",
       "lane": "keyword",
       "newFind": true,
-      "source": "keyword:travel cinematography",
-      "trendScore": 27.7,
+      "source": "keyword:cinematic travel",
+      "trendScore": 28.5,
       "hook": "Traveling with an open mind like Anthony Bourdain can guide you through so many countries.  What a privilege it is to experience this life.  Everything shot on the Canon EOS 5D Mark IV and DJI #anthonybourdain #travel #iceland #dolomites #cinematic",
       "format": "TikTok",
-      "views": 559876,
-      "likes": 151702,
-      "comments": 261,
-      "shares": 3343,
-      "engRate": 27.7,
+      "views": 409438,
+      "likes": 114103,
+      "comments": 212,
+      "shares": 2321,
+      "engRate": 28.5,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound - cutl1p · redbeans692",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Framed NYC skyline through a window, silhouettes.",
       "week": "2026-06-21",
       "date": "2026-06-21",
-      "thumb": "thumbs/kw_12_mr.manhattan.jpg",
+      "thumb": "thumbs/kw_08_mr.manhattan.jpg",
       "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7653985026958298382.mp4",
-      "carousel": []
+      "carousel": [],
+      "videoText": ""
+    },
+    {
+      "account": "ryanbvisuals",
+      "url": "https://www.tiktok.com/@ryanbvisuals/video/7648033554047323406",
+      "platform": "tiktok",
+      "lane": "keyword",
+      "newFind": true,
+      "source": "keyword:cinematic travel",
+      "trendScore": 28.2,
+      "hook": "Sneak peak at some frames from Raja Ampat 🇮🇩 #travelfilmmaker #cinematic #cinematography #travel #rajaampat",
+      "format": "TikTok",
+      "views": 229414,
+      "likes": 61719,
+      "comments": 127,
+      "shares": 2831,
+      "engRate": 28.2,
+      "outlier": null,
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Drone/aerial",
+        "Cinematic/teal-orange"
+      ],
+      "audio": "someone new · Arden Jones",
+      "audioDetected": false,
+      "notes": "Raja Ampat aerial, teal lagoons.",
+      "week": "2026-06-21",
+      "date": "2026-06-05",
+      "thumb": "thumbs/kw_09_ryanbvisuals.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7648033554047323406.mp4",
+      "carousel": [],
+      "videoText": ""
+    },
+    {
+      "account": "sedyyfilms",
+      "url": "https://www.tiktok.com/@sedyyfilms/video/7651577559729163542",
+      "platform": "tiktok",
+      "lane": "keyword",
+      "newFind": false,
+      "source": "keyword:cinematic travel",
+      "trendScore": 27.5,
+      "hook": "peak life experience  #travel #Lifestyle #dolomites #alps #cinematic",
+      "format": "TikTok",
+      "views": 52005,
+      "likes": 12914,
+      "comments": 78,
+      "shares": 1317,
+      "engRate": 27.5,
+      "outlier": null,
+      "hookTypes": [
+        "POV"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
+      "audio": "original sound - sedyyfilms",
+      "audioDetected": false,
+      "notes": "Carefree leap in an alpine meadow.",
+      "week": "2026-06-21",
+      "date": "2026-06-15",
+      "thumb": "thumbs/kw_10_sedyyfilms.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7651577559729163542.mp4",
+      "carousel": [],
+      "videoText": "absolute freedom."
+    },
+    {
+      "account": "avaacostanzo",
+      "url": "https://www.tiktok.com/@avaacostanzo/video/7648206237858860306",
+      "platform": "tiktok",
+      "lane": "keyword",
+      "newFind": true,
+      "source": "keyword:cinematic travel",
+      "trendScore": 25.5,
+      "hook": "This is your sign to go to the Dolomites. #dolomites #Hiking #travel #touchthesky #cinematic",
+      "format": "TikTok",
+      "views": 6355220,
+      "likes": 1530239,
+      "comments": 708,
+      "shares": 90356,
+      "engRate": 25.5,
+      "outlier": null,
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
+      "audio": "original sound - avaacostanzo",
+      "audioDetected": false,
+      "notes": "Two hikers on a Dolomites trail; 'your sign to go' hook.",
+      "week": "2026-06-21",
+      "date": "2026-06-06",
+      "thumb": "thumbs/kw_11_avaacostanzo.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7648206237858860306.mp4",
+      "carousel": [],
+      "videoText": ""
+    },
+    {
+      "account": "asilcinematicfilmes",
+      "url": "https://www.tiktok.com/@asilcinematicfilmes/video/7647837224628653345",
+      "platform": "tiktok",
+      "lane": "keyword",
+      "newFind": true,
+      "source": "keyword:travel filmmaker",
+      "trendScore": 25.5,
+      "hook": "Peace. #cinematic #filmmaking",
+      "format": "TikTok",
+      "views": 761810,
+      "likes": 173623,
+      "comments": 664,
+      "shares": 20075,
+      "engRate": 25.5,
+      "outlier": null,
+      "hookTypes": [],
+      "triggers": [
+        "Nostalgia",
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
+      "audio": "original sound - z7skino",
+      "audioDetected": false,
+      "notes": "Golden-hour meadow rest, one-word caption.",
+      "week": "2026-06-21",
+      "date": "2026-06-05",
+      "thumb": "thumbs/kw_12_asilcinematicfilmes.jpg",
+      "video": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7647837224628653345.mp4",
+      "carousel": [],
+      "videoText": ""
     }
   ],
   "generatedHooks": [
@@ -1563,8 +1748,8 @@
     {
       "title": "Sign of the Times",
       "artist": "Harry Styles",
-      "creators": 9,
-      "uses": 10,
+      "creators": 10,
+      "uses": 11,
       "original": false,
       "ids": 1,
       "accounts": [
@@ -1575,8 +1760,8 @@
       "samples": [
         "https://www.instagram.com/reel/DZfheGuJtf6/",
         "https://www.instagram.com/reel/DXFFeJehCMT/",
-        "https://www.instagram.com/reel/DXOJ_txElUY/",
-        "https://www.instagram.com/reel/DZBhJK-MKcU/"
+        "https://www.instagram.com/reel/DWbsmTxD2oH/",
+        "https://www.instagram.com/reel/DXOJ_txElUY/"
       ],
       "sample": "https://www.instagram.com/reel/DZfheGuJtf6/",
       "detected": false,
@@ -1584,24 +1769,24 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/5/1/0/551d8084025fa8648c30aed373171301.mp3?hdnea=exp=1782740079~acl=/api/1/1/5/5/1/0/551d8084025fa8648c30aed373171301.mp3*~data=user_id=0,application_id=42~hmac=28eca5e249357a3ab7d7c5e6d5ceb21b5b2d88b29beac6d673426497c8713e3f",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/5/1/0/551d8084025fa8648c30aed373171301.mp3?hdnea=exp=1782321934~acl=/api/1/1/5/5/1/0/551d8084025fa8648c30aed373171301.mp3*~data=user_id=0,application_id=42~hmac=8d7a90246a6cf092e50f7b3a5431c990b7e29d890b25b35d7ce0becb2deeae48",
       "deezer": "https://www.deezer.com/track/360301951"
     },
     {
       "title": "Papaoutai (Afro Soul)",
       "artist": "mikeeysmind, Chill77, Unjaps",
-      "creators": 6,
-      "uses": 8,
+      "creators": 5,
+      "uses": 6,
       "original": false,
       "ids": 1,
       "accounts": [
+        "agnesnicolee",
         "catalinavonbonin",
-        "evkoenig",
-        "gonzalopasquier"
+        "evkoenig"
       ],
       "samples": [
         "https://www.instagram.com/reel/DTmWUdUjLxF/",
-        "https://www.instagram.com/reel/DaFkckXNxcB/",
+        "https://www.instagram.com/reel/DYZKVzOqUNW/",
         "https://www.instagram.com/reel/DTs5xUjjcF0/",
         "https://www.instagram.com/reel/DTKyZTQASSd/"
       ],
@@ -1611,14 +1796,14 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/8/6/2/0/8621a85b9e0249353861a827b976ba9d.mp3?hdnea=exp=1782740079~acl=/api/1/1/8/6/2/0/8621a85b9e0249353861a827b976ba9d.mp3*~data=user_id=0,application_id=42~hmac=c2f5c5124fdc8dc2ceda1b4607081febe218c3272fdecfcdc411e30621984122",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/8/6/2/0/8621a85b9e0249353861a827b976ba9d.mp3?hdnea=exp=1782321935~acl=/api/1/1/8/6/2/0/8621a85b9e0249353861a827b976ba9d.mp3*~data=user_id=0,application_id=42~hmac=035c284e48c98b4cbeaf5271ef703553e471dce2592ff693e9a8e5199d500066",
       "deezer": "https://www.deezer.com/track/3837950551"
     },
     {
       "title": "Where'd All the Time Go?",
       "artist": "Dr. Dog",
-      "creators": 6,
-      "uses": 6,
+      "creators": 5,
+      "uses": 5,
       "original": false,
       "ids": 1,
       "accounts": [
@@ -1638,35 +1823,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/6/d/0/36d022750ef83a11cc253e0aa962a498.mp3?hdnea=exp=1782740080~acl=/api/1/1/3/6/d/0/36d022750ef83a11cc253e0aa962a498.mp3*~data=user_id=0,application_id=42~hmac=115e95a40da1d2f17f65159d79db216ec8a1700bef83a246c26ca4bea12bc5f3",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/6/d/0/36d022750ef83a11cc253e0aa962a498.mp3?hdnea=exp=1782321935~acl=/api/1/1/3/6/d/0/36d022750ef83a11cc253e0aa962a498.mp3*~data=user_id=0,application_id=42~hmac=02af080fc5030d2ce8b2101c9dbf58086aba55cea01df5d9264ea1bcf7c2d260",
       "deezer": "https://www.deezer.com/track/378113071"
-    },
-    {
-      "title": "M83 Outro",
-      "artist": "alexcisse",
-      "creators": 5,
-      "uses": 5,
-      "original": true,
-      "ids": 1,
-      "accounts": [
-        "elliotmacguire",
-        "javipostigo",
-        "jetlagjessy"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DZaXlMwzFIo/",
-        "https://www.instagram.com/reel/DWO8k70iA5t/",
-        "https://www.instagram.com/reel/DaIqmFOs6aW/",
-        "https://www.instagram.com/reel/DZ4KVmSs-oj/"
-      ],
-      "sample": "https://www.instagram.com/reel/DZaXlMwzFIo/",
-      "detected": true,
-      "detectedVerified": false,
-      "detectedSong": "Look for the real light about the existence of a dim heart",
-      "detectedArtist": "Cing Colkimin",
-      "detectedLink": "https://lis.tn/GtjNk",
-      "preview": "",
-      "deezer": ""
     },
     {
       "title": "Daydream",
@@ -1692,7 +1850,7 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/6/2/0/962da76142d311366521beaa5a5126b6.mp3?hdnea=exp=1782740080~acl=/api/1/1/9/6/2/0/962da76142d311366521beaa5a5126b6.mp3*~data=user_id=0,application_id=42~hmac=13ec768cdf6bcd38e1d5ca79ac1f7a0b83b28624785df78af0f5dced5d21f689",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/6/2/0/962da76142d311366521beaa5a5126b6.mp3?hdnea=exp=1782321935~acl=/api/1/1/9/6/2/0/962da76142d311366521beaa5a5126b6.mp3*~data=user_id=0,application_id=42~hmac=1e6ec445b01dc02cc0920c676737892b7d30cf639544f1dbecef80af77c2a861",
       "deezer": "https://www.deezer.com/track/3556990581"
     },
     {
@@ -1719,35 +1877,35 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/e/d/5/0/ed526c1d402b1e3de14f3f55a5f746c4.mp3?hdnea=exp=1782740081~acl=/api/1/1/e/d/5/0/ed526c1d402b1e3de14f3f55a5f746c4.mp3*~data=user_id=0,application_id=42~hmac=f9bfd6358d98fa8dbb2ffdc0963385efe82a115fed8c14923c83dc831478655f",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/e/d/5/0/ed526c1d402b1e3de14f3f55a5f746c4.mp3?hdnea=exp=1782321936~acl=/api/1/1/e/d/5/0/ed526c1d402b1e3de14f3f55a5f746c4.mp3*~data=user_id=0,application_id=42~hmac=791335d9d996b01648925c7321954932713a6b114409b4d495ae5a3eebf6a04a",
       "deezer": "https://www.deezer.com/track/4621947"
     },
     {
-      "title": "Sand Drawing",
-      "artist": "Judah Earl",
+      "title": "M83 Outro",
+      "artist": "alexcisse",
       "creators": 4,
-      "uses": 5,
-      "original": false,
+      "uses": 4,
+      "original": true,
       "ids": 1,
       "accounts": [
-        "hoehen_flug",
-        "ru.visions",
-        "saxonkent"
+        "elliotmacguire",
+        "javipostigo",
+        "jetlagjessy"
       ],
       "samples": [
-        "https://www.instagram.com/reel/DZnIsaJxBr7/",
-        "https://www.instagram.com/reel/DYcdNojN2Fo/",
-        "https://www.instagram.com/reel/DaFjlBxv56a/",
-        "https://www.instagram.com/reel/DaC71qGPWak/"
+        "https://www.instagram.com/reel/DZaXlMwzFIo/",
+        "https://www.instagram.com/reel/DWO8k70iA5t/",
+        "https://www.instagram.com/reel/DZ4KVmSs-oj/",
+        "https://www.instagram.com/reel/DZyA6AnO5Rb/"
       ],
-      "sample": "https://www.instagram.com/reel/DZnIsaJxBr7/",
-      "detected": false,
+      "sample": "https://www.instagram.com/reel/DZaXlMwzFIo/",
+      "detected": true,
       "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/b/f/0/3bf59bdcdba6030135d17dae3dbb2a7d.mp3?hdnea=exp=1782740081~acl=/api/1/1/3/b/f/0/3bf59bdcdba6030135d17dae3dbb2a7d.mp3*~data=user_id=0,application_id=42~hmac=9b750aeafb42da72ff13a97481f47ca86a8858f3abeb071b362b9cf3ccc8cf4e",
-      "deezer": "https://www.deezer.com/track/2980190311"
+      "detectedSong": "Look for the real light about the existence of a dim heart",
+      "detectedArtist": "Cing Colkimin",
+      "detectedLink": "https://lis.tn/GtjNk",
+      "preview": "",
+      "deezer": ""
     },
     {
       "title": "Beauty And A Beat (feat. Nicki Minaj)",
@@ -1773,8 +1931,35 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/1/c/0/d1c27d65e371c0af90ef579772bd8db3.mp3?hdnea=exp=1782740081~acl=/api/1/1/d/1/c/0/d1c27d65e371c0af90ef579772bd8db3.mp3*~data=user_id=0,application_id=42~hmac=13561de5b17f5af4aa1db59d01224a3a50e6f0947fa8b529d2481ffa28450ce3",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/1/c/0/d1c27d65e371c0af90ef579772bd8db3.mp3?hdnea=exp=1782321936~acl=/api/1/1/d/1/c/0/d1c27d65e371c0af90ef579772bd8db3.mp3*~data=user_id=0,application_id=42~hmac=02d4386392230182b9c8ca3ca8a2a2897b36531ecd7bde622e7f8b339172788f",
       "deezer": "https://www.deezer.com/track/37030571"
+    },
+    {
+      "title": "Sand Drawing",
+      "artist": "Judah Earl",
+      "creators": 4,
+      "uses": 4,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "hoehen_flug",
+        "ru.visions",
+        "sebastienclosuit"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DZnIsaJxBr7/",
+        "https://www.instagram.com/reel/DYcdNojN2Fo/",
+        "https://www.instagram.com/reel/DZb3NNHsA4x/",
+        "https://www.instagram.com/reel/DZAoLQTxCSJ/"
+      ],
+      "sample": "https://www.instagram.com/reel/DZnIsaJxBr7/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/b/f/0/3bf59bdcdba6030135d17dae3dbb2a7d.mp3?hdnea=exp=1782321937~acl=/api/1/1/3/b/f/0/3bf59bdcdba6030135d17dae3dbb2a7d.mp3*~data=user_id=0,application_id=42~hmac=a804486e46d476a804e48fc4a243b3c8738feaa2b8a3cb4bde1f8b182218cb03",
+      "deezer": "https://www.deezer.com/track/2980190311"
     },
     {
       "title": "Innerbloom (Radio Edit)",
@@ -1800,35 +1985,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/8/c/0/c8c5f9f16ce88482cc307e45d4f1de73.mp3?hdnea=exp=1782740082~acl=/api/1/1/c/8/c/0/c8c5f9f16ce88482cc307e45d4f1de73.mp3*~data=user_id=0,application_id=42~hmac=7549eb7cdb18a253d678025c0e02862ef3545977526282cd85918bfa148f9bae",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/8/c/0/c8c5f9f16ce88482cc307e45d4f1de73.mp3?hdnea=exp=1782321937~acl=/api/1/1/c/8/c/0/c8c5f9f16ce88482cc307e45d4f1de73.mp3*~data=user_id=0,application_id=42~hmac=c32ee437dce413e3bd7aad38c59c0e182d7777cf99e61f5510cc4b4684be16e2",
       "deezer": "https://www.deezer.com/track/132257146"
-    },
-    {
-      "title": "Wavin'  Flag",
-      "artist": "K'NAAN",
-      "creators": 3,
-      "uses": 5,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "juliakursten",
-        "julievalentina",
-        "sebastienclosuit"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DYPWcc2IM2_/",
-        "https://www.instagram.com/reel/DYPRp1bo-ly/",
-        "https://www.instagram.com/reel/DZiWoOAsnAw/",
-        "https://www.instagram.com/reel/DZHjYuXs_Aw/"
-      ],
-      "sample": "https://www.instagram.com/reel/DYPWcc2IM2_/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/9/9/0/999ffc0fce8ff71e2a2d0f3857b3215c.mp3?hdnea=exp=1782740082~acl=/api/1/1/9/9/9/0/999ffc0fce8ff71e2a2d0f3857b3215c.mp3*~data=user_id=0,application_id=42~hmac=b6ac61659ecc97c9963734df62ecf7603425bfc46054e40324a5eddd8a9e9d84",
-      "deezer": "https://www.deezer.com/track/6717372"
     },
     {
       "title": "misses",
@@ -1854,35 +2012,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/5/b/0/b5beb84e0195e2de9e56d4215716e1a9.mp3?hdnea=exp=1782740082~acl=/api/1/1/b/5/b/0/b5beb84e0195e2de9e56d4215716e1a9.mp3*~data=user_id=0,application_id=42~hmac=3ea16444d9fb9994b86e84dea886dd159c5bb2f8ddc4d4ecf5775a26cc8fa510",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/5/b/0/b5beb84e0195e2de9e56d4215716e1a9.mp3?hdnea=exp=1782321937~acl=/api/1/1/b/5/b/0/b5beb84e0195e2de9e56d4215716e1a9.mp3*~data=user_id=0,application_id=42~hmac=b476a04eceff0e5f13c8a78ea8078c3df9538ef79107811c75f5d9c991dfb506",
       "deezer": "https://www.deezer.com/track/2777334421"
-    },
-    {
-      "title": "American Pie",
-      "artist": "Don McLean",
-      "creators": 3,
-      "uses": 4,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "calumtravel",
-        "lesmoonwalkers",
-        "thesunnilife"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DUmOhvak2S9/",
-        "https://www.instagram.com/reel/DXE52rZEXGg/",
-        "https://www.instagram.com/reel/DXE8tjikRvE/",
-        "https://www.instagram.com/reel/DYMK-XBs8QI/"
-      ],
-      "sample": "https://www.instagram.com/reel/DUmOhvak2S9/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/7/c/0/57cbce69a91c893b637333dcd5e30eda.mp3?hdnea=exp=1782740083~acl=/api/1/1/5/7/c/0/57cbce69a91c893b637333dcd5e30eda.mp3*~data=user_id=0,application_id=42~hmac=4230b37a684d6bdd7f6b19bb44fb8770af750f7232b537151221914a2642496d",
-      "deezer": "https://www.deezer.com/track/3156285"
     },
     {
       "title": "Orient (Original)",
@@ -1908,7 +2039,7 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/8/6/0/c86c7b51f029e047e3852e1dbb12ccff.mp3?hdnea=exp=1782740083~acl=/api/1/1/c/8/6/0/c86c7b51f029e047e3852e1dbb12ccff.mp3*~data=user_id=0,application_id=42~hmac=0e4597f3e6da144fe4c35097df1b7bdea1a63766f9ea1760a986cb10ce592416",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/8/6/0/c86c7b51f029e047e3852e1dbb12ccff.mp3?hdnea=exp=1782321938~acl=/api/1/1/c/8/6/0/c86c7b51f029e047e3852e1dbb12ccff.mp3*~data=user_id=0,application_id=42~hmac=cef8e39fd2e3669a8b674072afff6d3efdfb22cd9f6791704a054813d7fb35c2",
       "deezer": "https://www.deezer.com/track/602089482"
     },
     {
@@ -1935,7 +2066,7 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/0/d/6/0/0d6a944e714937c06c92df75cb77bbb6.mp3?hdnea=exp=1782740084~acl=/api/1/1/0/d/6/0/0d6a944e714937c06c92df75cb77bbb6.mp3*~data=user_id=0,application_id=42~hmac=2d744673fdd86a8cfbea3d4dd279d076c2b762a2ff93b81a24ed7d8dd2328d0e",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/0/d/6/0/0d6a944e714937c06c92df75cb77bbb6.mp3?hdnea=exp=1782321938~acl=/api/1/1/0/d/6/0/0d6a944e714937c06c92df75cb77bbb6.mp3*~data=user_id=0,application_id=42~hmac=3ff3172873da4e53da9a99ac9a61e774d71df67053ca12d63bf95d5981add0de",
       "deezer": "https://www.deezer.com/track/3616144112"
     },
     {
@@ -1961,86 +2092,34 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/9/8/0/b9817955a02288e40afc0dcbf50902d0.mp3?hdnea=exp=1782740084~acl=/api/1/1/b/9/8/0/b9817955a02288e40afc0dcbf50902d0.mp3*~data=user_id=0,application_id=42~hmac=0755a512735855c3807dabeb06fbccc7c235c6f506e59565c59e8b235dde657a",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/9/8/0/b9817955a02288e40afc0dcbf50902d0.mp3?hdnea=exp=1782321938~acl=/api/1/1/b/9/8/0/b9817955a02288e40afc0dcbf50902d0.mp3*~data=user_id=0,application_id=42~hmac=ccdd7a1ebc3e07316bd9a238c6b05bf67edfa94ed026f40b747560112957dad8",
       "deezer": "https://www.deezer.com/track/3979667701"
     },
     {
-      "title": "Angeleyes",
-      "artist": "ABBA",
+      "title": "Caribbean Blue (Single Version)",
+      "artist": "Enya",
       "creators": 3,
       "uses": 3,
       "original": false,
       "ids": 1,
       "accounts": [
         "bonnyandgava",
-        "chloesumy",
-        "mikelspirit"
+        "daniescayola",
+        "keankburke"
       ],
       "samples": [
-        "https://www.instagram.com/reel/DaDfF8FMhUU/",
-        "https://www.instagram.com/reel/DYc0siYqSZv/",
-        "https://www.instagram.com/reel/DZR85nEz4AS/"
+        "https://www.instagram.com/reel/DZc_IsQMAWc/",
+        "https://www.instagram.com/reel/DZov7eAzsHc/",
+        "https://www.instagram.com/reel/DWyxVavDZdP/"
       ],
-      "sample": "https://www.instagram.com/reel/DaDfF8FMhUU/",
+      "sample": "https://www.instagram.com/reel/DZc_IsQMAWc/",
       "detected": false,
       "detectedVerified": false,
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/f/d/0/cfd2692638e9799cced3f08930b4872b.mp3?hdnea=exp=1782740084~acl=/api/1/1/c/f/d/0/cfd2692638e9799cced3f08930b4872b.mp3*~data=user_id=0,application_id=42~hmac=4ce3b9a2ae9fca5f541714cb11d7dceb571741c219ec9beda876925cb58c5e0d",
-      "deezer": "https://www.deezer.com/track/76376891"
-    },
-    {
-      "title": "DANCE... (Edit)",
-      "artist": "Slayyyter",
-      "creators": 3,
-      "uses": 3,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "aureliestory",
-        "bonnyandgava",
-        "lawrencewalton_"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DZ-LtBiM4f0/",
-        "https://www.instagram.com/reel/DZXGzDiNNMJ/",
-        "https://www.instagram.com/reel/DaBHCbbuatg/"
-      ],
-      "sample": "https://www.instagram.com/reel/DZ-LtBiM4f0/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/1/1/5/0/1153c192432402f6d159b78c5860b63e.mp3?hdnea=exp=1782740085~acl=/api/1/1/1/1/5/0/1153c192432402f6d159b78c5860b63e.mp3*~data=user_id=0,application_id=42~hmac=34bb5fd9bdac4261782e7c007f1a59f203b40f36ff3512d8f3b597de0917c916",
-      "deezer": "https://www.deezer.com/track/3769849222"
-    },
-    {
-      "title": "Knockin' on Heaven's Door",
-      "artist": "Bob Dylan",
-      "creators": 3,
-      "uses": 3,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "braedenpato",
-        "laurastravl",
-        "thesunnilife"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DWdtMXyj0cg/",
-        "https://www.instagram.com/reel/DZfp_9FoyI0/",
-        "https://www.instagram.com/reel/DaFnP6nsmUY/"
-      ],
-      "sample": "https://www.instagram.com/reel/DWdtMXyj0cg/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/6/1/8/0/618937c6dbd9058114ae2fdad99bb2c1.mp3?hdnea=exp=1782740085~acl=/api/1/1/6/1/8/0/618937c6dbd9058114ae2fdad99bb2c1.mp3*~data=user_id=0,application_id=42~hmac=d717b87ea6ed9e1fdb44f86cee446e9a84b4fb98e10c57f85bd4968830450642",
-      "deezer": "https://www.deezer.com/track/75768727"
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/8/4/6/0/8460bd3c3c7b2d2cbd8eef8a9e29c999.mp3?hdnea=exp=1782321939~acl=/api/1/1/8/4/6/0/8460bd3c3c7b2d2cbd8eef8a9e29c999.mp3*~data=user_id=0,application_id=42~hmac=d792e651af83e3bd5037a2935548ab9f97594a6650de33aef0565625536ebf6c",
+      "deezer": "https://www.deezer.com/track/943708062"
     },
     {
       "title": "Original audio",
@@ -2065,7 +2144,7 @@
       "detectedSong": "I Want You",
       "detectedArtist": "Thomas Ford",
       "detectedLink": "https://lis.tn/ndkAlo",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/2/3/d/0/23d7a105611c1424faf89882fc3e1693.mp3?hdnea=exp=1782740085~acl=/api/1/1/2/3/d/0/23d7a105611c1424faf89882fc3e1693.mp3*~data=user_id=0,application_id=42~hmac=2820571cf08630d2b094317c4b8cdc204b4b48b090d263602a3c9dc53d4b6094",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/2/3/d/0/23d7a105611c1424faf89882fc3e1693.mp3?hdnea=exp=1782321939~acl=/api/1/1/2/3/d/0/23d7a105611c1424faf89882fc3e1693.mp3*~data=user_id=0,application_id=42~hmac=13e6a697269fe465854d676085ed8e6db31ee70c86b3e1be3f35a219c77ac301",
       "deezer": "https://www.deezer.com/track/695555192"
     },
     {
@@ -2091,34 +2170,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/a/9/1/0/a91cf77966574b9ebebc8b78dbdb4210.mp3?hdnea=exp=1782740086~acl=/api/1/1/a/9/1/0/a91cf77966574b9ebebc8b78dbdb4210.mp3*~data=user_id=0,application_id=42~hmac=d5781a9f81e40b3f18e37296940719fffb9060a6d650d3cc633786be7ac218df",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/a/9/1/0/a91cf77966574b9ebebc8b78dbdb4210.mp3?hdnea=exp=1782321940~acl=/api/1/1/a/9/1/0/a91cf77966574b9ebebc8b78dbdb4210.mp3*~data=user_id=0,application_id=42~hmac=bf009abad45ee94ff4e6a7d068b2190b63ccdc90aeaeb0f74d964d6e1f3358b6",
       "deezer": "https://www.deezer.com/track/2415560255"
-    },
-    {
-      "title": "Original audio",
-      "artist": "thefictioncore",
-      "creators": 3,
-      "uses": 3,
-      "original": true,
-      "ids": 1,
-      "accounts": [
-        "agnesnicolee",
-        "hoehen_flug",
-        "jaxon_roberts"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DZKXceizd0j/",
-        "https://www.instagram.com/reel/DaA5ZHwtq_H/",
-        "https://www.instagram.com/reel/DaIc5_3K6De/"
-      ],
-      "sample": "https://www.instagram.com/reel/DZKXceizd0j/",
-      "detected": true,
-      "detectedVerified": true,
-      "detectedSong": "This Bitter Earth / On the Nature of Daylight",
-      "detectedArtist": "Dinah Washington",
-      "detectedLink": "https://lis.tn/Jmxdpe",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/f/a/d/0/fad698273cd5da39adb40a5986305f7c.mp3?hdnea=exp=1782740086~acl=/api/1/1/f/a/d/0/fad698273cd5da39adb40a5986305f7c.mp3*~data=user_id=0,application_id=42~hmac=f009f41a3f6fe6524d1f02470d4063b4fe68bc9a641f6085efb2478d41e1b892",
-      "deezer": "https://www.deezer.com/track/497150822"
     },
     {
       "title": "Can You Hear The Music",
@@ -2143,8 +2196,34 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/6/6/0/566abdaf99ddec0f2bbf445a7bd4c2e9.mp3?hdnea=exp=1782740086~acl=/api/1/1/5/6/6/0/566abdaf99ddec0f2bbf445a7bd4c2e9.mp3*~data=user_id=0,application_id=42~hmac=7fedb691095eb4c7bba4c7f413c3a2bb1e3676eeec50c052a3c1ec482a760730",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/6/6/0/566abdaf99ddec0f2bbf445a7bd4c2e9.mp3?hdnea=exp=1782321940~acl=/api/1/1/5/6/6/0/566abdaf99ddec0f2bbf445a7bd4c2e9.mp3*~data=user_id=0,application_id=42~hmac=9e3cdc4e5446050ffbbd1f12dc591c24eabf203afaee46d408dbeeabf9780a3e",
       "deezer": "https://www.deezer.com/track/2364462315"
+    },
+    {
+      "title": "Sailor Song",
+      "artist": "Gigi Perez",
+      "creators": 3,
+      "uses": 3,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "lauradesnoeck",
+        "marshal_roam",
+        "saxonkent"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DMiTmkyuT43/",
+        "https://www.instagram.com/reel/DZ4mVYts9Oq/",
+        "https://www.instagram.com/reel/DYct1C7INmp/"
+      ],
+      "sample": "https://www.instagram.com/reel/DMiTmkyuT43/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/3/9/0/b39c6ef75c29d7adf80454ba81ad3dfb.mp3?hdnea=exp=1782321940~acl=/api/1/1/b/3/9/0/b39c6ef75c29d7adf80454ba81ad3dfb.mp3*~data=user_id=0,application_id=42~hmac=4ed484851442b82b2a9fdd37617a85ff517af3c3e3a1cd0a43509c8dae6da5d1",
+      "deezer": "https://www.deezer.com/track/3012786851"
     },
     {
       "title": "Bliss (Slowed)",
@@ -2169,7 +2248,7 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/a/5/0/3a580db5a3cd14cb8708dd98d7107a84.mp3?hdnea=exp=1782740087~acl=/api/1/1/3/a/5/0/3a580db5a3cd14cb8708dd98d7107a84.mp3*~data=user_id=0,application_id=42~hmac=01d6b2699a981d40bbbe26d564e1395301aff4c8675ad092a6d3710fa3c76ef9",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/a/5/0/3a580db5a3cd14cb8708dd98d7107a84.mp3?hdnea=exp=1782321941~acl=/api/1/1/3/a/5/0/3a580db5a3cd14cb8708dd98d7107a84.mp3*~data=user_id=0,application_id=42~hmac=0ac23584a7999eabe28ac05880c106464097edb480a1bbeed2e16ba4a2a1f187",
       "deezer": "https://www.deezer.com/track/3294890621"
     },
     {
@@ -2195,7 +2274,7 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/7/a/0/97a7d61871b60b3f67b11b372e55abcc.mp3?hdnea=exp=1782740087~acl=/api/1/1/9/7/a/0/97a7d61871b60b3f67b11b372e55abcc.mp3*~data=user_id=0,application_id=42~hmac=467c67025f30969f30bec26f44cea13cd34ee53a7f0ddbd0669888dc3b984a8f",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/7/a/0/97a7d61871b60b3f67b11b372e55abcc.mp3?hdnea=exp=1782321941~acl=/api/1/1/9/7/a/0/97a7d61871b60b3f67b11b372e55abcc.mp3*~data=user_id=0,application_id=42~hmac=fed16606ee77cb3ac47e1a2511a52dac1eff6bdf47522b29c815d0ae00543cd4",
       "deezer": "https://www.deezer.com/track/2610650602"
     },
     {
@@ -2213,7 +2292,7 @@
       "samples": [
         "https://www.instagram.com/reel/DY7V9FBzEs2/",
         "https://www.instagram.com/reel/DXjsKMbEqGp/",
-        "https://www.instagram.com/reel/DaGmU-6sCaD/"
+        "https://www.instagram.com/reel/DZ8TwRDMnkv/"
       ],
       "sample": "https://www.instagram.com/reel/DY7V9FBzEs2/",
       "detected": false,
@@ -2221,34 +2300,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/f/7/e/0/f7ef652996da9351d7503a363fcd3be0.mp3?hdnea=exp=1782740087~acl=/api/1/1/f/7/e/0/f7ef652996da9351d7503a363fcd3be0.mp3*~data=user_id=0,application_id=42~hmac=04056b5d3071b0e2a83097711e27772a60557e0cef83f22b9f51f9c33fa3320c",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/f/7/e/0/f7ef652996da9351d7503a363fcd3be0.mp3?hdnea=exp=1782321942~acl=/api/1/1/f/7/e/0/f7ef652996da9351d7503a363fcd3be0.mp3*~data=user_id=0,application_id=42~hmac=4208b85bdbd9f009da57f6e7a51523e5e03738b99b315181c0fb2447b05485dc",
       "deezer": "https://www.deezer.com/track/3898999851"
-    },
-    {
-      "title": "Take Me (To The Moon)",
-      "artist": "Ian Asher, D A N N Y",
-      "creators": 3,
-      "uses": 3,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "andyescapes",
-        "dario.explore",
-        "monicaroams"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DZ_K_7KyZsO/",
-        "https://www.instagram.com/reel/DaFzZU1qQDH/",
-        "https://www.instagram.com/reel/DZz2xwQuCUm/"
-      ],
-      "sample": "https://www.instagram.com/reel/DZ_K_7KyZsO/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/8/2/0/b82ad599f04971474512d38529b7a50d.mp3?hdnea=exp=1782740088~acl=/api/1/1/b/8/2/0/b82ad599f04971474512d38529b7a50d.mp3*~data=user_id=0,application_id=42~hmac=8ec53e98c8c86de15a185ae0dde68eef806cf080293e71d358a4eef212abe75f",
-      "deezer": "https://www.deezer.com/track/4060582951"
     },
     {
       "title": "The Feels",
@@ -2273,34 +2326,8 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/f/1/0/3f1835b54a058c7b73ff0c3103eb76d1.mp3?hdnea=exp=1782740088~acl=/api/1/1/3/f/1/0/3f1835b54a058c7b73ff0c3103eb76d1.mp3*~data=user_id=0,application_id=42~hmac=4f9b77554e3b3da865e62265b29ab0e41c696932476c010050f2ef964308f839",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/f/1/0/3f1835b54a058c7b73ff0c3103eb76d1.mp3?hdnea=exp=1782321942~acl=/api/1/1/3/f/1/0/3f1835b54a058c7b73ff0c3103eb76d1.mp3*~data=user_id=0,application_id=42~hmac=a0812d7e78e7eb61aed1d274d46a701ff82a502866ba7f41309df3bc0e169db9",
       "deezer": "https://www.deezer.com/track/2255212497"
-    },
-    {
-      "title": "Spitting Off the Edge of the World (feat. Perfume Genius)",
-      "artist": "Yeah Yeah Yeahs",
-      "creators": 3,
-      "uses": 3,
-      "original": false,
-      "ids": 1,
-      "accounts": [
-        "aagnesefontana",
-        "kylecitrin",
-        "lesmoonwalkers"
-      ],
-      "samples": [
-        "https://www.instagram.com/reel/DJE2MF7uzLJ/",
-        "https://www.instagram.com/reel/DZt_aOvSOmx/",
-        "https://www.instagram.com/reel/DMrnFJ7qlvP/"
-      ],
-      "sample": "https://www.instagram.com/reel/DJE2MF7uzLJ/",
-      "detected": false,
-      "detectedVerified": false,
-      "detectedSong": "",
-      "detectedArtist": "",
-      "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/1/8/d/0/18d2cd062be73a052617d93cc95a4200.mp3?hdnea=exp=1782740088~acl=/api/1/1/1/8/d/0/18d2cd062be73a052617d93cc95a4200.mp3*~data=user_id=0,application_id=42~hmac=a18f5730de21d437f9282bc309b614b5739ab22b0a0ab5b46b0a8f5b7d7c44d7",
-      "deezer": "https://www.deezer.com/track/1745402797"
     },
     {
       "title": "Golden Brown (Slowed Down Version)",
@@ -2325,8 +2352,34 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/8/8/3/0/8833e76e4bb4c0feddb245b4b87debb4.mp3?hdnea=exp=1782740089~acl=/api/1/1/8/8/3/0/8833e76e4bb4c0feddb245b4b87debb4.mp3*~data=user_id=0,application_id=42~hmac=a11a8e69e6d0b8b3667911f0270b6f6d94ccad58e68a746f2c4050f130e7e421",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/8/8/3/0/8833e76e4bb4c0feddb245b4b87debb4.mp3?hdnea=exp=1782321942~acl=/api/1/1/8/8/3/0/8833e76e4bb4c0feddb245b4b87debb4.mp3*~data=user_id=0,application_id=42~hmac=6adfa6c0517c870e4635b23b8f5ed91f78e1dc4982af24e1f8a3470d385dbb97",
       "deezer": "https://www.deezer.com/track/3465193691"
+    },
+    {
+      "title": "Wavin'  Flag",
+      "artist": "K'NAAN",
+      "creators": 2,
+      "uses": 4,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "juliakursten",
+        "julievalentina"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DYPWcc2IM2_/",
+        "https://www.instagram.com/reel/DYPRp1bo-ly/",
+        "https://www.instagram.com/reel/DZiWoOAsnAw/",
+        "https://www.instagram.com/reel/DZHjYuXs_Aw/"
+      ],
+      "sample": "https://www.instagram.com/reel/DYPWcc2IM2_/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/9/9/0/999ffc0fce8ff71e2a2d0f3857b3215c.mp3?hdnea=exp=1782321943~acl=/api/1/1/9/9/9/0/999ffc0fce8ff71e2a2d0f3857b3215c.mp3*~data=user_id=0,application_id=42~hmac=41decdf6ad6eab73d480e060932e187b5bf7683d712f957131738aa40b2023e5",
+      "deezer": "https://www.deezer.com/track/6717372"
     },
     {
       "title": "Chemtrails Over The Country Club",
@@ -2351,11 +2404,143 @@
       "detectedSong": "",
       "detectedArtist": "",
       "detectedLink": "",
-      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/0/9/0/d0924088f1bc01a5b7714613f5c12450.mp3?hdnea=exp=1782740089~acl=/api/1/1/d/0/9/0/d0924088f1bc01a5b7714613f5c12450.mp3*~data=user_id=0,application_id=42~hmac=cbf3969d7aa344838e5a2faf85a52bfc0ca2624b5a468cd009bb422d8ff83ed4",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/0/9/0/d0924088f1bc01a5b7714613f5c12450.mp3?hdnea=exp=1782321943~acl=/api/1/1/d/0/9/0/d0924088f1bc01a5b7714613f5c12450.mp3*~data=user_id=0,application_id=42~hmac=fdecb660fd03c5c7887218f12cee202a38411e72942f574b45658d031eefa16d",
       "deezer": "https://www.deezer.com/track/1280158372"
+    },
+    {
+      "title": "American Pie",
+      "artist": "Don McLean",
+      "creators": 2,
+      "uses": 3,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "calumtravel",
+        "thesunnilife"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DUmOhvak2S9/",
+        "https://www.instagram.com/reel/DXE52rZEXGg/",
+        "https://www.instagram.com/reel/DXE8tjikRvE/"
+      ],
+      "sample": "https://www.instagram.com/reel/DUmOhvak2S9/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/7/c/0/57cbce69a91c893b637333dcd5e30eda.mp3?hdnea=exp=1782321944~acl=/api/1/1/5/7/c/0/57cbce69a91c893b637333dcd5e30eda.mp3*~data=user_id=0,application_id=42~hmac=71564c62938d4a1db88f7252869d2179ebebe02ae15ccf75a9d0f039a7b2abb3",
+      "deezer": "https://www.deezer.com/track/3156285"
+    },
+    {
+      "title": "Telephone Line",
+      "artist": "Electric Light Orchestra",
+      "creators": 2,
+      "uses": 3,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "juliakursten",
+        "tom_webster5"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DYKhj1-B6Jd/",
+        "https://www.instagram.com/reel/DVOiJf4E7Z8/",
+        "https://www.instagram.com/reel/DYKhj1-B6Jd/"
+      ],
+      "sample": "https://www.instagram.com/reel/DYKhj1-B6Jd/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/3/3/0/d33ebdfd555d0fdfe5bd7de63bb45bd3.mp3?hdnea=exp=1782321944~acl=/api/1/1/d/3/3/0/d33ebdfd555d0fdfe5bd7de63bb45bd3.mp3*~data=user_id=0,application_id=42~hmac=ce5994431277e1dde4777fabc7d0863a7377a39dcc8019695cba1f4d2b563555",
+      "deezer": "https://www.deezer.com/track/112660452"
+    },
+    {
+      "title": "Extraordinary Moment",
+      "artist": "Chilløut, Soul Frequency, D'Michel leb",
+      "creators": 2,
+      "uses": 3,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "javipostigo",
+        "josepostigo"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DZaBGheIO2t/",
+        "https://www.instagram.com/reel/DYzoJ7MoY0n/",
+        "https://www.instagram.com/reel/DYH2cfNoy-l/"
+      ],
+      "sample": "https://www.instagram.com/reel/DZaBGheIO2t/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/0/d/a/0/0dadbeb0e93ae3ef4904471ab165fecb.mp3?hdnea=exp=1782321945~acl=/api/1/1/0/d/a/0/0dadbeb0e93ae3ef4904471ab165fecb.mp3*~data=user_id=0,application_id=42~hmac=2ef817be221b8c6fda61609f50f909fa823396a6d55fd2ac4f17a793876ad06b",
+      "deezer": "https://www.deezer.com/track/3638252262"
+    },
+    {
+      "title": "Hey mama",
+      "artist": "Hamex",
+      "creators": 2,
+      "uses": 3,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "dario.explore",
+        "joefii_"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DZAPcJ5T2h1/",
+        "https://www.instagram.com/reel/DYUTcaETWR2/",
+        "https://www.instagram.com/reel/DZ-Y6ESqIw_/"
+      ],
+      "sample": "https://www.instagram.com/reel/DZAPcJ5T2h1/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/3/a/0/33ae59767ab5079c5a120e67a6ee802a.mp3?hdnea=exp=1782321945~acl=/api/1/1/3/3/a/0/33ae59767ab5079c5a120e67a6ee802a.mp3*~data=user_id=0,application_id=42~hmac=95fcf30a3355e34afb6dc6b7264984595efb2dfbcf5b78d81c7422587e150e23",
+      "deezer": "https://www.deezer.com/track/3948917401"
+    },
+    {
+      "title": "Jacob and the Stone",
+      "artist": "Emile Mosseri",
+      "creators": 2,
+      "uses": 2,
+      "original": false,
+      "ids": 1,
+      "accounts": [
+        "arthur.edelmans",
+        "elliotmacguire"
+      ],
+      "samples": [
+        "https://www.instagram.com/reel/DV06G_1k7EH/",
+        "https://www.instagram.com/reel/DLHwRjdtAVi/"
+      ],
+      "sample": "https://www.instagram.com/reel/DV06G_1k7EH/",
+      "detected": false,
+      "detectedVerified": false,
+      "detectedSong": "",
+      "detectedArtist": "",
+      "detectedLink": "",
+      "preview": "https://cdnt-preview.dzcdn.net/api/1/1/b/f/b/0/bfbd8eb4a1974ff8c87a0cd52efa4443.mp3?hdnea=exp=1782321945~acl=/api/1/1/b/f/b/0/bfbd8eb4a1974ff8c87a0cd52efa4443.mp3*~data=user_id=0,application_id=42~hmac=8308e69e9a624b988e366992d2941483e8f64aaa493871c86847782bd520ebed",
+      "deezer": "https://www.deezer.com/track/1220635712"
     }
   ],
   "tiktokSounds": [
+    {
+      "title": "End of August",
+      "artist": "Noah Kahan",
+      "useCount": 0,
+      "alsoInIgNiche": true,
+      "igNicheCreators": 1,
+      "link": "https://www.tiktok.com/music/x-7631924550058723344"
+    },
     {
       "title": "Self Aware",
       "artist": "Temper City",
@@ -2369,8 +2554,16 @@
       "artist": "Noah Kahan",
       "useCount": 0,
       "alsoInIgNiche": true,
-      "igNicheCreators": 1,
+      "igNicheCreators": 2,
       "link": "https://www.tiktok.com/music/x-7632483465908897809"
+    },
+    {
+      "title": "Purple Rain",
+      "artist": "Prince & The Revolution",
+      "useCount": 0,
+      "alsoInIgNiche": true,
+      "igNicheCreators": 1,
+      "link": "https://www.tiktok.com/music/x-7369728644731635713"
     },
     {
       "title": "Hey There Delilah",
@@ -2381,28 +2574,28 @@
       "link": "https://www.tiktok.com/music/x-6741543390367713282"
     },
     {
-      "title": "Parfum d'étoiles",
-      "artist": "Ichiko Aoba",
+      "title": "Dai Dai",
+      "artist": "Shakira & Burna Boy",
       "useCount": 0,
       "alsoInIgNiche": true,
-      "igNicheCreators": 2,
-      "link": "https://www.tiktok.com/music/x-6892023442791483393"
+      "igNicheCreators": 1,
+      "link": "https://www.tiktok.com/music/x-7637147165290924831"
     },
     {
-      "title": "honeybee",
-      "artist": "Olivia Rodrigo",
+      "title": "Be Like a Woman",
+      "artist": "Chris Rainbow",
       "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7649983963347994640"
+      "alsoInIgNiche": true,
+      "igNicheCreators": 1,
+      "link": "https://www.tiktok.com/music/x-6724598001303554050"
     },
     {
-      "title": "Who's Lovin' You",
-      "artist": "Jackson 5",
+      "title": "Motion Party",
+      "artist": "BossMan Dlow",
       "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-6926398091861657601"
+      "alsoInIgNiche": true,
+      "igNicheCreators": 1,
+      "link": "https://www.tiktok.com/music/x-7613193955303917585"
     },
     {
       "title": "Cinderella (feat. Ty Dolla $ign)",
@@ -2413,12 +2606,12 @@
       "link": "https://www.tiktok.com/music/x-6704937565830531074"
     },
     {
-      "title": "Spend Dat",
-      "artist": "Yung Miami",
+      "title": "stupid song",
+      "artist": "Olivia Rodrigo",
       "useCount": 0,
       "alsoInIgNiche": false,
       "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7635213256902526993"
+      "link": "https://www.tiktok.com/music/x-7649983963347978256"
     },
     {
       "title": "Gut Genug (mit Blumengarten & Shirin David)",
@@ -2429,68 +2622,12 @@
       "link": "https://www.tiktok.com/music/x-7647536724906952705"
     },
     {
-      "title": "damned",
-      "artist": "Miguel",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-6715582739854133249"
-    },
-    {
-      "title": "misery.",
-      "artist": "pupsies",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7618469072708601873"
-    },
-    {
-      "title": "Do You Mind (Remix)",
-      "artist": "calmc",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7541939840036735767"
-    },
-    {
-      "title": "Earrings",
-      "artist": "Malcolm Todd",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7354423336196933649"
-    },
-    {
-      "title": "stupid song",
-      "artist": "Olivia Rodrigo",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7649983963347978256"
-    },
-    {
       "title": "take my hand",
       "artist": "kobzx2z",
       "useCount": 0,
       "alsoInIgNiche": false,
       "igNicheCreators": null,
       "link": "https://www.tiktok.com/music/x-7639082411168221201"
-    },
-    {
-      "title": "Total Eclipse of the Heart",
-      "artist": "Bonnie Tyler",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-6807444249945049089"
-    },
-    {
-      "title": "Cowpoke",
-      "artist": "Isaiah Sheffield",
-      "useCount": 0,
-      "alsoInIgNiche": false,
-      "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7329830896702670850"
     },
     {
       "title": "lucy~",
@@ -2501,26 +2638,66 @@
       "link": "https://www.tiktok.com/music/x-7355782464273614864"
     },
     {
-      "title": "Life Goes On",
-      "artist": "Oliver Tree",
+      "title": "Spend Dat",
+      "artist": "Yung Miami",
       "useCount": 0,
       "alsoInIgNiche": false,
       "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-6967187297502660609"
+      "link": "https://www.tiktok.com/music/x-7635213256902526993"
     },
     {
-      "title": "think about you",
-      "artist": "kofun",
+      "title": "Earrings",
+      "artist": "Malcolm Todd",
       "useCount": 0,
       "alsoInIgNiche": false,
       "igNicheCreators": null,
-      "link": "https://www.tiktok.com/music/x-7649682397055879184"
+      "link": "https://www.tiktok.com/music/x-7354423336196933649"
+    },
+    {
+      "title": "Total Eclipse of the Heart",
+      "artist": "Bonnie Tyler",
+      "useCount": 0,
+      "alsoInIgNiche": false,
+      "igNicheCreators": null,
+      "link": "https://www.tiktok.com/music/x-6807444249945049089"
+    },
+    {
+      "title": "The One That Got Away",
+      "artist": "Katy Perry",
+      "useCount": 0,
+      "alsoInIgNiche": false,
+      "igNicheCreators": null,
+      "link": "https://www.tiktok.com/music/x-7608527302834146056"
+    },
+    {
+      "title": "Shabang",
+      "artist": "Drake",
+      "useCount": 0,
+      "alsoInIgNiche": false,
+      "igNicheCreators": null,
+      "link": "https://www.tiktok.com/music/x-7639970612841531409"
+    },
+    {
+      "title": "honeybee",
+      "artist": "Olivia Rodrigo",
+      "useCount": 0,
+      "alsoInIgNiche": false,
+      "igNicheCreators": null,
+      "link": "https://www.tiktok.com/music/x-7649983963347994640"
+    },
+    {
+      "title": "hate that i made you love me",
+      "artist": "Ariana Grande",
+      "useCount": 0,
+      "alsoInIgNiche": false,
+      "igNicheCreators": null,
+      "link": "https://www.tiktok.com/music/x-7645168637741729808"
     }
   ],
   "provenance": {
-    "igAccounts": 171,
-    "igResolved": 163,
-    "igSeed": 110,
+    "igAccounts": 168,
+    "igResolved": 160,
+    "igSeed": 107,
     "igDiscovered": 39,
     "igBootstrap": 22,
     "tiktokCreators": 26,
@@ -2530,20 +2707,20 @@
     "igCurated": 22,
     "tiktokCurated": 12,
     "keywordFinds": 12,
-    "keywordScanned": 59,
-    "boardAccounts": 39,
-    "audioAccounts": 163,
+    "keywordScanned": 42,
+    "boardAccounts": 37,
+    "audioAccounts": 152,
     "audioReelsPer": 20,
-    "audioTracks": 1602,
-    "audioMulti": 84,
+    "audioTracks": 1576,
+    "audioMulti": 81,
     "audioShown": 30,
     "ttSounds": 50,
-    "ttXplatform": 4,
+    "ttXplatform": 8,
     "ttShown": 20,
-    "audioReels": 3260,
-    "hooksOcrd": 245,
-    "hooksReadable": 192,
-    "hookValidated": 17,
+    "audioReels": 3040,
+    "hooksOcrd": 234,
+    "hooksReadable": 181,
+    "hookValidated": 16,
     "hookPlats": [
       "Instagram"
     ],
@@ -2788,9 +2965,7 @@
       "gonzalopasquier",
       "harrypope",
       "heber_stanton",
-      "henbu_",
       "hoehen_flug",
-      "hugo.visuals",
       "i.jaziii",
       "ikdmiantara",
       "inojuettner",
@@ -2827,7 +3002,6 @@
       "lauradesnoeck",
       "laurastravl",
       "lawrencewalton_",
-      "lesmoonwalkers",
       "lolahubner",
       "loriis_r",
       "lucaepifany",
@@ -2928,5 +3102,118 @@
       "tonyolsenfilm",
       "travel_films.bo"
     ]
+  },
+  "videos": {
+    "https://www.instagram.com/reel/C4QMXqhvuQt/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_C4QMXqhvuQt.mp4",
+    "https://www.instagram.com/reel/DYtkEZ_Noxf/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYtkEZ_Noxf.mp4",
+    "https://www.instagram.com/reel/DYEq07UyDCj/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYEq07UyDCj.mp4",
+    "https://www.instagram.com/reel/DY9WpcdIRv_/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DY9WpcdIRv_.mp4",
+    "https://www.instagram.com/reel/DZHjYuXs_Aw/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZHjYuXs_Aw.mp4",
+    "https://www.instagram.com/reel/DLHwRjdtAVi/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DLHwRjdtAVi.mp4",
+    "https://www.instagram.com/reel/DTPJWaUklnm/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTPJWaUklnm.mp4",
+    "https://www.instagram.com/reel/DUGiOu-iPNa/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DUGiOu-iPNa.mp4",
+    "https://www.instagram.com/reel/CsZW13wIakt/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_CsZW13wIakt.mp4",
+    "https://www.instagram.com/reel/DXE52rZEXGg/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXE52rZEXGg.mp4",
+    "https://www.instagram.com/reel/DSZYPjIjUQ-/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DSZYPjIjUQ-.mp4",
+    "https://www.instagram.com/reel/DWO5M14Dib6/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DWO5M14Dib6.mp4",
+    "https://www.instagram.com/reel/DZAPcJ5T2h1/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZAPcJ5T2h1.mp4",
+    "https://www.instagram.com/reel/DW58g9ggQGs/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DW58g9ggQGs.mp4",
+    "https://www.instagram.com/reel/DYH2cfNoy-l/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYH2cfNoy-l.mp4",
+    "https://www.instagram.com/reel/DNTi6-GN6KO/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DNTi6-GN6KO.mp4",
+    "https://www.tiktok.com/@ang.and.chris/video/7633136716714429727": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7633136716714429727.mp4",
+    "https://www.instagram.com/reel/DZ8TwRDMnkv/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ8TwRDMnkv.mp4",
+    "https://www.instagram.com/reel/DZiWoOAsnAw/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZiWoOAsnAw.mp4",
+    "https://www.instagram.com/reel/DYKhj1-B6Jd/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYKhj1-B6Jd.mp4",
+    "https://www.instagram.com/reel/DZ7VeImAnOR/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ7VeImAnOR.mp4",
+    "https://www.instagram.com/reel/DTKyZTQASSd/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTKyZTQASSd.mp4",
+    "https://www.instagram.com/reel/CvNL_xopczA/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_CvNL_xopczA.mp4",
+    "https://www.instagram.com/reel/DZR22TAyTJy/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZR22TAyTJy.mp4",
+    "https://www.instagram.com/reel/DTrH8GMExe4/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTrH8GMExe4.mp4",
+    "https://www.instagram.com/reel/DXxd1hUSr6i/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXxd1hUSr6i.mp4",
+    "https://www.instagram.com/reel/DZov7eAzsHc/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZov7eAzsHc.mp4",
+    "https://www.instagram.com/reel/DTelfa8DnHN/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTelfa8DnHN.mp4",
+    "https://www.instagram.com/reel/DKkBXQsIN9s/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DKkBXQsIN9s.mp4",
+    "https://www.instagram.com/reel/DX6TSj4zUpz/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DX6TSj4zUpz.mp4",
+    "https://www.instagram.com/reel/DXE8tjikRvE/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXE8tjikRvE.mp4",
+    "https://www.instagram.com/reel/DU2G9GakgWe/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DU2G9GakgWe.mp4",
+    "https://www.instagram.com/reel/DOS0socjCOj/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DOS0socjCOj.mp4",
+    "https://www.instagram.com/reel/DXjsKMbEqGp/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXjsKMbEqGp.mp4",
+    "https://www.instagram.com/reel/DRqFQ68DU3p/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DRqFQ68DU3p.mp4",
+    "https://www.instagram.com/reel/DWbsmTxD2oH/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DWbsmTxD2oH.mp4",
+    "https://www.instagram.com/reel/DXFFeJehCMT/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXFFeJehCMT.mp4",
+    "https://www.tiktok.com/@skyyybase6/video/7651722331873758478": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7651722331873758478.mp4",
+    "https://www.instagram.com/reel/DXoYxJsDJFJ/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXoYxJsDJFJ.mp4",
+    "https://www.instagram.com/reel/DUyAYBhjDKE/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DUyAYBhjDKE.mp4",
+    "https://www.tiktok.com/@iconicyachtrentals/video/7652470258950753558": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652470258950753558.mp4",
+    "https://www.instagram.com/reel/DSLGDI4jYPi/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DSLGDI4jYPi.mp4",
+    "https://www.instagram.com/reel/DYZKVzOqUNW/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYZKVzOqUNW.mp4",
+    "https://www.instagram.com/reel/DVlA-IODDRv/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DVlA-IODDRv.mp4",
+    "https://www.instagram.com/reel/DMuoU-OpTuE/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DMuoU-OpTuE.mp4",
+    "https://www.instagram.com/reel/DAUPPKjNchR/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DAUPPKjNchR.mp4",
+    "https://www.instagram.com/reel/DZaXlMwzFIo/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZaXlMwzFIo.mp4",
+    "https://www.instagram.com/reel/DWO8k70iA5t/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DWO8k70iA5t.mp4",
+    "https://www.instagram.com/reel/DYcdNojN2Fo/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYcdNojN2Fo.mp4",
+    "https://www.instagram.com/reel/DV0QMD8E_D1/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DV0QMD8E_D1.mp4",
+    "https://www.instagram.com/reel/DYPWcc2IM2_/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYPWcc2IM2_.mp4",
+    "https://www.instagram.com/reel/DZiSfyiJI8x/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZiSfyiJI8x.mp4",
+    "https://www.instagram.com/reel/DXOLoalEcGk/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXOLoalEcGk.mp4",
+    "https://www.instagram.com/reel/DXq7ORok7jj/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXq7ORok7jj.mp4",
+    "https://www.instagram.com/reel/DZNPeqvT5EO/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZNPeqvT5EO.mp4",
+    "https://www.instagram.com/reel/DYct1C7INmp/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYct1C7INmp.mp4",
+    "https://www.instagram.com/reel/C3StVZ8q6Ma/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_C3StVZ8q6Ma.mp4",
+    "https://www.instagram.com/reel/DMiTmkyuT43/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DMiTmkyuT43.mp4",
+    "https://www.instagram.com/reel/DVMLZWNjSkO/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DVMLZWNjSkO.mp4",
+    "https://www.instagram.com/reel/DZZyYDnBXBW/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZZyYDnBXBW.mp4",
+    "https://www.instagram.com/reel/DRkrzQZExkE/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DRkrzQZExkE.mp4",
+    "https://www.instagram.com/reel/DTs5xUjjcF0/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTs5xUjjcF0.mp4",
+    "https://www.instagram.com/reel/DZgNfFkTGrN/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZgNfFkTGrN.mp4",
+    "https://www.instagram.com/reel/DZfheGuJtf6/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZfheGuJtf6.mp4",
+    "https://www.instagram.com/reel/DYUTcaETWR2/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYUTcaETWR2.mp4",
+    "https://www.instagram.com/reel/DZAoLQTxCSJ/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZAoLQTxCSJ.mp4",
+    "https://www.instagram.com/reel/DYSiNkisVsw/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYSiNkisVsw.mp4",
+    "https://www.instagram.com/reel/CuVH8snAZmI/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_CuVH8snAZmI.mp4",
+    "https://www.instagram.com/reel/DX4lcpFJLO-/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DX4lcpFJLO-.mp4",
+    "https://www.instagram.com/reel/DZkIbW0v5fN/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZkIbW0v5fN.mp4",
+    "https://www.tiktok.com/@conor.jpg_/video/7648614954563652886": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7648614954563652886.mp4",
+    "https://www.tiktok.com/@yoojoonkang/video/7592914015928503607": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7592914015928503607.mp4",
+    "https://www.instagram.com/reel/DX69gFRNpoy/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DX69gFRNpoy.mp4",
+    "https://www.instagram.com/reel/DXOJ_txElUY/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXOJ_txElUY.mp4",
+    "https://www.instagram.com/reel/DZyA6AnO5Rb/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZyA6AnO5Rb.mp4",
+    "https://www.instagram.com/reel/DTmWUdUjLxF/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTmWUdUjLxF.mp4",
+    "https://www.instagram.com/reel/DZc_IsQMAWc/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZc_IsQMAWc.mp4",
+    "https://www.instagram.com/reel/DYzoJ7MoY0n/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYzoJ7MoY0n.mp4",
+    "https://www.instagram.com/reel/DY7V9FBzEs2/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DY7V9FBzEs2.mp4",
+    "https://www.tiktok.com/@lego.stories.today/video/7643906793952906509": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7643906793952906509.mp4",
+    "https://www.instagram.com/reel/DZiWRU5oZHZ/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZiWRU5oZHZ.mp4",
+    "https://www.instagram.com/reel/DZuKg_Wzscb/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZuKg_Wzscb.mp4",
+    "https://www.instagram.com/reel/DVOiJf4E7Z8/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DVOiJf4E7Z8.mp4",
+    "https://www.instagram.com/reel/DUqonyBiSqM/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DUqonyBiSqM.mp4",
+    "https://www.instagram.com/reel/DPAsKgRjtL7/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DPAsKgRjtL7.mp4",
+    "https://www.instagram.com/reel/DZ4mVYts9Oq/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ4mVYts9Oq.mp4",
+    "https://www.instagram.com/reel/DUmOhvak2S9/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DUmOhvak2S9.mp4",
+    "https://www.instagram.com/reel/DYPRp1bo-ly/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYPRp1bo-ly.mp4",
+    "https://www.instagram.com/reel/DWyxVavDZdP/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DWyxVavDZdP.mp4",
+    "https://www.instagram.com/reel/DZVQjd6iauT/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZVQjd6iauT.mp4",
+    "https://www.instagram.com/reel/DZjua8_xy8s/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZjua8_xy8s.mp4",
+    "https://www.instagram.com/reel/C9918AeRzBy/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_C9918AeRzBy.mp4",
+    "https://www.tiktok.com/@jessmelu/video/7649642257888316694": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7649642257888316694.mp4",
+    "https://www.instagram.com/reel/DXYnqcuEo36/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXYnqcuEo36.mp4",
+    "https://www.instagram.com/reel/DZVEkFQT44t/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZVEkFQT44t.mp4",
+    "https://www.instagram.com/reel/DWmDly9DMal/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DWmDly9DMal.mp4",
+    "https://www.instagram.com/reel/DZb3NNHsA4x/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZb3NNHsA4x.mp4",
+    "https://www.tiktok.com/@deryaxmi/video/7639684189385690400": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7639684189385690400.mp4",
+    "https://www.instagram.com/reel/DCMet9avwxE/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DCMet9avwxE.mp4",
+    "https://www.instagram.com/reel/DXNTw_UiOLt/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXNTw_UiOLt.mp4",
+    "https://www.instagram.com/reel/DXZlcTOkv86/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DXZlcTOkv86.mp4",
+    "https://www.instagram.com/reel/DZ4KVmSs-oj/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ4KVmSs-oj.mp4",
+    "https://www.tiktok.com/@laibxz_khan/video/7640569114766920977": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7640569114766920977.mp4",
+    "https://www.instagram.com/reel/DZaBGheIO2t/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZaBGheIO2t.mp4",
+    "https://www.instagram.com/reel/DYzadhrBCy8/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DYzadhrBCy8.mp4",
+    "https://www.instagram.com/reel/DZnIsaJxBr7/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZnIsaJxBr7.mp4",
+    "https://www.instagram.com/reel/DZ1r9s8TTOU/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ1r9s8TTOU.mp4",
+    "https://www.tiktok.com/@zackroams/video/7652379793459121438": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652379793459121438.mp4",
+    "https://www.instagram.com/reel/DZ-Y6ESqIw_/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DZ-Y6ESqIw_.mp4",
+    "https://www.tiktok.com/@privateboatparty/video/7652378070778711310": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/tiktok_7652378070778711310.mp4",
+    "https://www.instagram.com/reel/DTF2EF7DKSU/": "https://78ndcbllc4seadrs.public.blob.vercel-storage.com/videos/instagram_DTF2EF7DKSU.mp4"
   }
 }
