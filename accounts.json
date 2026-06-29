@@ -169,8 +169,12 @@
     "travelfilmsbyrj",
     "ramrylie",
     "ekoharphotos",
-    "timur_tugalev"
+    "timur_tugalev",
+    "hugo.visuals",
+    "henbu_",
+    "lesmoonwalkers"
   ],
   "_discovered_2026_06_22": "Added 39 accounts via related-profiles discovery (discover.py), ranked by seed-overlap. Excluded as aggregators/brand/off-niche: traveler, beautifuldestinations, wonders, globehotels, travellingthroughtheworld, takemyhearteverywhere, voyagefox_, tinkerbelltik, igor_um_olhar_catolico. Next weekly scrape ranks these by outlier score; any that don't post high-performing cinematic content simply won't surface.",
-  "_bootstrapped_2026-06-23": "Added 39 via bootstrap.py (keyword harvest); pruned 17 off-niche/brand/spam on review (fitness coach, AI-photo, drone-hardware/training, weddings, dancer, numeric-handle bots). Kept 22 genuine creators."
+  "_bootstrapped_2026-06-23": "Added 39 via bootstrap.py (keyword harvest); pruned 17 off-niche/brand/spam on review (fitness coach, AI-photo, drone-hardware/training, weddings, dancer, numeric-handle bots). Kept 22 genuine creators.",
+  "_dashboard_edit_2026-06-29": "+3 / -0 via Accounts panel"
 }
