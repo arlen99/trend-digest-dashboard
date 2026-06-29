@@ -12,12 +12,29 @@ const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15
 const TH = "https://api.tikhub.io";
 
 async function tikhub(path, token) {
-  const r = await fetch(TH + path, {
-    headers: { authorization: `Bearer ${token}`, "user-agent": UA, accept: "application/json" },
-  });
-  const body = await r.text();
-  let j = null; try { j = JSON.parse(body); } catch (e) {}
-  return { status: r.status, json: j };
+  // TikHub occasionally returns 5xx / empty bodies; retry briefly before giving up.
+  let lastStatus = 0, lastBody = "";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 12000);
+      const r = await fetch(TH + path, {
+        headers: { authorization: `Bearer ${token}`, "user-agent": UA, accept: "application/json" },
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      const body = await r.text();
+      lastStatus = r.status; lastBody = body;
+      let j = null; try { j = JSON.parse(body); } catch (e) {}
+      // success-looking: 200 + parseable JSON; otherwise retry
+      if (r.status === 200 && j) return { status: 200, json: j };
+      if (r.status === 400) return { status: 400, json: j };  // 400 = not found, don't retry
+    } catch (e) {
+      lastBody = String(e).slice(0, 80);
+    }
+    await new Promise(res => setTimeout(res, 400 * (attempt + 1)));
+  }
+  return { status: lastStatus || 0, json: null, _hint: lastBody.slice(0, 80) };
 }
 
 function deepFind(o, key) {
@@ -28,10 +45,10 @@ function deepFind(o, key) {
 }
 
 async function verifyIG(handle, token) {
-  const { status, json } = await tikhub(`/api/v1/instagram/v1/fetch_user_info_by_username?username=${encodeURIComponent(handle)}`, token);
-  if (status !== 200 || !json) return { ok: false, reason: "lookup_failed" };
-  // Validity is decided by ONE signal: does TikHub return a numeric pk anywhere in the payload?
-  // (Valid responses can contain harmless empty `errorMessage` fields too, so don't gate on those.)
+  const { status, json, _hint } = await tikhub(`/api/v1/instagram/v1/fetch_user_info_by_username?username=${encodeURIComponent(handle)}`, token);
+  if (status !== 200) return { ok: false, reason: `upstream_${status || "timeout"}`, hint: _hint };
+  if (!json) return { ok: false, reason: "bad_response" };
+  // Validity is decided by ONE signal: does the payload carry a numeric IG user id anywhere?
   const pk = deepFind(json, "pk") || deepFind(json, "id");
   if (!pk || !/^\d+$/.test(String(pk))) return { ok: false, reason: "not_found" };
   return { ok: true, handle, displayName: deepFind(json, "full_name") || "", followers: deepFind(json, "follower_count") || null,
@@ -40,9 +57,10 @@ async function verifyIG(handle, token) {
 }
 
 async function verifyTT(handle, token) {
-  const { status, json } = await tikhub(`/api/v1/tiktok/app/v3/handler_user_profile?unique_id=${encodeURIComponent(handle)}`, token);
+  const { status, json, _hint } = await tikhub(`/api/v1/tiktok/app/v3/handler_user_profile?unique_id=${encodeURIComponent(handle)}`, token);
   if (status === 400) return { ok: false, reason: "not_found" };
-  if (status !== 200 || !json) return { ok: false, reason: "lookup_failed" };
+  if (status !== 200) return { ok: false, reason: `upstream_${status || "timeout"}`, hint: _hint };
+  if (!json) return { ok: false, reason: "bad_response" };
   const found = deepFind(json, "unique_id") || deepFind(json, "uniqueId") || deepFind(json, "sec_uid") || deepFind(json, "secUid");
   if (!found) return { ok: false, reason: "not_found" };
   const av = deepFind(json, "avatar_larger") || deepFind(json, "avatar_thumb") || deepFind(json, "avatarLarger") || {};
