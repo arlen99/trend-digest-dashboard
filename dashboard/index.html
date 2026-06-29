@@ -63,6 +63,8 @@ a{color:inherit;text-decoration:none}
 .trk .static-ic{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:15px}
 .reels{display:flex;flex-wrap:wrap;gap:9px;margin-top:5px}
 .lk.reel{font-size:10.5px;opacity:.65}
+button.lk{font:inherit;font-family:'JetBrains Mono',monospace;cursor:pointer;text-align:left}
+button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .lk.dl{cursor:pointer;background:none;border:1px solid var(--teal);border-radius:6px;color:var(--teal);font:inherit;padding:3px 8px;transition:.15s}
 .lk.dl:hover{background:var(--teal);color:#0c0d0f}
 .prov{font-size:11.5px;line-height:1.65;color:var(--muted);max-width:900px;margin-top:15px;border-top:1px solid var(--line2);padding-top:12px}
@@ -548,7 +550,7 @@ renderAccounts();
   const ICN={audio:'♪',hook:'✎'};
   if(!trends.length){tg.innerHTML=`<div class="empty">Trend cards are written during the weekly scan — none yet this week.</div>`;}
   else tg.innerHTML=trends.map(t=>{
-    const ex=(t.examples||[]).map((u,k)=>`<a class="lk reel" href="${u}" target="_blank" rel="noopener">▶ example ${k+1}</a>`).join('');
+    const ex=(t.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ example ${k+1}</button>`).join('');
     const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'<span></span>';
     const mom=(t.momentum||'new').toLowerCase();
     return `<article class="tcard">
@@ -858,6 +860,27 @@ async function openProfile(plat,h){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.acct-link');if(b){e.preventDefault();e.stopPropagation();openProfile(b.dataset.plat,b.dataset.acct);}});
 
+/* ---- Reel popup for Trend Radar / Audio chart examples ----
+   If the reel is on the board → reuse the full swipe-file card (openPost).
+   Otherwise → slim embed-only modal: video + open-on-platform link + Save button. */
+function openReelPopup(url){
+  if(!url)return;
+  const onBoard=posts.find(p=>p.url===url)||savedData[url];
+  if(onBoard){openPost(url);return;}
+  const plat=url.includes('tiktok.com')?'tiktok':'instagram';
+  const code=igCode(url),id=ttId(url);
+  const embedSrc=plat==='tiktok'&&id?`https://www.tiktok.com/embed/v2/${id}`:(code?`https://www.instagram.com/reel/${code}/embed/`:'');
+  const platLabel=plat==='tiktok'?'TikTok':'Instagram';
+  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
+    <h3 class="mm-title">Example reel</h3>
+    <p class="mm-sub">This reel isn't curated on the board — playing the platform embed directly.</p>
+    <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`}</div>
+    <div class="pp-actions"><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
+  mm.classList.remove('hidden');document.body.style.overflow='hidden';
+  $('#mm-close').onclick=closeMethod;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-popup]');if(b){e.preventDefault();e.stopPropagation();openReelPopup(b.dataset.reelPopup);}});
+
 function apply(){
   const fw=$('#f-week').value,ff=$('#f-format').value,fh=$('#f-hook').value,ft=$('#f-trigger').value,fs=$('#f-style').value,
     q=$('#f-search').value.toLowerCase().trim(),sort=$('#f-sort').value,show=$('#f-show').value,from=$('#f-from').value,to=$('#f-to').value;
@@ -941,7 +964,7 @@ function breakdown(title,rows){
     const sub=det?`${t.detectedArtist||''} · tagged “original audio” by @${t.artist}`:(t.artist||'');
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
       :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
-    const reels=(t.samples||[]).map((u,k)=>`<a class="lk reel" href="${u}" target="_blank" rel="noopener">▶ reel ${k+1}</a>`).join('');
+    const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ reel ${k+1}</button>`).join('');
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     const dl=t.sample?`<button class="lk dl" type="button" data-reel="${t.sample}" title="Copy reel link &amp; open reelsave">⬇ Get audio</button>`:'';
     return `<div class="trk">${play}<div class="r">${i+1}</div><div class="ti">
