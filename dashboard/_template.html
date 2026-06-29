@@ -585,17 +585,23 @@ let saved=new Set(Object.keys(savedData));
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
 function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));}
-function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',off:'sync off',err:'sync error',bad:'wrong passphrase'}[st]||st;}
+function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT;
-function pushState(){saveLocal();apply();if(!SECRET)return;clearTimeout(_pushT);_pushT=setTimeout(()=>{
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits})}).then(r=>setSync(r.ok?'on':(r.status===401?'bad':'err'))).catch(()=>setSync('err'));},700);}
+function pushState(){saveLocal();apply();if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits})})
+    .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
+    .catch(()=>setSync('err'));},500);}
 async function pullState(){if(!SECRET){setSync('off');return;}
-  try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET}});
+  try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
     if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));saveLocal();}
-    setSync('on');apply();
+    setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();
   }catch(e){setSync('err');}}
+// background poll every 30s so changes made on another device appear automatically — no manual sync click needed
+setInterval(()=>{if(SECRET&&document.visibilityState==='visible')pullState();},30000);
+// pull immediately when the tab regains focus (so the moment you switch back from another device, it's fresh)
+document.addEventListener('visibilitychange',()=>{if(SECRET&&document.visibilityState==='visible')pullState();});
 function setupSync(){const p=prompt('Sync passphrase (the EDIT_SECRET you set in Vercel) — syncs bookmarks & accounts across your devices:',SECRET);if(p===null)return;SECRET=p.trim();localStorage.setItem('td_secret',SECRET);pullState();}
 function toggleSave(u){
   if(savedData[u]){delete savedData[u];}
