@@ -105,10 +105,32 @@ def blob_delete(urls):
     urllib.request.urlopen(req, timeout=60).read()
 
 
+def removed_set():
+    """URLs the user explicitly removed from Blob via the dashboard → never re-download."""
+    if not BLOB:
+        return set()
+    try:
+        req = urllib.request.Request(f"{BLOB_API}?prefix=state/dashboard-state.json",
+                                     headers={"authorization": "Bearer " + BLOB})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            blobs = json.loads(r.read()).get("blobs", [])
+        match = next((b for b in blobs if b["pathname"] == "state/dashboard-state.json"), None)
+        if not match:
+            return set()
+        with urllib.request.urlopen(match["url"], timeout=30) as r:
+            state = json.loads(r.read())
+        return set(state.get("removedVideos") or [])
+    except Exception:  # noqa: BLE001
+        return set()
+
+
 def main():
     if not (TIKHUB and BLOB):
         raise SystemExit("Need TIKHUB_TOKEN and BLOB_READ_WRITE_TOKEN in env.")
     data = json.loads((DASH / "data.json").read_text())
+    removed = removed_set()
+    if removed:
+        print(f"Skipping {len(removed)} URLs the user removed from Blob (won't be re-downloaded).")
     # displayed posts that are single videos (skip carousels/photos)
     vids = [p for p in data["posts"] if p.get("platform") == "tiktok"
             or (p.get("format") == "Reel" and not p.get("carousel"))]
@@ -117,6 +139,11 @@ def main():
         plat = p.get("platform", "instagram")
         code = tt_id(p["url"]) if plat == "tiktok" else ig_code(p["url"])
         if not code:
+            continue
+        if p["url"] in removed:
+            # user removed this from Blob via the dashboard — honour that, drop any stale blob URL
+            if "blob.vercel-storage" in (p.get("video") or ""):
+                p["video"] = ""
             continue
         # already self-hosted on Blob? keep it — Blob URLs never expire, so no re-fetch
         if "blob.vercel-storage" in (p.get("video") or ""):
@@ -152,6 +179,10 @@ def main():
     by_url = {p["url"]: p.get("video", "") for p in data["posts"] if "blob.vercel-storage" in (p.get("video") or "")}
     ex_ok = ex_kept = ex_fail = 0
     for url in ex_urls:
+        if url in removed:
+            # user removed this from Blob via the dashboard — honour the choice; strip any stale mapping
+            video_map.pop(url, None)
+            continue
         if url in video_map and "blob.vercel-storage" in video_map[url]:
             ex_kept += 1; continue
         if url in by_url:

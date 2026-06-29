@@ -599,7 +599,9 @@ async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
-    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));saveLocal();}
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));saveLocal();
+      // strip videos the user has removed on any device, so popups fall back to the embed
+      if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
     setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();
   }catch(e){setSync('err');}}
 // background poll every 30s so changes made on another device appear automatically — no manual sync click needed
@@ -865,6 +867,18 @@ document.addEventListener('click',e=>{const b=e.target.closest('.acct-link');if(
 /* ---- Reel popup for Trend Radar / Audio chart examples ----
    If the reel is on the board → reuse the full swipe-file card (openPost).
    Otherwise → slim embed-only modal: video + open-on-platform link + Save button. */
+async function removeReelDownload(url){
+  if(!SECRET){alert('Click ⇄ Sync devices and enter your passphrase first — this action needs the backend.');return;}
+  const yes=await appConfirm({title:'Remove this video from the server?',body:'The native video file will be deleted from your Vercel Blob storage to free up space. The reel will fall back to the platform embed when played from now on. (Use this for reels you no longer need to study in-app.)',yes:'Remove from server',no:'Keep it'});
+  if(!yes)return;
+  try{const r=await fetch('/api/blob-delete',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url})});
+    const j=await r.json();
+    if(!j.ok){alert(`Couldn't remove: ${j.reason||r.status}`);return;}
+    if(DATA.videos)delete DATA.videos[url];
+    openReelPopup(url); // re-render — now without the native video
+    setTimeout(()=>{const note=$('#mm-body .pp-spin')||$('#mm-body .mm-sub');if(note)note.insertAdjacentHTML('beforebegin',`<div class="pp-spin" style="color:var(--teal);padding:8px 0">✓ Removed (${j.freedKB?j.freedKB+' KB':'no blob found'} freed)</div>`);},80);
+  }catch(e){alert('Remove failed: '+e.message);}
+}
 function openReelPopup(url){
   if(!url)return;
   const onBoard=posts.find(p=>p.url===url)||savedData[url];
@@ -879,13 +893,16 @@ function openReelPopup(url){
     ? `<video controls autoplay playsinline src="${blobVid}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
     : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
   const sub=blobVid?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
+  // Only show the "remove from server" button when a native video EXISTS (otherwise there's nothing to free).
+  const removeBtn=blobVid?`<button class="danger" data-remove-blob="${url}" type="button">✕ Remove download</button>`:'';
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
     <h3 class="mm-title">Example reel</h3>
     <p class="mm-sub">${sub}</p>
     <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
-    <div class="pp-actions"><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
+    <div class="pp-actions">${removeBtn}<a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
   mm.classList.remove('hidden');document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
+  const rm=$('#mm-body [data-remove-blob]'); if(rm)rm.onclick=()=>removeReelDownload(rm.dataset.removeBlob);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-popup]');if(b){e.preventDefault();e.stopPropagation();openReelPopup(b.dataset.reelPopup);}});
 
