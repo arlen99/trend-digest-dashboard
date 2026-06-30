@@ -36,8 +36,10 @@ jobs:
           set -e
           TODAY=$(date +%F)
           python3 apply_account_edits.py   # apply dashboard add/removes → accounts.json + tiktok_accounts.json BEFORE scraping
+          python3 accumulate.py            # archive prior week's data BEFORE this week's pipeline writes over it
           python3 scrape.py
           python3 tiktok_scrape.py
+          python3 scrape_dedupe.py         # strip any post URL ever curated in a prior week
           python3 keyword_posts.py
           python3 audio_trends.py
           python3 tiktok_trends.py

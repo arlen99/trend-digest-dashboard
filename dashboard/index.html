@@ -439,8 +439,21 @@ const COLORS={
   'Drone/aerial':'#b07cd6','Transitions':'#e87fae','Film grain':'#c79a6a'};
 const col=t=>COLORS[t]||'#8c8b86';
 const fmtN=n=>n==null?'—':n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,'')+'M':n>=1e3?(n/1e3).toFixed(n>=1e5?0:1).replace(/\.0$/,'')+'K':''+n;
-const posts=DATA.posts.slice();
 const $=s=>document.querySelector(s);
+/* ---- week-archive plumbing ---- */
+// Build the "current" week record from top-level fields; merge in any historical weeks (DATA.weeks).
+const CURRENT_WEEK=DATA.generated||null;
+const WEEKS={[CURRENT_WEEK||'current']:{posts:DATA.posts||[],soundChart:DATA.soundChart||[],trends:DATA.trends||[],tiktokSounds:DATA.tiktokSounds||[],generatedHooks:DATA.generatedHooks||[]}};
+Object.entries(DATA.weeks||{}).forEach(([w,s])=>{WEEKS[w]=Object.assign({posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]},s);});
+const WEEK_IDS=Object.keys(WEEKS).sort().reverse(); // newest first
+function weekLabel(w){if(!w||w==='current')return 'All weeks';const d=new Date(w+'T00:00:00');if(isNaN(d))return w;const end=new Date(d);end.setDate(d.getDate()+6);const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${M[d.getMonth()]} ${d.getDate()} → ${M[end.getMonth()]} ${end.getDate()}`;}
+// Swipe-file: posts flow as a flat list (dedupe by URL, keep oldest week's tag). The #f-week filter handles selection.
+const _seen={};
+const posts=[];
+[CURRENT_WEEK,...Object.keys(DATA.weeks||{}).sort().reverse()].forEach(w=>{const slice=(WEEKS[w||'current']||{}).posts||[];slice.forEach(p=>{if(!p.url||_seen[p.url])return;_seen[p.url]=1;posts.push(Object.assign({},p,{week:p.week||w}));});});
+// Active week getter for sound chart / trends / audio (these don't flatten — they're per-week snapshots)
+function activeWeekId(){const v=$('#f-week')&&$('#f-week').value;return WEEKS[v]?v:CURRENT_WEEK;}
+function activeData(){return WEEKS[activeWeekId()]||WEEKS[CURRENT_WEEK]||{posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]};}
 
 /* ---- stat tiles ---- */
 (function(){
@@ -547,11 +560,11 @@ $('#v-accounts').addEventListener('click',e=>{
 renderAccounts();
 
 /* ========== TREND RADAR ========== */
-(function(){
-  const trends=DATA.trends||[], tg=$('#trendgrid');
+function renderTrendRadar(){
+  const trends=activeData().trends||[], tg=$('#trendgrid');
   const ICN={audio:'♪',hook:'✎'};
-  if(!trends.length){tg.innerHTML=`<div class="empty">Trend cards are written during the weekly scan — none yet this week.</div>`;}
-  else tg.innerHTML=trends.map(t=>{
+  if(!trends.length){tg.innerHTML=`<div class="empty">No trend cards for this week.</div>`;return;}
+  tg.innerHTML=trends.map(t=>{
     const ex=(t.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ example ${k+1}</button>`).join('');
     const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'<span></span>';
     const mom=(t.momentum||'new').toLowerCase();
@@ -565,9 +578,10 @@ renderAccounts();
       ${t.howTo?`<div class="thow"><span class="thow-l">Ride it</span>${t.howTo}</div>`:''}
       ${ex?`<div class="texamples">${ex}</div>`:''}
     </article>`;}).join('');
-  const v=DATA.provenance;
-  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;
-})();
+}
+renderTrendRadar();
+(function(){const v=DATA.provenance;
+  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;})();
 
 /* ========== SWIPE FILE ========== */
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -620,7 +634,9 @@ const modal=$('#modal');
 function uniq(key){const s=new Set();posts.forEach(p=>{const v=p[key];(Array.isArray(v)?v:[v]).forEach(x=>x&&s.add(x))});return [...s].sort();}
 function fill(sel,label,vals){$(sel).innerHTML=`<option value="">${label} · all</option>`+vals.map(v=>`<option value="${v}">${v}</option>`).join('');}
 $('#f-show').innerHTML=[['active','Show · Active'],['newfind','Show · ⚡ New finds'],['saved','Show · ★ Bookmarked'],['dismissed','Show · ✕ Dismissed'],['all','Show · All']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-fill('#f-week','Week',uniq('week'));fill('#f-format','Format',uniq('format'));fill('#f-hook','Hook',uniq('hookTypes'));
+// Week filter: includes EVERY week present in the archive (not just weeks tagged on visible posts), with human-readable labels.
+$('#f-week').innerHTML=`<option value="">Week · all</option>`+WEEK_IDS.map(w=>`<option value="${w}">${weekLabel(w)}</option>`).join('');
+fill('#f-format','Format',uniq('format'));fill('#f-hook','Hook',uniq('hookTypes'));
 fill('#f-trigger','Trigger',uniq('triggers'));fill('#f-style','Style',uniq('visualStyles'));
 $('#f-sort').innerHTML=[['outlier','Sort · Outlier'],['views','Sort · Views'],['engRate','Sort · Eng. rate'],['likes','Sort · Likes'],['date','Sort · Newest']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
 
@@ -946,6 +962,8 @@ $('#grid').addEventListener('click',e=>{
   if(e.target.closest('.body')){openPost(url);}
 });
 ['#f-show','#f-week','#f-format','#f-hook','#f-trigger','#f-style','#f-sort','#f-from','#f-to'].forEach(s=>$(s).addEventListener('change',apply));
+// The week dropdown also drives sound chart + trend radar (per-week snapshots, not flattened like posts)
+$('#f-week').addEventListener('change',()=>{renderSoundChart();renderTrendRadar();});
 $('#f-search').addEventListener('input',apply);
 $('#reset').addEventListener('click',()=>{['#f-week','#f-format','#f-hook','#f-trigger','#f-style'].forEach(s=>$(s).value='');$('#f-show').value='active';$('#f-sort').value='outlier';$('#f-from').value='';$('#f-to').value='';$('#f-search').value='';apply();});
 apply();
@@ -973,12 +991,13 @@ function breakdown(title,rows){
 })();
 
 /* ========== NICHE SOUND CHART + TIKTOK TRENDING ========== */
-(function(){
-  const chart=DATA.soundChart||[], tt=DATA.tiktokSounds||[];
+const _PLAY_ICON='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+function renderSoundChart(){
+  const ad=activeData(), chart=ad.soundChart||[], tt=ad.tiktokSounds||[];
   const ic='<span class="static-ic">♪</span>';
-  const PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
-  if(!chart.length){const s=$('#sec-chart');if(s)s.style.display='none';}
-  else $('#soundchart').innerHTML=chart.map((t,i)=>{
+  const PLAY=_PLAY_ICON;
+  const sc=$('#sec-chart');if(sc)sc.style.display=chart.length?'':'none';
+  if(chart.length) $('#soundchart').innerHTML=chart.map((t,i)=>{
     const det=t.detected;
     const detb=det?(t.detectedVerified
       ? `<span class="det-badge" title="Real song behind IG's 'original audio', fingerprinted by AudD and confirmed in a music catalogue">♫ detected</span>`
@@ -997,23 +1016,24 @@ function breakdown(title,rows){
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
       ${reels?`<div class="reels">${reels}</div>`:''}</div>
       <div class="links">${dz}${dl}</div></div>`;}).join('');
-  if(!tt.length){const s=$('#sec-tt');if(s)s.style.display='none';}
-  else $('#ttsounds').innerHTML=tt.map((t,i)=>{
+  const stt=$('#sec-tt');if(stt)stt.style.display=tt.length?'':'none';
+  if(tt.length) $('#ttsounds').innerHTML=tt.map((t,i)=>{
     const xr=t.alsoInIgNiche?`<span class="xref">⚡ also in your IG niche${t.igNicheCreators?' · '+t.igNicheCreators:''}</span>`:'';
     const uc=t.useCount?` · ${fmtN(t.useCount)} uses`:'';
     const lk=t.link?`<a class="lk" href="${t.link}" target="_blank" rel="noopener">▶ TikTok</a>`:'';
     return `<div class="trk">${ic}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${t.title} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
       <div class="links">${lk}</div></div>`;}).join('');
-  // ⬇ Get audio: copy the reel link + open reelsave (optimistic ?url= prefill) — removes the manual copy
-  $('#v-audio').addEventListener('click',e=>{
-    const b=e.target.closest('.dl'); if(!b)return;
-    const url=b.dataset.reel;
-    if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
-    window.open('https://reelsave.app/audio?url='+encodeURIComponent(url),'_blank','noopener');
-    const o=b.textContent; b.textContent='✓ link copied'; setTimeout(()=>{b.textContent=o;},1600);
-  });
-})();
+}
+renderSoundChart();
+// ⬇ Get audio: copy the reel link + open reelsave (one-time attach, survives re-renders)
+$('#v-audio').addEventListener('click',e=>{
+  const b=e.target.closest('.dl'); if(!b)return;
+  const url=b.dataset.reel;
+  if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
+  window.open('https://reelsave.app/audio?url='+encodeURIComponent(url),'_blank','noopener');
+  const o=b.textContent; b.textContent='✓ link copied'; setTimeout(()=>{b.textContent=o;},1600);
+});
 
 /* ========== AUDIO ========== */
 (function(){
