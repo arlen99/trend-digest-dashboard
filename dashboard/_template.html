@@ -108,9 +108,33 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .trk-actions button:hover{border-color:var(--teal);color:var(--teal)}
 .trk-actions button.active{background:rgba(76,199,182,.12);border-color:var(--teal);color:var(--teal)}
 .trk.saved-sound{border-color:var(--teal)}
-.trends-bar,.sounds-bar{display:flex;gap:8px;margin-bottom:14px}
-.trends-bar button,.sounds-bar button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:20px;padding:4px 12px;color:var(--muted);cursor:pointer;transition:.15s}
-.trends-bar button.on,.sounds-bar button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
+.sec-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.trends-bar,.sounds-bar{display:flex;gap:8px}
+.trends-bar button,.sounds-bar button,.view-toggle button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:20px;padding:4px 12px;color:var(--muted);cursor:pointer;transition:.15s}
+.trends-bar button.on,.sounds-bar button.on,.view-toggle button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
+.view-toggle{display:flex;gap:6px}
+/* Spotlight carousel */
+.spl-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:20px 0}
+.spl-nav{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--muted);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
+.spl-nav:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.spl-nav:disabled{opacity:.18;cursor:default}
+.spl-card{flex:1;max-width:400px;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.spl-player{position:relative;background:#000;aspect-ratio:9/16;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.spl-player video{width:100%;height:100%;object-fit:contain;display:block}
+.spl-player iframe{width:100%;height:100%;border:0;display:block}
+.spl-no-reel{color:var(--faint);font-size:13px;font-family:'JetBrains Mono',monospace;text-align:center;padding:20px}
+.spl-body{padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.spl-count{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--faint)}
+.spl-title{font-family:'Fraunces',serif;font-size:21px;line-height:1.18}
+.spl-sub{color:var(--muted);font-size:13px}
+.spl-stat{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint)}
+.spl-stat b{color:var(--teal)}
+.spl-reels{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.spl-reel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line2);border-radius:7px;padding:5px 9px;color:var(--muted);background:none;cursor:pointer;transition:.15s}
+.spl-reel.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
+.spl-reel:hover{color:var(--teal);border-color:var(--teal)}
+.spl-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);text-align:center;margin-top:8px;letter-spacing:.04em}
+.spl-howto{background:rgba(76,199,182,.06);border-left:2px solid var(--teal);padding:8px 11px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink);line-height:1.4}
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tmom{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-weight:600}
 .tmom.new{background:var(--teal);color:#08110f}.tmom.rising{background:#6bbf8a;color:#08110f}
@@ -389,12 +413,19 @@ select:hover{border-color:var(--teal)}
       <div class="vhead"><h1>Trend <em>Radar</em></h1>
         <p class="sub">Repeatable <b>templates</b> the niche is copying — recurring sounds and on-screen hooks, with momentum, so you can ride a format instead of guessing.</p>
         <p class="prov" id="prov-trends"></p></div>
-      <div class="trends-bar" id="trends-bar">
-        <button data-tf="all" class="on">All</button>
-        <button data-tf="saved">★ Saved</button>
-        <button data-tf="dismissed">✕ Dismissed</button>
+      <div class="sec-bar">
+        <div class="trends-bar" id="trends-bar">
+          <button data-tf="all" class="on">All</button>
+          <button data-tf="saved">★ Saved</button>
+          <button data-tf="dismissed">✕ Dismissed</button>
+        </div>
+        <div class="view-toggle" id="tr-view-toggle">
+          <button data-trv="list" class="on">≡ List</button>
+          <button data-trv="spotlight">◉ Spotlight</button>
+        </div>
       </div>
       <div class="trendgrid" id="trendgrid"></div>
+      <div id="spl-trends" style="display:none"></div>
     </section>
     <!-- SUMMARY -->
     <section class="view hidden" id="v-summary">
@@ -413,12 +444,19 @@ select:hover{border-color:var(--teal)}
         <p class="prov" id="prov-audio"></p></div>
       <div class="sec" id="sec-chart"><h2>Niche sound chart</h2>
         <p class="lead">Sounds ranked by how many niche creators use them, across a wide account scan. Instagram splinters one song into many "audio" IDs — these are consolidated back into a single track.</p>
-        <div class="sounds-bar" id="sounds-bar">
-          <button data-sf="all" class="on">All</button>
-          <button data-sf="saved">★ Saved</button>
-          <button data-sf="dismissed">✕ Dismissed</button>
+        <div class="sec-bar">
+          <div class="sounds-bar" id="sounds-bar">
+            <button data-sf="all" class="on">All</button>
+            <button data-sf="saved">★ Saved</button>
+            <button data-sf="dismissed">✕ Dismissed</button>
+          </div>
+          <div class="view-toggle" id="sc-view-toggle">
+            <button data-scv="list" class="on">≡ List</button>
+            <button data-scv="spotlight">◉ Spotlight</button>
+          </div>
         </div>
-        <div class="tracks" id="soundchart"></div></div>
+        <div class="tracks" id="soundchart"></div>
+        <div id="spl-sounds" style="display:none"></div></div>
       <div class="sec" id="sec-tt"><h2>Trending on TikTok</h2>
         <p class="lead">TikTok's trending sounds, with the ones already surfacing in your Instagram niche flagged — a cross-platform early signal.</p>
         <div class="tracks" id="ttsounds"></div></div>
@@ -586,15 +624,20 @@ renderAccounts();
 /* ========== TREND RADAR ========== */
 function renderTrendRadar(){
   const trends=activeData().trends||[], tg=$('#trendgrid');
+  const spl=$('#spl-trends');
   const ICN={audio:'♪',hook:'✎'};
-  // update filter bar active state
+  // update filter bar + view toggle active state
   document.querySelectorAll('#trends-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.tf===trendFilter);});
+  document.querySelectorAll('#tr-view-toggle button').forEach(b=>{b.classList.toggle('on',b.dataset.trv===trMode);});
   const visible=trends.filter(t=>{
     const k=`${t.name}|${t.type}`;
     if(trendFilter==='saved')return savedTrends.has(k);
     if(trendFilter==='dismissed')return dismissedTrends.has(k);
     return !dismissedTrends.has(k);
   });
+  // dispatch to spotlight or list
+  if(trMode==='spotlight'){tg.style.display='none';if(spl)spl.style.display='';renderTrendSpotlight(visible);return;}
+  tg.style.display='';if(spl)spl.style.display='none';
   if(!visible.length){tg.innerHTML=`<div class="empty">${trendFilter==='saved'?'No saved trends yet.':trendFilter==='dismissed'?'No dismissed trends.':'No trend cards for this week.'}</div>`;return;}
   tg.innerHTML=visible.map(t=>{
     const k=`${t.name}|${t.type}`;
@@ -637,6 +680,8 @@ let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
 let trendFilter='all', soundFilter='all';
+let trMode='list', scMode='list';
+let trIdx=0, trReel=0, scIdx=0, scReel=0;
 let savedTrends=LS.get('td_saved_trends');
 let dismissedTrends=LS.get('td_dis_trends');
 let savedSounds=LS.get('td_saved_sounds');
@@ -1053,8 +1098,9 @@ function renderSoundChart(){
   const ic='<span class="static-ic">♪</span>';
   const PLAY=_PLAY_ICON;
   const sc=$('#sec-chart');if(sc)sc.style.display=chart.length?'':'none';
-  // update sounds filter bar
+  // update sounds filter bar + view toggle
   document.querySelectorAll('#sounds-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.sf===soundFilter);});
+  document.querySelectorAll('#sc-view-toggle button').forEach(b=>{b.classList.toggle('on',b.dataset.scv===scMode);});
   const visChart=chart.filter(t=>{
     const headline=t.detected?t.detectedSong:t.title;
     const sub=t.detected?`${t.detectedArtist||''}|${t.artist}`:(t.artist||'');
@@ -1063,6 +1109,10 @@ function renderSoundChart(){
     if(soundFilter==='dismissed')return dismissedSounds.has(k);
     return !dismissedSounds.has(k);
   });
+  // dispatch to spotlight or list
+  const splSounds=$('#spl-sounds'), scTracks=$('#soundchart');
+  if(scMode==='spotlight'){if(scTracks)scTracks.style.display='none';if(splSounds)splSounds.style.display='';renderSoundSpotlight(visChart);return;}
+  if(scTracks)scTracks.style.display='';if(splSounds)splSounds.style.display='none';
   if(chart.length) $('#soundchart').innerHTML=(visChart.length?visChart:[]).map((t,i)=>{
     const det=t.detected;
     const detb=det?(t.detectedVerified
@@ -1094,6 +1144,102 @@ function renderSoundChart(){
       <div class="sg">${t.title} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
       <div class="links">${lk}</div></div>`;}).join('');
 }
+/* ===== TREND SPOTLIGHT ===== */
+function splPlayer(reelUrl){
+  if(!reelUrl)return '<div class="spl-no-reel">No example reels</div>';
+  const blobVid=(DATA.videos||{})[reelUrl];
+  if(blobVid)return `<video controls autoplay playsinline src="${blobVid}"></video>`;
+  const code=igCode(reelUrl),istt=reelUrl.includes('tiktok.com'),tid=istt?ttId(reelUrl):'';
+  const src=istt&&tid?`https://www.tiktok.com/embed/v2/${tid}`:code?`https://www.instagram.com/reel/${code}/embed/`:'';
+  return src?`<iframe src="${src}" allow="autoplay;encrypted-media;fullscreen" allowfullscreen scrolling="no"></iframe>`:'<div class="spl-no-reel">No embed available</div>';
+}
+function renderTrendSpotlight(items){
+  const el=$('#spl-trends');if(!el)return;
+  if(!items||!items.length){el.innerHTML='<div class="empty">No trends to show.</div>';return;}
+  if(trIdx>=items.length)trIdx=0;
+  const t=items[trIdx], ICN={audio:'♪',hook:'✎'};
+  const reels=t.examples||[];
+  if(trReel>=reels.length)trReel=0;
+  const reelBtns=reels.map((u,i)=>`<button class="spl-reel${i===trReel?' on':''}" data-trreel="${i}">▶ Example ${i+1}</button>`).join('');
+  const mom=(t.momentum||'new').toLowerCase();
+  const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'';
+  el.innerHTML=`<div class="spl-wrap">
+    <button class="spl-nav" id="spl-tr-prev"${trIdx===0?' disabled':''}>&#8249;</button>
+    <div class="spl-card">
+      <div class="spl-player">${splPlayer(reels[trReel])}</div>
+      <div class="spl-body">
+        <div class="spl-count">${trIdx+1} / ${items.length} &nbsp;·&nbsp; <span class="tmom ${mom}" style="display:inline-block">${mom}</span> &nbsp;${ICN[t.type]||''} ${t.type}</div>
+        <div class="spl-title">${t.name}</div>
+        <div class="spl-sub">${t.anchor}</div>
+        ${t.format?`<div class="spl-stat">${t.format}</div>`:''}
+        <div class="spl-stat">${trig?trig+'&ensp;':''}<b>${t.creators}</b> creators &nbsp;·&nbsp; <b>${t.uses}</b> uses</div>
+        ${t.howTo?`<div class="spl-howto">${t.howTo}</div>`:''}
+        ${reels.length?`<div class="spl-reels">${reelBtns}</div>`:''}
+      </div>
+    </div>
+    <button class="spl-nav" id="spl-tr-next"${trIdx===items.length-1?' disabled':''}>&#8250;</button>
+  </div>
+  <p class="spl-hint">‹ › to navigate &nbsp;·&nbsp; select a reel tab to switch</p>`;
+  $('#spl-tr-prev').onclick=()=>{trIdx--;trReel=0;renderTrendRadar();};
+  $('#spl-tr-next').onclick=()=>{trIdx++;trReel=0;renderTrendRadar();};
+  el.querySelectorAll('[data-trreel]').forEach(b=>b.onclick=()=>{trReel=+b.dataset.trreel;renderTrendSpotlight(items);});
+}
+/* ===== SOUND SPOTLIGHT ===== */
+function renderSoundSpotlight(items){
+  const el=$('#spl-sounds');if(!el)return;
+  if(!items||!items.length){el.innerHTML='<div class="empty">No sounds to show.</div>';return;}
+  if(scIdx>=items.length)scIdx=0;
+  const t=items[scIdx];
+  const det=t.detected, headline=det?t.detectedSong:t.title;
+  const artist=det?t.detectedArtist||'':t.artist||'';
+  const sub=det?`${artist} · tagged "original audio" by @${t.artist}`:artist;
+  const reels=t.samples||[];
+  if(scReel>=reels.length)scReel=0;
+  const detb=det?(t.detectedVerified?'<span class="det-badge">♫ detected</span>':'<span class="det-badge unv">♫ detected · unverified</span>'):'';
+  const reelBtns=reels.map((u,i)=>`<button class="spl-reel${i===scReel?' on':''}" data-screel="${i}">▶ Reel ${i+1}</button>`).join('');
+  const accts=t.accounts&&t.accounts.length?'<br>'+t.accounts.map(a=>'@'+a).join(', '):'';
+  el.innerHTML=`<div class="spl-wrap">
+    <button class="spl-nav" id="spl-sc-prev"${scIdx===0?' disabled':''}>&#8249;</button>
+    <div class="spl-card">
+      <div class="spl-player">${splPlayer(reels[scReel])}</div>
+      <div class="spl-body">
+        <div class="spl-count">${scIdx+1} / ${items.length}</div>
+        <div class="spl-title">${headline} ${detb}</div>
+        <div class="spl-sub">${sub}</div>
+        <div class="spl-stat">used in <b>${t.uses}</b> reel${t.uses!==1?'s':''} &nbsp;·&nbsp; <b>${t.creators}</b> creator${t.creators!==1?'s':''}${accts}</div>
+        ${reels.length?`<div class="spl-reels">${reelBtns}</div>`:'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>'}
+      </div>
+    </div>
+    <button class="spl-nav" id="spl-sc-next"${scIdx===items.length-1?' disabled':''}>&#8250;</button>
+  </div>
+  <p class="spl-hint">‹ › to navigate &nbsp;·&nbsp; select a reel tab to switch</p>`;
+  $('#spl-sc-prev').onclick=()=>{scIdx--;scReel=0;renderSoundChart();};
+  $('#spl-sc-next').onclick=()=>{scIdx++;scReel=0;renderSoundChart();};
+  el.querySelectorAll('[data-screel]').forEach(b=>b.onclick=()=>{scReel=+b.dataset.screel;renderSoundSpotlight(items);});
+}
+/* ===== VIEW TOGGLES ===== */
+document.getElementById('tr-view-toggle').addEventListener('click',e=>{
+  const b=e.target.closest('[data-trv]');if(!b)return;
+  trMode=b.dataset.trv;trIdx=0;trReel=0;renderTrendRadar();
+});
+document.getElementById('sc-view-toggle').addEventListener('click',e=>{
+  const b=e.target.closest('[data-scv]');if(!b)return;
+  scMode=b.dataset.scv;scIdx=0;scReel=0;renderSoundChart();
+});
+/* ===== KEYBOARD NAVIGATION for spotlight ===== */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  const dir=e.key==='ArrowLeft'?-1:1;
+  const vTr=$('#v-trends'),vAu=$('#v-audio');
+  if(trMode==='spotlight'&&vTr&&!vTr.classList.contains('hidden')){
+    const items=(activeData().trends||[]).filter(t=>{const k=`${t.name}|${t.type}`;return trendFilter==='saved'?savedTrends.has(k):trendFilter==='dismissed'?dismissedTrends.has(k):!dismissedTrends.has(k);});
+    trIdx=Math.max(0,Math.min(items.length-1,trIdx+dir));trReel=0;renderTrendRadar();
+  }else if(scMode==='spotlight'&&vAu&&!vAu.classList.contains('hidden')){
+    const items=(activeData().soundChart||[]).filter(t=>{const h=t.detected?t.detectedSong:t.title,s=t.detected?`${t.detectedArtist||''}|${t.artist}`:(t.artist||''),k=`${h}|${s}`;return soundFilter==='saved'?savedSounds.has(k):soundFilter==='dismissed'?dismissedSounds.has(k):!dismissedSounds.has(k);});
+    scIdx=Math.max(0,Math.min(items.length-1,scIdx+dir));scReel=0;renderSoundChart();
+  }
+});
 renderSoundChart();
 // Sound chart: filter bar + save/dismiss delegation
 document.getElementById('sounds-bar').addEventListener('click',e=>{
