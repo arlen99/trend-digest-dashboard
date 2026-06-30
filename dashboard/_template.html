@@ -98,6 +98,19 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .plane h5{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin:0 0 9px;text-align:center}
 .trendgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:18px}
 .tcard{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:17px 18px 15px;display:flex;flex-direction:column;gap:9px}
+.tcard.saved-trend{border-color:var(--teal)}
+.tcard-actions{display:flex;gap:7px;margin-top:2px}
+.tcard-actions button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:7px;padding:4px 9px;color:var(--muted);cursor:pointer;transition:.15s}
+.tcard-actions button:hover{border-color:var(--teal);color:var(--teal)}
+.tcard-actions button.active{background:rgba(76,199,182,.12);border-color:var(--teal);color:var(--teal)}
+.trk-actions{display:flex;gap:6px;flex:none}
+.trk-actions button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:7px;padding:4px 8px;color:var(--muted);cursor:pointer;transition:.15s}
+.trk-actions button:hover{border-color:var(--teal);color:var(--teal)}
+.trk-actions button.active{background:rgba(76,199,182,.12);border-color:var(--teal);color:var(--teal)}
+.trk.saved-sound{border-color:var(--teal)}
+.trends-bar,.sounds-bar{display:flex;gap:8px;margin-bottom:14px}
+.trends-bar button,.sounds-bar button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:20px;padding:4px 12px;color:var(--muted);cursor:pointer;transition:.15s}
+.trends-bar button.on,.sounds-bar button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tmom{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-weight:600}
 .tmom.new{background:var(--teal);color:#08110f}.tmom.rising{background:#6bbf8a;color:#08110f}
@@ -376,6 +389,11 @@ select:hover{border-color:var(--teal)}
       <div class="vhead"><h1>Trend <em>Radar</em></h1>
         <p class="sub">Repeatable <b>templates</b> the niche is copying — recurring sounds and on-screen hooks, with momentum, so you can ride a format instead of guessing.</p>
         <p class="prov" id="prov-trends"></p></div>
+      <div class="trends-bar" id="trends-bar">
+        <button data-tf="all" class="on">All</button>
+        <button data-tf="saved">★ Saved</button>
+        <button data-tf="dismissed">✕ Dismissed</button>
+      </div>
       <div class="trendgrid" id="trendgrid"></div>
     </section>
     <!-- SUMMARY -->
@@ -395,6 +413,11 @@ select:hover{border-color:var(--teal)}
         <p class="prov" id="prov-audio"></p></div>
       <div class="sec" id="sec-chart"><h2>Niche sound chart</h2>
         <p class="lead">Sounds ranked by how many niche creators use them, across a wide account scan. Instagram splinters one song into many "audio" IDs — these are consolidated back into a single track.</p>
+        <div class="sounds-bar" id="sounds-bar">
+          <button data-sf="all" class="on">All</button>
+          <button data-sf="saved">★ Saved</button>
+          <button data-sf="dismissed">✕ Dismissed</button>
+        </div>
         <div class="tracks" id="soundchart"></div></div>
       <div class="sec" id="sec-tt"><h2>Trending on TikTok</h2>
         <p class="lead">TikTok's trending sounds, with the ones already surfacing in your Instagram niche flagged — a cross-platform early signal.</p>
@@ -564,12 +587,22 @@ renderAccounts();
 function renderTrendRadar(){
   const trends=activeData().trends||[], tg=$('#trendgrid');
   const ICN={audio:'♪',hook:'✎'};
-  if(!trends.length){tg.innerHTML=`<div class="empty">No trend cards for this week.</div>`;return;}
-  tg.innerHTML=trends.map(t=>{
-    const ex=(t.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ example ${k+1}</button>`).join('');
+  // update filter bar active state
+  document.querySelectorAll('#trends-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.tf===trendFilter);});
+  const visible=trends.filter(t=>{
+    const k=`${t.name}|${t.type}`;
+    if(trendFilter==='saved')return savedTrends.has(k);
+    if(trendFilter==='dismissed')return dismissedTrends.has(k);
+    return !dismissedTrends.has(k);
+  });
+  if(!visible.length){tg.innerHTML=`<div class="empty">${trendFilter==='saved'?'No saved trends yet.':trendFilter==='dismissed'?'No dismissed trends.':'No trend cards for this week.'}</div>`;return;}
+  tg.innerHTML=visible.map(t=>{
+    const k=`${t.name}|${t.type}`;
+    const isSaved=savedTrends.has(k), isDis=dismissedTrends.has(k);
+    const ex=(t.examples||[]).map((u,i)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ example ${i+1}</button>`).join('');
     const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'<span></span>';
     const mom=(t.momentum||'new').toLowerCase();
-    return `<article class="tcard">
+    return `<article class="tcard${isSaved?' saved-trend':''}" data-tkey="${encodeURIComponent(k)}">
       <div class="tcard-top"><span class="tmom ${mom}">${mom}</span><span class="ttype">${ICN[t.type]||''} ${t.type}</span></div>
       <h3 class="tname">${t.name}</h3>
       <div class="tanchor"><span>${ICN[t.type]||'♪'}</span><span>${t.anchor}</span></div>
@@ -578,9 +611,12 @@ function renderTrendRadar(){
       <div class="tmeta">${trig}<span class="tcount"><b>${t.creators}</b> creators · ${t.uses} uses</span></div>
       ${t.howTo?`<div class="thow"><span class="thow-l">Ride it</span>${t.howTo}</div>`:''}
       ${ex?`<div class="texamples">${ex}</div>`:''}
+      <div class="tcard-actions">
+        <button data-tact="save" class="${isSaved?'active':''}">★ ${isSaved?'Saved':'Save'}</button>
+        <button data-tact="dismiss" class="${isDis?'active':''}">✕ ${isDis?'Dismissed':'Dismiss'}</button>
+      </div>
     </article>`;}).join('');
 }
-renderTrendRadar();
 (function(){const v=DATA.provenance;
   if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;})();
 
@@ -600,27 +636,46 @@ let platformFilter='all';
 let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'{}')}catch(e){}
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
+let trendFilter='all', soundFilter='all';
+let savedTrends=LS.get('td_saved_trends');
+let dismissedTrends=LS.get('td_dis_trends');
+let savedSounds=LS.get('td_saved_sounds');
+let dismissedSounds=LS.get('td_dis_sounds');
 // accountEdits is declared earlier (before the Accounts panel block) to avoid a TDZ; nothing else to init here
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
-function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));}
+function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);}
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT;
 function pushState(){saveLocal();apply();if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits})})
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds]})})
     .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
     .catch(()=>setSync('err'));},500);}
 async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
-    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));saveLocal();
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);saveLocal();
       // strip videos the user has removed on any device, so popups fall back to the embed
       if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
-    setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();
+    setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();if(typeof renderTrendRadar==='function')renderTrendRadar();if(typeof renderSoundChart==='function')renderSoundChart();
   }catch(e){setSync('err');}}
 // background poll every 30s so changes made on another device appear automatically — no manual sync click needed
 setInterval(()=>{if(SECRET&&document.visibilityState==='visible')pullState();},30000);
+// Trend Radar: initial render + filter bar + save/dismiss delegation
+renderTrendRadar();
+document.getElementById('trends-bar').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tf]');if(!b)return;
+  trendFilter=b.dataset.tf;renderTrendRadar();
+});
+document.getElementById('trendgrid').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-tact]');if(!btn)return;
+  const card=btn.closest('[data-tkey]');if(!card)return;
+  const k=decodeURIComponent(card.dataset.tkey), act=btn.dataset.tact;
+  if(act==='save'){savedTrends.has(k)?savedTrends.delete(k):savedTrends.add(k);}
+  else{dismissedTrends.has(k)?dismissedTrends.delete(k):dismissedTrends.add(k);}
+  pushState();renderTrendRadar();
+});
 // pull immediately when the tab regains focus (so the moment you switch back from another device, it's fresh)
 document.addEventListener('visibilitychange',()=>{if(SECRET&&document.visibilityState==='visible')pullState();});
 function setupSync(){const p=prompt('Sync passphrase (the EDIT_SECRET you set in Vercel) — syncs bookmarks & accounts across your devices:',SECRET);if(p===null)return;SECRET=p.trim();localStorage.setItem('td_secret',SECRET);pullState();}
@@ -998,7 +1053,17 @@ function renderSoundChart(){
   const ic='<span class="static-ic">♪</span>';
   const PLAY=_PLAY_ICON;
   const sc=$('#sec-chart');if(sc)sc.style.display=chart.length?'':'none';
-  if(chart.length) $('#soundchart').innerHTML=chart.map((t,i)=>{
+  // update sounds filter bar
+  document.querySelectorAll('#sounds-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.sf===soundFilter);});
+  const visChart=chart.filter(t=>{
+    const headline=t.detected?t.detectedSong:t.title;
+    const sub=t.detected?`${t.detectedArtist||''}|${t.artist}`:(t.artist||'');
+    const k=`${headline}|${sub}`;
+    if(soundFilter==='saved')return savedSounds.has(k);
+    if(soundFilter==='dismissed')return dismissedSounds.has(k);
+    return !dismissedSounds.has(k);
+  });
+  if(chart.length) $('#soundchart').innerHTML=(visChart.length?visChart:[]).map((t,i)=>{
     const det=t.detected;
     const detb=det?(t.detectedVerified
       ? `<span class="det-badge" title="Real song behind IG's 'original audio', fingerprinted by AudD and confirmed in a music catalogue">♫ detected</span>`
@@ -1006,17 +1071,20 @@ function renderSoundChart(){
     const orig=(t.original&&!det)?`<span class="det-badge" title="Creator's own original audio">original</span>`:'';
     const cons=t.ids>1?`<span class="xref" title="${t.ids} audio IDs merged into one song">${t.ids} IDs merged</span>`:'';
     const headline=det?t.detectedSong:t.title;
-    const sub=det?`${t.detectedArtist||''} · tagged “original audio” by @${t.artist}`:(t.artist||'');
+    const sub=det?`${t.detectedArtist||''} · tagged "original audio" by @${t.artist}`:(t.artist||'');
+    const skey=`${headline}|${det?`${t.detectedArtist||''}|${t.artist}`:(t.artist||'')}`;
+    const isSaved=savedSounds.has(skey), isDis=dismissedSounds.has(skey);
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
       :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
     const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ reel ${k+1}</button>`).join('');
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     const dl=t.sample?`<button class="lk dl" type="button" data-reel="${t.sample}" title="Copy reel link &amp; open reelsave">⬇ Get audio</button>`:'';
-    return `<div class="trk">${play}<div class="r">${i+1}</div><div class="ti">
+    return `<div class="trk${isSaved?' saved-sound':''}" data-skey="${encodeURIComponent(skey)}">${play}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${headline} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
       ${reels?`<div class="reels">${reels}</div>`:''}</div>
-      <div class="links">${dz}${dl}</div></div>`;}).join('');
+      <div class="links">${dz}${dl}<div class="trk-actions"><button data-sact="save" class="${isSaved?'active':''}">★ ${isSaved?'Saved':'Save'}</button><button data-sact="dismiss" class="${isDis?'active':''}">✕ ${isDis?'Dismissed':'Dismiss'}</button></div></div></div>`;
+  }).join('')+(visChart.length===0?`<div class="empty">${soundFilter==='saved'?'No saved sounds yet.':'No dismissed sounds.'}</div>`:'');
   const stt=$('#sec-tt');if(stt)stt.style.display=tt.length?'':'none';
   if(tt.length) $('#ttsounds').innerHTML=tt.map((t,i)=>{
     const xr=t.alsoInIgNiche?`<span class="xref">⚡ also in your IG niche${t.igNicheCreators?' · '+t.igNicheCreators:''}</span>`:'';
@@ -1027,6 +1095,19 @@ function renderSoundChart(){
       <div class="links">${lk}</div></div>`;}).join('');
 }
 renderSoundChart();
+// Sound chart: filter bar + save/dismiss delegation
+document.getElementById('sounds-bar').addEventListener('click',e=>{
+  const b=e.target.closest('[data-sf]');if(!b)return;
+  soundFilter=b.dataset.sf;renderSoundChart();
+});
+document.getElementById('soundchart').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-sact]');if(!btn)return;
+  const row=btn.closest('[data-skey]');if(!row)return;
+  const k=decodeURIComponent(row.dataset.skey), act=btn.dataset.sact;
+  if(act==='save'){savedSounds.has(k)?savedSounds.delete(k):savedSounds.add(k);}
+  else{dismissedSounds.has(k)?dismissedSounds.delete(k):dismissedSounds.add(k);}
+  pushState();renderSoundChart();
+});
 // ⬇ Get audio: copy the reel link + open reelsave (one-time attach, survives re-renders)
 $('#v-audio').addEventListener('click',e=>{
   const b=e.target.closest('.dl'); if(!b)return;
