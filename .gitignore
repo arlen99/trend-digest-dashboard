@@ -17,3 +17,4 @@ output/*
 __pycache__/
 *.pyc
 tools/ocr
+dashboard/.claude/

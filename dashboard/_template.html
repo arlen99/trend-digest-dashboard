@@ -442,7 +442,8 @@ const fmtN=n=>n==null?'—':n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,'')+'M':n>=
 const $=s=>document.querySelector(s);
 /* ---- week-archive plumbing ---- */
 // Build the "current" week record from top-level fields; merge in any historical weeks (DATA.weeks).
-const CURRENT_WEEK=DATA.generated||null;
+// Current-week key: weekOf (the ISO-Monday set deterministically by accumulate.py). Falls back to generated for older data.
+const CURRENT_WEEK=DATA.weekOf||DATA.generated||null;
 const WEEKS={[CURRENT_WEEK||'current']:{posts:DATA.posts||[],soundChart:DATA.soundChart||[],trends:DATA.trends||[],tiktokSounds:DATA.tiktokSounds||[],generatedHooks:DATA.generatedHooks||[]}};
 Object.entries(DATA.weeks||{}).forEach(([w,s])=>{WEEKS[w]=Object.assign({posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]},s);});
 const WEEK_IDS=Object.keys(WEEKS).sort().reverse(); // newest first
