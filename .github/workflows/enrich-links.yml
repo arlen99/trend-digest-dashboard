@@ -1,0 +1,31 @@
+name: Enrich Saved Links (OCR)
+
+# Backfills on-screen text (videoText) for links saved via the "Save to Trend
+# Digest" iOS Shortcut. Metrics (views/likes/thumbnail/video/account) are already
+# fetched synchronously by dashboard/api/save-link.js at save time — this only
+# covers the OCR pass, which needs a real OCR engine (Tesseract here, same
+# macOS-Vision -> Tesseract swap the weekly digest already uses on Linux runners).
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 hours — adjust to taste
+  workflow_dispatch: {}
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Tesseract OCR
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Backfill on-screen text for saved links
+        env:
+          EDIT_SECRET: ${{ secrets.EDIT_SECRET }}
+          OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
+        run: python3 enrich_links.py
