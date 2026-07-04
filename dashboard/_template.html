@@ -103,6 +103,7 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .tcard-actions button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:7px;padding:4px 9px;color:var(--muted);cursor:pointer;transition:.15s}
 .tcard-actions button:hover{border-color:var(--teal);color:var(--teal)}
 .tcard-actions button.active{background:rgba(76,199,182,.12);border-color:var(--teal);color:var(--teal)}
+.trk-actions-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
 .trk-actions{display:flex;gap:6px;flex:none}
 .trk-actions button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:7px;padding:4px 8px;color:var(--muted);cursor:pointer;transition:.15s}
 .trk-actions button:hover{border-color:var(--teal);color:var(--teal)}
@@ -1309,9 +1310,9 @@ function renderBookmarks(){
         // so it's not used for the hyperlink.
         var audioPageUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||'');
         var dlUrl=audioPageUrl||(t.samples&&t.samples.length?t.samples[0]:'');
-        var dlBtn=dlUrl?'<button class="dl" type="button" data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'';
+        var dlBtn=dlUrl?'<button class="lk dl" type="button" data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'';
         var headlineHtml=audioPageUrl?'<a class="ht-lk" href="'+audioPageUrl+'" target="_blank" rel="noopener">'+headline+'</a>':headline;
-        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+dlBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headlineHtml+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
+        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'"><div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headlineHtml+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions-wrap"><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>'+dlBtn+'</div></div>';
       }).join('');
       html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
     }
