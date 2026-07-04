@@ -1592,13 +1592,37 @@ document.getElementById('soundchart').addEventListener('click',e=>{
   else{dismissedSounds.has(k)?dismissedSounds.delete(k):dismissedSounds.add(k);}
   pushState();renderSoundChart();
 });
-// ⬇ Get audio: copy the reel link + open reelsave (one-time attach, survives re-renders)
-$('#v-audio').addEventListener('click',e=>{
+// ⬇ Get audio: try a real direct download via TikHub first (data.reel is a reel URL,
+// the RELIABLE lookup path — same one confirmed to always succeed for direct reel
+// links, unlike the flaky reels/audio/<id> music-search path). Falls back to the
+// original copy-link + open-reelsave behavior on any failure (network, TikHub outage,
+// deleted post, etc.) so nothing regresses for the failure case.
+// (one-time attach, survives re-renders)
+$('#v-audio').addEventListener('click',async e=>{
   const b=e.target.closest('.dl'); if(!b)return;
   const url=b.dataset.reel;
-  if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
-  window.open('https://reelsave.app/audio?url='+encodeURIComponent(url),'_blank','noopener');
-  const o=b.textContent; b.textContent='✓ link copied'; setTimeout(()=>{b.textContent=o;},1600);
+  const orig=b.textContent;
+  const fallback=()=>{
+    if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
+    window.open('https://reelsave.app/audio?url='+encodeURIComponent(url),'_blank','noopener');
+    b.textContent='✓ link copied';
+  };
+  if(!SECRET){fallback();setTimeout(()=>{b.textContent=orig;},1600);return;}
+  b.disabled=true;b.textContent='Downloading…';
+  try{
+    const r=await fetch('/api/download-audio',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url})});
+    const ct=r.headers.get('content-type')||'';
+    if(r.ok&&ct.indexOf('audio')===0){
+      const blob=await r.blob();
+      const cd=r.headers.get('content-disposition')||'';
+      const m=cd.match(/filename="([^"]+)"/);
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download=m?m[1]:'audio.m4a';document.body.appendChild(a);a.click();
+      setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+      b.textContent='✓ downloaded';
+    }else{fallback();}
+  }catch(err){fallback();}
+  b.disabled=false;setTimeout(()=>{b.textContent=orig;},1600);
 });
 
 /* ========== AUDIO ========== */
