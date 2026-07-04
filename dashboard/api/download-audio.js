@@ -1,22 +1,32 @@
-// Real audio-only download for an Instagram link — either a "reels/audio/<id>"
-// music page or a direct reel/post link. Named account_name-audio_ID.m4a so the
-// exact audio can be traced back to its source later.
+// Real audio download for an Instagram link — either a "reels/audio/<id>" music
+// page or a direct reel/post link.
 //
-// Two lookup paths depending on what was pasted:
-//  - reel/post link  -> fetch_post_by_url (reliable, same call save-link.js uses)
-//  - reels/audio link -> fetch_music_posts?music_url=... (an IG-internal endpoint
-//    proxied by TikHub; genuinely flaky — empirically ~1-in-3 to 1-in-9 calls
-//    return real data, the rest come back with an opaque `{attempts: N}` payload
-//    with no error message). We retry a few times with a short delay, which in
-//    testing reliably turns up real post data within 2-3 attempts. If it still
-//    fails, the client falls back to opening instasaver.io (confirmed by hand to
-//    work specifically for the reels/audio/ URL shape, unlike reelsave.app).
+// For a reels/audio/<id> link with a REGISTERED/licensed track, IG's own music
+// metadata (fetch_music_posts) includes a `progressive_download_url` — the raw,
+// complete original track (e.g. the full 5:40 studio recording), independent of
+// any specific reel. That's what we serve when it's available: creators often
+// layer their own foley/SFX on top of a sound in their reel, so extracting audio
+// from a random reel using that sound is NOT the same as the clean original track.
+// Named "{track title} ({audio ID}).m4a", e.g. "Sign of the Times (204373260395952).m4a".
 //
-// Once we have a representative post's video URL, we download it and extract just
-// the audio stream with a real ffmpeg binary (ffmpeg-static — a native binary
-// bundled via npm, not WASM; comfortably fits Vercel's 250MB function budget).
-// `-c:a copy` re-packages the existing AAC stream losslessly with no re-encode,
-// so this is fast and avoids picking an arbitrary target bitrate.
+// Fallback path (used for creator-original audio with no registered-track metadata,
+// or when the audio-page lookup fails/times out): extract audio from a representative
+// reel's video instead — same as before, named "{account}-{audio ID or shortcode}.m4a".
+//
+// Direct reel/post links (no reels/audio/ in the URL) always use the fallback path,
+// since fetch_post_by_url's response has no audio metadata at all (verified by
+// walking its full response tree — only a boolean `has_audio` exists there).
+//
+// The reels/audio/<id> lookup (fetch_music_posts) is proxied IG-internal API and
+// genuinely flaky — empirically ~1-in-3 to 1-in-9 calls return real data, the rest
+// come back with an opaque `{attempts: N}` payload with no error message. We retry
+// a few times, which in testing reliably turns up real data within 2-3 attempts.
+// If it still fails, the client falls back to opening instasaver.io (confirmed by
+// hand to work specifically for the reels/audio/ URL shape, unlike reelsave.app).
+//
+// Audio extraction/repackaging uses a real ffmpeg binary (ffmpeg-static — a native
+// binary bundled via npm, not WASM; comfortably fits Vercel's 250MB function budget).
+// `-c:a copy` re-packages the existing AAC stream losslessly with no re-encode.
 //
 //   POST /api/download-audio   { url }   header X-Edit-Secret
 //   -> audio/mp4 (m4a) binary response, Content-Disposition: attachment
@@ -71,23 +81,29 @@ async function lookupByPostUrl(url) {
   return {
     account: deep(d, "owner", "username") || "",
     video: d.video_url || "",
-    audioId: "reel_" + (shortcodeFromUrl(url) || d.shortcode || ""),
+    idLabel: "reel_" + (shortcodeFromUrl(url) || d.shortcode || ""),
   };
 }
 
-// For a reels/audio/<id> link, the audio ID is already the ID in the URL itself —
-// no need to dig it back out of the API response. fetch_music_posts is only used
-// here to find a representative post using that audio, for its video_url/account.
+// For a reels/audio/<id> link: try to get the RAW track first (registered/licensed
+// sounds only — music_info is null for creator-original audio). Falls back to a
+// representative reel's video if no raw track is available.
 async function lookupByMusicUrl(url) {
   const audioId = audioIdFromUrl(url);
   for (let attempt = 0; attempt < 3; attempt++) {
     const j = await tikhub(`/api/v1/instagram/v1/fetch_music_posts?music_url=${encodeURIComponent(url)}`);
-    const items = deep(j, "data", "items");
+    const d = deep(j, "data") || {};
+    const items = d.items;
     if (Array.isArray(items) && items.length) {
+      const ai = deep(d, "metadata", "music_info", "music_asset_info");
+      const rawUrl = ai && (ai.progressive_download_url || ai.fast_start_progressive_download_url);
+      if (rawUrl) {
+        return { rawAudio: rawUrl, title: ai.title || "", audioId };
+      }
       for (const it of items) {
         const m = it.media;
         const video = m && deep(m, "video_versions", 0, "url");
-        if (video) return { account: deep(m, "user", "username") || "", video, audioId };
+        if (video) return { account: deep(m, "user", "username") || "", video, idLabel: audioId };
       }
     }
     if (attempt < 2) await new Promise((res) => setTimeout(res, 3000));
@@ -95,8 +111,32 @@ async function lookupByMusicUrl(url) {
   return null;
 }
 
+// Preserves spaces/parens/apostrophes (wanted in the filename) but strips
+// characters invalid across filesystems.
+function sanitizeTitle(s) {
+  return (s || "Unknown").replace(/[/\\:*?"<>|]/g, "").trim().slice(0, 100);
+}
 function sanitize(s) {
   return (s || "unknown").replace(/[^A-Za-z0-9_-]+/g, "_").slice(0, 60);
+}
+
+async function extractAudio(sourceUrl) {
+  const tmpIn = path.join(os.tmpdir(), `dl_in_${Date.now()}.mp4`);
+  const tmpOut = path.join(os.tmpdir(), `dl_out_${Date.now()}.m4a`);
+  try {
+    const vr = await fetch(sourceUrl, { headers: { "user-agent": UA } });
+    if (!vr.ok) throw new Error("source fetch failed");
+    fs.writeFileSync(tmpIn, Buffer.from(await vr.arrayBuffer()));
+    await new Promise((resolve, reject) => {
+      execFile(ffmpegPath, ["-y", "-i", tmpIn, "-vn", "-acodec", "copy", tmpOut], (err) => {
+        if (err) reject(err); else resolve();
+      });
+    });
+    return fs.readFileSync(tmpOut);
+  } finally {
+    try { fs.unlinkSync(tmpIn); } catch (e) {}
+    try { fs.unlinkSync(tmpOut); } catch (e) {}
+  }
 }
 
 module.exports = async (req, res) => {
@@ -128,33 +168,20 @@ module.exports = async (req, res) => {
   } catch (e) {
     found = null;
   }
-  if (!found || !found.video) {
+  if (!found || (!found.video && !found.rawAudio)) {
     res.status(200).json({ ok: false, reason: "lookup_failed", fallback: audioLink ? "instasaver" : null });
     return;
   }
 
-  const tmpIn = path.join(os.tmpdir(), `dl_in_${Date.now()}.mp4`);
-  const tmpOut = path.join(os.tmpdir(), `dl_out_${Date.now()}.m4a`);
   try {
-    const vr = await fetch(found.video, { headers: { "user-agent": UA } });
-    if (!vr.ok) throw new Error("video fetch failed");
-    fs.writeFileSync(tmpIn, Buffer.from(await vr.arrayBuffer()));
-
-    await new Promise((resolve, reject) => {
-      execFile(ffmpegPath, ["-y", "-i", tmpIn, "-vn", "-acodec", "copy", tmpOut], (err) => {
-        if (err) reject(err); else resolve();
-      });
-    });
-
-    const audio = fs.readFileSync(tmpOut);
-    const filename = `${sanitize(found.account)}-${sanitize(found.audioId)}.m4a`;
+    const audio = await extractAudio(found.rawAudio || found.video);
+    const filename = found.rawAudio
+      ? `${sanitizeTitle(found.title || "Original audio")} (${found.audioId}).m4a`
+      : `${sanitize(found.account)}-${sanitize(found.idLabel)}.m4a`;
     res.setHeader("Content-Type", "audio/mp4");
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
     res.status(200).send(audio);
   } catch (e) {
     res.status(200).json({ ok: false, reason: "extract_failed", fallback: audioLink ? "instasaver" : null });
-  } finally {
-    try { fs.unlinkSync(tmpIn); } catch (e) {}
-    try { fs.unlinkSync(tmpOut); } catch (e) {}
   }
 };

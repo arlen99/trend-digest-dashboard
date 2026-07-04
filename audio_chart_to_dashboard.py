@@ -80,6 +80,7 @@ def main():
             "uses": t.get("niche_uses", 0),
             "original": bool(t.get("original")),
             "ids": len(t.get("audio_ids") or []),
+            "audioId": aid,  # lets the dashboard build a reels/audio/<id> link → raw-track download, not a reel's mixed audio
             "accounts": (t.get("accounts") or [])[:3],
             "samples": (t.get("samples") or [])[:4],   # reels that used it (within niche)
             "sample": (t.get("samples") or [None])[0],

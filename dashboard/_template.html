@@ -1441,7 +1441,10 @@ function renderSoundChart(){
       :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
     const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ reel ${k+1}</button>`).join('');
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
-    const dl=t.sample?`<button class="lk dl" type="button" data-reel="${t.sample}" title="Copy reel link &amp; open reelsave">⬇ Get audio</button>`:'';
+    // Prefer the audio-page URL (raw original track, no creator foley/SFX mixed in)
+    // over a reel URL — download-audio.js only gets the clean track from that path.
+    const dlUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:t.sample;
+    const dl=dlUrl?`<button class="lk dl" type="button" data-reel="${dlUrl}" title="Download the raw audio">⬇ Get audio</button>`:'';
     return `<div class="trk${isSaved?' saved-sound':''}" data-skey="${encodeURIComponent(skey)}">${play}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${headline} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
