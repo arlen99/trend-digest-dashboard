@@ -778,13 +778,10 @@ function renderPasteAudioList(){
       +'<span class="insp-plat ig">IG</span>'
       +'<div class="insp-body"><div class="insp-label">'+(l.account?'@'+l.account:'Audio link')+'</div><div class="insp-url">'+shortUrl+'</div></div>'
       +'<div class="insp-actions">'
-      +'<button class="insp-dl" data-dl-audio="'+encodeURIComponent(l.url)+'">⬇ Download</button>'
+      +'<button class="insp-dl" data-get-audio="'+l.url+'">⬇ Get audio</button>'
       +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(l.url)+'">Remove</button>'
       +'</div></div>';
   }).join('');
-  con.querySelectorAll('[data-dl-audio]').forEach(function(btn){
-    btn.onclick=function(){downloadAudio(decodeURIComponent(btn.dataset.dlAudio),btn);};
-  });
   con.querySelectorAll('[data-rm-link]').forEach(function(btn){
     btn.onclick=function(){
       const url=decodeURIComponent(btn.dataset.rmLink);
@@ -821,6 +818,17 @@ async function downloadAudio(url,btn){
   }catch(e){alert('Download failed: network error');}
   btn.disabled=false;btn.textContent=orig;
 }
+// Single delegated handler for every "Get audio" button on the board, regardless of
+// where it's rendered (Niche sound chart, TikTok trending, this week's top posts,
+// Saved > Sounds, post cards/modal, example-reel popups, saved links). Each button
+// just needs data-get-audio="<url>" — the endpoint auto-detects an audio-page link
+// (raw track) vs. a reel/video link (that post's own audio) from the URL shape.
+document.addEventListener('click',function(e){
+  const b=e.target.closest('[data-get-audio]');
+  if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  downloadAudio(b.dataset.getAudio,b);
+});
 $('#paste-audio-save').addEventListener('click',async function(){
   const inp=$('#paste-audio-input');const url=inp.value.trim();if(!url)return;
   if(!SECRET){alert('Set up ⇄ Sync devices first (sidebar).');return;}
@@ -888,6 +896,7 @@ function actionsRow(p,inModal){
   return `<div class="actions">
     <button class="act save${sv?' on':''}" data-act="save" type="button">${sv?ICON.saved:ICON.save}${sv?'Saved':'Save'}</button>
     ${inModal?'':`<a class="act" data-act="ig" href="${p.url}" target="_blank" rel="noopener">${ICON.ig}${p.platform==='tiktok'?'View TikTok':'View IG'}</a>`}
+    <button class="act" data-get-audio="${p.url}" type="button" title="Download this reel's own audio">⬇ Get audio</button>
     <button class="act dis" data-act="dismiss" type="button">${ICON.x}${ds?'Restore':'Dismiss'}</button>
   </div>`;
 }
@@ -970,6 +979,7 @@ function linkCard(l){
       <div class="metrics"><div class="m"><b>${fmtN(l.views||0)}</b>views</div><div class="m"><b>${fmtN(l.likes||0)}</b>likes</div><div class="m"><b>${fmtN(l.comments||0)}</b>comments</div></div>
       <div class="actions">
         <a class="act" href="${l.url}" target="_blank" rel="noopener">${ICON.ig} Open</a>
+        <button class="act" data-get-audio="${l.url}" type="button" title="Download this reel's own audio">⬇ Get audio</button>
         <button class="act dis" data-rm-link="${encodeURIComponent(l.url)}" type="button">${ICON.x} Remove</button>
       </div>
     </div></article>`;
@@ -1179,7 +1189,7 @@ function openReelPopup(url){
     <h3 class="mm-title">Example reel</h3>
     <p class="mm-sub">${sub}</p>
     <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
-    <div class="pp-actions">${removeBtn}<a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
+    <div class="pp-actions">${removeBtn}<button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
   mm.classList.remove('hidden');document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
   const rm=$('#mm-body [data-remove-blob]'); if(rm)rm.onclick=()=>removeReelDownload(rm.dataset.removeBlob);
@@ -1285,8 +1295,11 @@ function renderBookmarks(){
         var skey=soundKey(t);
         var isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
         var detb=det?(t.detectedVerified?'<span class="det-badge">&#9835; detected</span>':'<span class="det-badge unv">&#9835; detected &middot; unverified</span>'):'';
-        var playBtn=t.samples&&t.samples.length?'<button class="dl" type="button" data-reel="'+t.samples[0]+'">&#9654; Play</button>':'';
-        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+playBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headline+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
+        // Prefer the audio-page URL (raw track) — IG via audioId, TikTok via its own
+        // music link — falling back to a sample reel's own audio if neither is known.
+        var dlUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||(t.samples&&t.samples.length?t.samples[0]:''));
+        var dlBtn=dlUrl?'<button class="dl" type="button" data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'';
+        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+dlBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headline+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
       }).join('');
       html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
     }
@@ -1310,6 +1323,7 @@ function renderBookmarks(){
         +(dateStr?'<span class="insp-date">'+dateStr+'</span>':'')
         +'<div class="insp-actions">'
         +'<a class="insp-open" href="'+lk.url+'" target="_blank" rel="noopener">Open</a>'
+        +'<button class="insp-dl" data-get-audio="'+lk.url+'">&#8681; Get audio</button>'
         +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
         +'</div></div>';
     }).join('');
@@ -1358,14 +1372,6 @@ function renderBookmarks(){
         if(act==='save'){savedSounds.has(k)?savedSounds.delete(k):savedSounds.add(k);}
         else{dismissedSounds.has(k)?dismissedSounds.delete(k):dismissedSounds.add(k);}
         pushState();renderBookmarks();renderSoundChart();
-      };
-    });
-    row.querySelectorAll('.dl[data-reel]').forEach(function(b){
-      b.onclick=function(e){
-        e.stopPropagation();
-        if(navigator.clipboard)navigator.clipboard.writeText(b.dataset.reel).catch(function(){});
-        window.open('https://reelsave.app/audio?url='+encodeURIComponent(b.dataset.reel),'_blank','noopener');
-        var o=b.textContent;b.textContent='copied';setTimeout(function(){b.textContent=o;},1600);
       };
     });
   });
@@ -1444,7 +1450,7 @@ function renderSoundChart(){
     // Prefer the audio-page URL (raw original track, no creator foley/SFX mixed in)
     // over a reel URL — download-audio.js only gets the clean track from that path.
     const dlUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:t.sample;
-    const dl=dlUrl?`<button class="lk dl" type="button" data-reel="${dlUrl}" title="Download the raw audio">⬇ Get audio</button>`:'';
+    const dl=dlUrl?`<button class="lk dl" type="button" data-get-audio="${dlUrl}" title="Download the raw audio">⬇ Get audio</button>`:'';
     return `<div class="trk${isSaved?' saved-sound':''}" data-skey="${encodeURIComponent(skey)}">${play}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${headline} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
@@ -1456,9 +1462,10 @@ function renderSoundChart(){
     const xr=t.alsoInIgNiche?`<span class="xref">⚡ also in your IG niche${t.igNicheCreators?' · '+t.igNicheCreators:''}</span>`:'';
     const uc=t.useCount?` · ${fmtN(t.useCount)} uses`:'';
     const lk=t.link?`<a class="lk" href="${t.link}" target="_blank" rel="noopener">▶ TikTok</a>`:'';
+    const dl=t.link?`<button class="lk dl" type="button" data-get-audio="${t.link}" title="Download the raw audio">⬇ Get audio</button>`:'';
     return `<div class="trk">${ic}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${t.title} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
-      <div class="links">${lk}</div></div>`;}).join('');
+      <div class="links">${lk}${dl}</div></div>`;}).join('');
 }
 /* ===== TREND SPOTLIGHT ===== */
 function splPlayer(reelUrl){
@@ -1530,7 +1537,8 @@ function renderSoundSpotlight(items){
     const isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
     const playerHtml=isActive?splPlayer(reels[scReel]):'';
     const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===scReel?' on':'')+'" data-screel="'+i+'">&#9654; Reel '+(i+1)+'</button>';}).join(''):'';
-    const actBtns=isActive?'<div class="tcard-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
+    const dlUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||(reels.length?reels[0]:''));
+    const actBtns=isActive?'<div class="tcard-actions">'+(dlUrl?'<button data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'')+'<button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
     const body='<div class="spl-body"><div class="spl-count">'+(scIdx+1)+' / '+items.length+'</div><div class="spl-title">'+headline+' '+detb+'</div><div class="spl-sub">'+sub+'</div><div class="spl-stat">used in <b>'+t.uses+'</b> reel'+(t.uses!==1?'s':'')+' &nbsp;&middot;&nbsp; <b>'+t.creators+'</b> creator'+(t.creators!==1?'s':'')+accts+'</div>'+(reels.length?'<div class="spl-reels">'+reelBtns+'</div>':'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>')+actBtns+'</div>';
     const ghost=rawIdx<0?' spl-ghost':'';
     const nav=(!isActive&&rawIdx>=0)?(' data-scgo="'+rawIdx+'"'):'';
@@ -1595,39 +1603,6 @@ document.getElementById('soundchart').addEventListener('click',e=>{
   else{dismissedSounds.has(k)?dismissedSounds.delete(k):dismissedSounds.add(k);}
   pushState();renderSoundChart();
 });
-// ⬇ Get audio: try a real direct download via TikHub first (data.reel is a reel URL,
-// the RELIABLE lookup path — same one confirmed to always succeed for direct reel
-// links, unlike the flaky reels/audio/<id> music-search path). Falls back to the
-// original copy-link + open-reelsave behavior on any failure (network, TikHub outage,
-// deleted post, etc.) so nothing regresses for the failure case.
-// (one-time attach, survives re-renders)
-$('#v-audio').addEventListener('click',async e=>{
-  const b=e.target.closest('.dl'); if(!b)return;
-  const url=b.dataset.reel;
-  const orig=b.textContent;
-  const fallback=()=>{
-    if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
-    window.open('https://reelsave.app/audio?url='+encodeURIComponent(url),'_blank','noopener');
-    b.textContent='✓ link copied';
-  };
-  if(!SECRET){fallback();setTimeout(()=>{b.textContent=orig;},1600);return;}
-  b.disabled=true;b.textContent='Downloading…';
-  try{
-    const r=await fetch('/api/download-audio',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url})});
-    const ct=r.headers.get('content-type')||'';
-    if(r.ok&&ct.indexOf('audio')===0){
-      const blob=await r.blob();
-      const cd=r.headers.get('content-disposition')||'';
-      const m=cd.match(/filename="([^"]+)"/);
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);a.download=m?m[1]:'audio.m4a';document.body.appendChild(a);a.click();
-      setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
-      b.textContent='✓ downloaded';
-    }else{fallback();}
-  }catch(err){fallback();}
-  b.disabled=false;setTimeout(()=>{b.textContent=orig;},1600);
-});
-
 /* ========== AUDIO ========== */
 (function(){
   const m={};
@@ -1647,12 +1622,13 @@ $('#v-audio').addEventListener('click',async e=>{
     const det=t.detected?`<span class="det-badge" title="Identified by audio fingerprinting from the reel">♫ detected</span>`:'';
     const igl=t.igLink?`<a class="lk" href="${t.igLink}" target="_blank" rel="noopener">▶ IG audio</a>`:'';
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
+    const dl=t.igLink?`<button class="lk dl" type="button" data-get-audio="${t.igLink}" title="Download the raw audio">⬇ Get audio</button>`:'';
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
       :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
     return `<div class="trk">${play}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${t.song} ${det}</div><div class="ar">${t.artist||''}</div>
       <div class="us">used by <b>${t.n}</b> post${t.n>1?'s':''} · ${[...new Set(t.accts)].map(a=>'@'+a).join(', ')}</div></div>
-      <div class="links">${igl}${dz}</div></div>`;
+      <div class="links">${igl}${dz}${dl}</div></div>`;
   };
   const grp=(label,list)=>list.length?`<h3 style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:6px 0 12px">${label}</h3>`+list.map(trk).join(''):'';
   $('#tracks').innerHTML=(grp('Tagged on Instagram',tagged)+grp('Detected background music · fingerprinted',detected))

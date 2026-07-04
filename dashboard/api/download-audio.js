@@ -1,28 +1,32 @@
-// Real audio download for an Instagram link — either a "reels/audio/<id>" music
-// page or a direct reel/post link.
+// Real audio download for a track or reel link, across both platforms.
 //
-// For a reels/audio/<id> link with a REGISTERED/licensed track, IG's own music
-// metadata (fetch_music_posts) includes a `progressive_download_url` — the raw,
-// complete original track (e.g. the full 5:40 studio recording), independent of
-// any specific reel. That's what we serve when it's available: creators often
-// layer their own foley/SFX on top of a sound in their reel, so extracting audio
-// from a random reel using that sound is NOT the same as the clean original track.
-// Named "{track title} ({audio ID}).m4a", e.g. "Sign of the Times (204373260395952).m4a".
+// Two distinct outcomes depending on WHAT was linked, not which platform:
+//  - "audio card" (an IG reels/audio/<id> page, or a TikTok music/x-<id> page) ->
+//    the RAW original track, independent of any specific reel/video. Creators often
+//    layer their own foley/SFX on top of a sound in their post, so extracting audio
+//    from a random post using that sound is NOT the same as the clean original.
+//    Named "{track title} ({audio ID}).m4a", e.g. "Sign of the Times (204373260395952).m4a".
+//  - "reel card" (a direct IG reel/post link, or a TikTok video link) -> that specific
+//    post's OWN audio (its video's audio track, whatever that contains — original
+//    music, remix, voiceover, foley, all of it, since that's the point: it's THIS
+//    post's audio, not the platform's canonical track).
+//    Named "{account}-{audio ID or shortcode}.m4a".
 //
-// Fallback path (used for creator-original audio with no registered-track metadata,
-// or when the audio-page lookup fails/times out): extract audio from a representative
-// reel's video instead — same as before, named "{account}-{audio ID or shortcode}.m4a".
+// IG raw track: fetch_music_posts's `metadata.music_info.music_asset_info` has a
+// progressive_download_url — but ONLY for registered/licensed tracks; music_info is
+// null for creator-original audio, which falls back to extracting from a
+// representative post's video instead (same as the reel-card path).
+// TikTok raw track: fetch_music_detail's `music_info.play_url` is a direct audio-only
+// URL — reliable, no retry loop needed (unlike IG's item-search lookup below).
 //
-// Direct reel/post links (no reels/audio/ in the URL) always use the fallback path,
-// since fetch_post_by_url's response has no audio metadata at all (verified by
-// walking its full response tree — only a boolean `has_audio` exists there).
-//
-// The reels/audio/<id> lookup (fetch_music_posts) is proxied IG-internal API and
+// IG's reels/audio/<id> lookup (fetch_music_posts) is proxied IG-internal API and
 // genuinely flaky — empirically ~1-in-3 to 1-in-9 calls return real data, the rest
 // come back with an opaque `{attempts: N}` payload with no error message. We retry
-// a few times, which in testing reliably turns up real data within 2-3 attempts.
-// If it still fails, the client falls back to opening instasaver.io (confirmed by
-// hand to work specifically for the reels/audio/ URL shape, unlike reelsave.app).
+// persistently (up to 10x), which in testing reliably turns up real data within a
+// handful of attempts and is well within Vercel's function time budget. If it still
+// fails, the client falls back to opening instasaver.io (confirmed by hand to work
+// specifically for the reels/audio/ URL shape, unlike reelsave.app) — IG links only,
+// no equivalent fallback tool verified for TikTok.
 //
 // Audio extraction/repackaging uses a real ffmpeg binary (ffmpeg-static — a native
 // binary bundled via npm, not WASM; comfortably fits Vercel's 250MB function budget).
@@ -48,16 +52,39 @@ function deep(obj, ...keys) {
   }
   return cur;
 }
-
-function isAudioLink(url) {
-  return /instagram\.com\/reels?\/audio\//.test(url);
+function deepPlayUrl(o) {
+  if (o && typeof o === "object") {
+    if (!Array.isArray(o)) {
+      const pa = o.play_addr || o.download_addr;
+      if (pa && Array.isArray(pa.url_list) && pa.url_list.length) return pa.url_list[0];
+      for (const v of Object.values(o)) { const r = deepPlayUrl(v); if (r) return r; }
+    } else {
+      for (const v of o) { const r = deepPlayUrl(v); if (r) return r; }
+    }
+  }
+  return "";
 }
-function audioIdFromUrl(url) {
+
+function kindOf(url) {
+  if (/instagram\.com\/reels?\/audio\//.test(url)) return "ig-audio";
+  if (/tiktok\.com\/music\//.test(url)) return "tt-music";
+  if (/tiktok\.com/.test(url)) return "tt-video";
+  return "ig-reel";
+}
+function igAudioIdFromUrl(url) {
   const m = (url || "").match(/\/reels?\/audio\/(\d+)/);
   return m ? m[1] : "";
 }
-function shortcodeFromUrl(url) {
+function igShortcodeFromUrl(url) {
   const m = (url || "").match(/\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);
+  return m ? m[1] : "";
+}
+function ttMusicIdFromUrl(url) {
+  const m = (url || "").match(/\/music\/[^/?]*-(\d+)/);
+  return m ? m[1] : "";
+}
+function ttVideoIdFromUrl(url) {
+  const m = (url || "").match(/\/video\/(\d+)/);
   return m ? m[1] : "";
 }
 
@@ -74,45 +101,65 @@ async function tikhub(path_) {
 // audio/music/sound/asset_id key; only a boolean `has_audio` is present. So for a
 // direct reel/post link we fall back to the shortcode as the traceable identifier
 // (still lets you find the exact reel, just not IG's internal audio ID).
-async function lookupByPostUrl(url) {
+async function lookupIgReel(url) {
   const j = await tikhub(`/api/v1/instagram/v1/fetch_post_by_url?post_url=${encodeURIComponent(url)}`);
   const d = (j && j.data) || {};
   if (!d.id) return null;
   return {
     account: deep(d, "owner", "username") || "",
     video: d.video_url || "",
-    idLabel: "reel_" + (shortcodeFromUrl(url) || d.shortcode || ""),
+    idLabel: "reel_" + (igShortcodeFromUrl(url) || d.shortcode || ""),
   };
 }
 
-// For a reels/audio/<id> link: try to get the RAW track first (registered/licensed
-// sounds only — music_info is null for creator-original audio). Falls back to a
-// representative reel's video if no raw track is available.
 // Empirically this endpoint can need 6-8+ tries before it returns real data (vs. an
 // opaque `{attempts: N}` payload) — well within Vercel's function time budget, so we
 // retry persistently rather than giving up after a couple of attempts.
-const MUSIC_LOOKUP_ATTEMPTS = 10;
-async function lookupByMusicUrl(url) {
-  const audioId = audioIdFromUrl(url);
-  for (let attempt = 0; attempt < MUSIC_LOOKUP_ATTEMPTS; attempt++) {
+const IG_MUSIC_LOOKUP_ATTEMPTS = 10;
+async function lookupIgAudioPage(url) {
+  const audioId = igAudioIdFromUrl(url);
+  for (let attempt = 0; attempt < IG_MUSIC_LOOKUP_ATTEMPTS; attempt++) {
     const j = await tikhub(`/api/v1/instagram/v1/fetch_music_posts?music_url=${encodeURIComponent(url)}`);
     const d = deep(j, "data") || {};
     const items = d.items;
     if (Array.isArray(items) && items.length) {
       const ai = deep(d, "metadata", "music_info", "music_asset_info");
       const rawUrl = ai && (ai.progressive_download_url || ai.fast_start_progressive_download_url);
-      if (rawUrl) {
-        return { rawAudio: rawUrl, title: ai.title || "", audioId };
-      }
+      if (rawUrl) return { rawAudio: rawUrl, title: ai.title || "", audioId };
       for (const it of items) {
         const m = it.media;
         const video = m && deep(m, "video_versions", 0, "url");
         if (video) return { account: deep(m, "user", "username") || "", video, idLabel: audioId };
       }
     }
-    if (attempt < MUSIC_LOOKUP_ATTEMPTS - 1) await new Promise((res) => setTimeout(res, 3000));
+    if (attempt < IG_MUSIC_LOOKUP_ATTEMPTS - 1) await new Promise((res) => setTimeout(res, 3000));
   }
   return null;
+}
+
+async function lookupTtMusic(url) {
+  const musicId = ttMusicIdFromUrl(url);
+  if (!musicId) return null;
+  const j = await tikhub(`/api/v1/tiktok/app/v3/fetch_music_detail?music_id=${musicId}`);
+  const mi = deep(j, "data", "music_info");
+  if (!mi || mi.prevent_download) return null;
+  const playUrl = deep(mi, "play_url", "url_list", 0);
+  if (!playUrl) return null;
+  return { rawAudio: playUrl, title: mi.title || "", audioId: musicId };
+}
+
+async function lookupTtVideo(url) {
+  const aid = ttVideoIdFromUrl(url);
+  if (!aid) return null;
+  const j = await tikhub(`/api/v1/tiktok/app/v3/fetch_one_video?aweme_id=${aid}`);
+  const a = deep(j, "data", "aweme_detail") || deep(j, "data") || {};
+  const video = deepPlayUrl(a.video || {});
+  if (!video) return null;
+  return {
+    account: deep(a, "author", "unique_id") || deep(a, "author", "uniqueId") || "",
+    video,
+    idLabel: "video_" + aid,
+  };
 }
 
 // Preserves spaces/parens/apostrophes (wanted in the filename) but strips
@@ -165,15 +212,18 @@ module.exports = async (req, res) => {
   const url = (body.url || "").trim();
   if (!url) { res.status(400).json({ ok: false, reason: "url required" }); return; }
 
-  const audioLink = isAudioLink(url);
+  const kind = kindOf(url);
   let found;
   try {
-    found = audioLink ? await lookupByMusicUrl(url) : await lookupByPostUrl(url);
+    found = kind === "ig-audio" ? await lookupIgAudioPage(url)
+      : kind === "tt-music" ? await lookupTtMusic(url)
+      : kind === "tt-video" ? await lookupTtVideo(url)
+      : await lookupIgReel(url);
   } catch (e) {
     found = null;
   }
   if (!found || (!found.video && !found.rawAudio)) {
-    res.status(200).json({ ok: false, reason: "lookup_failed", fallback: audioLink ? "instasaver" : null });
+    res.status(200).json({ ok: false, reason: "lookup_failed", fallback: kind === "ig-audio" ? "instasaver" : null });
     return;
   }
 
@@ -186,6 +236,6 @@ module.exports = async (req, res) => {
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
     res.status(200).send(audio);
   } catch (e) {
-    res.status(200).json({ ok: false, reason: "extract_failed", fallback: audioLink ? "instasaver" : null });
+    res.status(200).json({ ok: false, reason: "extract_failed", fallback: kind === "ig-audio" ? "instasaver" : null });
   }
 };
