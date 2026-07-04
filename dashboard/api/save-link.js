@@ -5,6 +5,12 @@
 const BLOB = "https://blob.vercel-storage.com";
 const PATH = "state/dashboard-state.json";
 
+// See api/state.js for why we construct the URL directly instead of listing for it.
+function directUrl(token) {
+  const storeId = (token.split("_")[3] || "").toLowerCase();
+  return storeId ? `https://${storeId}.public.blob.vercel-storage.com/${PATH}` : null;
+}
+
 function parseLink(url) {
   try {
     const u = new URL(url);
@@ -28,18 +34,8 @@ function parseLink(url) {
   }
 }
 
-async function stateUrl(token) {
-  const r = await fetch(`${BLOB}?prefix=${encodeURIComponent(PATH)}`, {
-    headers: { authorization: `Bearer ${token}` },
-  });
-  if (!r.ok) return null;
-  const j = await r.json();
-  const b = (j.blobs || []).find((x) => x.pathname === PATH);
-  return b ? b.url : null;
-}
-
 async function readState(token) {
-  const u = await stateUrl(token);
+  const u = directUrl(token);
   if (!u) return {};
   const r = await fetch(`${u}?t=${Date.now()}`, { cache: "no-store" });
   return r.ok ? await r.json() : {};
