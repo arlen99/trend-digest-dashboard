@@ -137,6 +137,12 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .spl-reel:hover{color:var(--teal);border-color:var(--teal)}
 .spl-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);text-align:center;margin-top:8px;letter-spacing:.04em}
 .spl-howto{background:rgba(76,199,182,.06);border-left:2px solid var(--teal);padding:8px 11px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink);line-height:1.4}
+.bk-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.bk-bar button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:20px;padding:4px 12px;color:var(--muted);cursor:pointer;transition:.15s}
+.bk-bar button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
+.bk-section{margin-bottom:36px}
+.bk-h{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.bk-cnt{background:var(--line2);border-radius:9px;padding:2px 7px;font-size:10px;color:var(--muted)}
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tmom{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-weight:600}
 .tmom.new{background:var(--teal);color:#08110f}.tmom.rising{background:#6bbf8a;color:#08110f}
@@ -377,6 +383,7 @@ select:hover{border-color:var(--teal)}
       <button class="navbtn" data-view="summary"><span class="ic">▤</span> Summary</button>
       <button class="navbtn" data-view="audio"><span class="ic">♪</span> Audio Trends</button>
       <button class="navbtn" data-view="accounts"><span class="ic">@</span> Accounts</button>
+      <button class="navbtn" data-view="bookmarks"><span class="ic">★</span> Saved</button>
     </nav>
     <div class="filters" id="filters">
       <div class="pf-toggle" id="pf-toggle">
@@ -486,6 +493,18 @@ select:hover{border-color:var(--teal)}
         </div>
       </div>
     </section>
+    <!-- BOOKMARKS -->
+    <section class="view hidden" id="v-bookmarks">
+      <div class="vhead"><h1>Saved <em>Items</em></h1>
+        <p class="sub">Your bookmarked posts, trends, and sounds — saved across all weeks.</p></div>
+      <div class="bk-bar" id="bk-bar">
+        <button data-bk="all" class="on">All</button>
+        <button data-bk="posts">Posts</button>
+        <button data-bk="trends">Trends</button>
+        <button data-bk="sounds">Sounds</button>
+      </div>
+      <div id="bk-content"></div>
+    </section>
   </main>
 </div>
 <div class="modal hidden" id="modal"></div>
@@ -546,9 +565,10 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
   const v=b.dataset.view;
-  document.querySelectorAll('.view').forEach(s=>s.classList.add('hidden'));
+  stopAllMedia();document.querySelectorAll('.view').forEach(s=>s.classList.add('hidden'));
   $('#v-'+v).classList.remove('hidden');
   $('#filters').style.display = v==='swipe' ? '' : 'none';
+  if(v==='bookmarks')renderBookmarks();
 }));
 
 /* ---- platform toggle (IG / TikTok) ---- */
@@ -681,7 +701,7 @@ let platformFilter='all';
 let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'{}')}catch(e){}
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
-let trendFilter='all', soundFilter='all';
+let trendFilter='all', soundFilter='all', bookmarkFilter='all';
 let trMode='list', scMode='list';
 let trIdx=0, trReel=0, scIdx=0, scReel=0;
 let savedTrends=LS.get('td_saved_trends');
@@ -883,8 +903,18 @@ function openPost(url){
     else if(b.dataset.act==='dismiss')dismissWithConfirm(pp);
     openPost(url);}));
 }
-function closeModal(){modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
+function stopVideos(root){
+  (root||document).querySelectorAll('video').forEach(function(v){try{v.pause();v.removeAttribute('src');v.load();}catch(e){}});
+  (root||document).querySelectorAll('iframe').forEach(function(f){try{f.src='';}catch(e){}});
+}
+function closeModal(){stopVideos(modal);modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+function stopAllMedia(){
+  document.querySelectorAll('.spl-stage video,.spl-stage iframe,.card video,.card iframe,.embed-frame').forEach(function(el){
+    if(el.tagName==='VIDEO'){try{el.pause();el.removeAttribute('src');el.load();}catch(e){}}
+    else{try{el.src='';}catch(e){}}
+  });
+}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))closeModal();});
 
 /* ---- "how it's built" method popups ---- */
@@ -1072,6 +1102,122 @@ $('#reset').addEventListener('click',()=>{['#f-week','#f-format','#f-hook','#f-t
 apply();
 pullState();  // hydrate bookmarks/dismissals from the backend (cross-device); no-op if no passphrase set
 
+/* ========== BOOKMARKS ========== */
+function renderBookmarks(){
+  const el=$('#v-bookmarks');if(!el)return;
+  el.querySelectorAll('[data-bk]').forEach(function(b){b.classList.toggle('on',b.dataset.bk===bookmarkFilter);});
+  var con=$('#bk-content');if(!con)return;
+  var showPosts=bookmarkFilter==='all'||bookmarkFilter==='posts';
+  var showTrends=bookmarkFilter==='all'||bookmarkFilter==='trends';
+  var showSounds=bookmarkFilter==='all'||bookmarkFilter==='sounds';
+  var html='';
+  // Posts
+  if(showPosts){
+    var savPs=[...saved].map(function(u){return savedData[u];}).filter(Boolean);
+    if(savPs.length){
+      html+='<div class="bk-section"><h3 class="bk-h">Posts <span class="bk-cnt">'+savPs.length+'</span></h3><div class="grid">'+savPs.map(function(p){return card(p);}).join('')+'</div></div>';
+    }
+  }
+  // Trends
+  if(showTrends){
+    var ICN2={audio:'&#9836;',hook:'&#9998;'};
+    var seenTr=new Set();var savTr=[];
+    Object.values(WEEKS).forEach(function(w){(w.trends||[]).forEach(function(t){
+      var k=t.name+'|'+t.type;
+      if(savedTrends.has(k)&&!seenTr.has(k)){seenTr.add(k);savTr.push(t);}
+    });});
+    if(savTr.length){
+      var tcards=savTr.map(function(t){
+        var k=t.name+'|'+t.type;
+        var isSaved=savedTrends.has(k),isDis=dismissedTrends.has(k);
+        var ex=(t.examples||[]).map(function(u,i){return '<button class="lk reel" type="button" data-reel-popup="'+u+'">&#9654; example '+(i+1)+'</button>';}).join('');
+        var trig=t.trigger?'<span class="ttrig" style="color:'+col(t.trigger)+'">'+t.trigger+'</span>':'<span></span>';
+        var mom=(t.momentum||'new').toLowerCase();
+        return '<article class="tcard'+(isSaved?' saved-trend':'')+'" data-tkey="'+encodeURIComponent(k)+'"><div class="tcard-top"><span class="tmom '+mom+'">'+mom+'</span><span class="ttype">'+(ICN2[t.type]||'')+' '+t.type+'</span></div><h3 class="tname">'+t.name+'</h3><div class="tanchor"><span>'+(ICN2[t.type]||'&#9836;')+'</span><span>'+t.anchor+'</span></div><p class="tformat">'+(t.format||'')+'</p>'+(t.note?'<div class="tnote">'+t.note+'</div>':'')+'<div class="tmeta">'+trig+'<span class="tcount"><b>'+t.creators+'</b> creators &middot; '+t.uses+' uses</span></div>'+(t.howTo?'<div class="thow"><span class="thow-l">Ride it</span>'+t.howTo+'</div>':'')+(ex?'<div class="texamples">'+ex+'</div>':'')+'<div class="tcard-actions"><button data-tact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-tact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></article>';
+      }).join('');
+      html+='<div class="bk-section"><h3 class="bk-h">Trends <span class="bk-cnt">'+savTr.length+'</span></h3><div class="trendgrid">'+tcards+'</div></div>';
+    }
+  }
+  // Sounds
+  if(showSounds){
+    var seenSc=new Set();var savSc=[];
+    Object.values(WEEKS).forEach(function(w){
+      ((w.soundChart||[]).concat(w.tiktokSounds||[])).forEach(function(t){
+        var sk=soundKey(t);
+        if(savedSounds.has(sk)&&!seenSc.has(sk)){seenSc.add(sk);savSc.push(t);}
+      });
+    });
+    if(savSc.length){
+      var rows=savSc.map(function(t,i){
+        var det=t.detected,headline=det?t.detectedSong:t.title;
+        var artist=det?t.detectedArtist||'':t.artist||'';
+        var skey=soundKey(t);
+        var isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
+        var detb=det?(t.detectedVerified?'<span class="det-badge">&#9835; detected</span>':'<span class="det-badge unv">&#9835; detected &middot; unverified</span>'):'';
+        var playBtn=t.samples&&t.samples.length?'<button class="dl" type="button" data-reel="'+t.samples[0]+'">&#9654; Play</button>':'';
+        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+playBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headline+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
+      }).join('');
+      html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
+    }
+  }
+  if(!html)html='<div class="empty" style="margin:48px auto">Nothing saved yet &mdash; use &#9733; Save on any post, trend, or sound.</div>';
+  con.innerHTML=html;
+  // Post card interactions
+  con.querySelectorAll('.card[data-url]').forEach(function(c){
+    c.querySelector('.play')&&c.querySelector('.play').addEventListener('click',function(e){e.stopPropagation();play(c);});
+    c.querySelectorAll('[data-act]').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.stopPropagation();
+        var p=savedData[c.dataset.url];if(!p)return;
+        if(b.dataset.act==='save')saveWithConfirm(p).then(function(){renderBookmarks();});
+        else if(b.dataset.act==='dismiss'){dismissWithConfirm(p);renderBookmarks();}
+      });
+    });
+    c.addEventListener('click',function(e){
+      if(e.target.closest('.play,.act,.acct-link'))return;
+      openPost(c.dataset.url);
+    });
+    c.querySelectorAll('.acct-link').forEach(function(al){
+      al.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openProfile(al.dataset.plat,al.dataset.acct);});
+    });
+  });
+  // Trend card interactions
+  con.querySelectorAll('[data-tkey]').forEach(function(tc){
+    var k=decodeURIComponent(tc.dataset.tkey);
+    tc.querySelectorAll('[data-tact]').forEach(function(btn){
+      btn.onclick=function(){
+        var act=btn.dataset.tact;
+        if(act==='save'){savedTrends.has(k)?savedTrends.delete(k):savedTrends.add(k);}
+        else{dismissedTrends.has(k)?dismissedTrends.delete(k):dismissedTrends.add(k);}
+        pushState();renderBookmarks();renderTrendRadar();
+      };
+    });
+  });
+  // Sound row interactions
+  con.querySelectorAll('[data-skey]').forEach(function(row){
+    var k=decodeURIComponent(row.dataset.skey);
+    row.querySelectorAll('[data-sact]').forEach(function(btn){
+      btn.onclick=function(){
+        var act=btn.dataset.sact;
+        if(act==='save'){savedSounds.has(k)?savedSounds.delete(k):savedSounds.add(k);}
+        else{dismissedSounds.has(k)?dismissedSounds.delete(k):dismissedSounds.add(k);}
+        pushState();renderBookmarks();renderSoundChart();
+      };
+    });
+    row.querySelectorAll('.dl[data-reel]').forEach(function(b){
+      b.onclick=function(e){
+        e.stopPropagation();
+        if(navigator.clipboard)navigator.clipboard.writeText(b.dataset.reel).catch(function(){});
+        window.open('https://reelsave.app/audio?url='+encodeURIComponent(b.dataset.reel),'_blank','noopener');
+        var o=b.textContent;b.textContent='copied';setTimeout(function(){b.textContent=o;},1600);
+      };
+    });
+  });
+  // Filter bar
+  el.querySelectorAll('[data-bk]').forEach(function(b){
+    b.onclick=function(){bookmarkFilter=b.dataset.bk;renderBookmarks();};
+  });
+}
 /* ========== SUMMARY ========== */
 function agg(key){
   const m={};
@@ -1186,7 +1332,7 @@ function renderTrendSpotlight(items){
   const prev=trIdx>0?buildTrCard(items[trIdx-1],false,trIdx-1):'<div class="spl-slide spl-ghost"></div>';
   const curr=buildTrCard(items[trIdx],true,trIdx);
   const next=trIdx<items.length-1?buildTrCard(items[trIdx+1],false,trIdx+1):'<div class="spl-slide spl-ghost"></div>';
-  el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
+  stopVideos(el);el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
   centerTrack(el);
   el.querySelectorAll('[data-trreel]').forEach(function(b){b.onclick=function(){trReel=+b.dataset.trreel;renderTrendSpotlight(items);};});
   el.querySelectorAll('[data-trgo]').forEach(function(b){b.onclick=function(){trIdx=+b.dataset.trgo;trReel=0;renderTrendRadar();};});
