@@ -88,9 +88,13 @@ async function lookupByPostUrl(url) {
 // For a reels/audio/<id> link: try to get the RAW track first (registered/licensed
 // sounds only — music_info is null for creator-original audio). Falls back to a
 // representative reel's video if no raw track is available.
+// Empirically this endpoint can need 6-8+ tries before it returns real data (vs. an
+// opaque `{attempts: N}` payload) — well within Vercel's function time budget, so we
+// retry persistently rather than giving up after a couple of attempts.
+const MUSIC_LOOKUP_ATTEMPTS = 10;
 async function lookupByMusicUrl(url) {
   const audioId = audioIdFromUrl(url);
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < MUSIC_LOOKUP_ATTEMPTS; attempt++) {
     const j = await tikhub(`/api/v1/instagram/v1/fetch_music_posts?music_url=${encodeURIComponent(url)}`);
     const d = deep(j, "data") || {};
     const items = d.items;
@@ -106,7 +110,7 @@ async function lookupByMusicUrl(url) {
         if (video) return { account: deep(m, "user", "username") || "", video, idLabel: audioId };
       }
     }
-    if (attempt < 2) await new Promise((res) => setTimeout(res, 3000));
+    if (attempt < MUSIC_LOOKUP_ATTEMPTS - 1) await new Promise((res) => setTimeout(res, 3000));
   }
   return null;
 }
