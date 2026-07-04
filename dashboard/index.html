@@ -143,6 +143,19 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .bk-section{margin-bottom:36px}
 .bk-h{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 14px;display:flex;align-items:center;gap:8px}
 .bk-cnt{background:var(--line2);border-radius:9px;padding:2px 7px;font-size:10px;color:var(--muted)}
+.insp-link{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.insp-plat{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;border-radius:4px;padding:2px 7px;text-transform:uppercase;flex-shrink:0}
+.insp-plat.ig{background:rgba(232,102,62,.15);color:#E8663E}
+.insp-plat.tt{background:rgba(105,201,208,.15);color:#69C9D0}
+.insp-plat.other{background:var(--line2);color:var(--muted)}
+.insp-body{flex:1;min-width:0}
+.insp-label{font-size:13px;color:var(--ink);font-weight:500}
+.insp-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.insp-date{font-size:11px;color:var(--faint);white-space:nowrap;flex-shrink:0}
+.insp-actions{display:flex;gap:6px;flex-shrink:0}
+.insp-open{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 10px;border-radius:6px;background:var(--teal);color:#000;text-decoration:none;border:none;cursor:pointer}
+.insp-rm{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 10px;border-radius:6px;background:none;border:1px solid var(--line2);color:var(--muted);cursor:pointer}
+.insp-rm:hover{border-color:var(--muted);color:var(--ink)}
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tmom{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-weight:600}
 .tmom.new{background:var(--teal);color:#08110f}.tmom.rising{background:#6bbf8a;color:#08110f}
@@ -403,7 +416,7 @@ select:hover{border-color:var(--teal)}
       <div class="search"><input id="f-search" type="text" placeholder="Search…"></div>
       <div class="frow"><span class="count" id="count"></span><button class="reset" id="reset">Reset</button></div>
     </div>
-    <div class="side-foot">Outlier = engagement ÷ account median.<br>Metrics from Instagram &amp; TikTok via TikHub.<br><button class="syncbtn" onclick="setupSync()">⇄ Sync devices</button> <span id="syncstat">sync off</span><br><span id="genstamp"></span></div>
+    <div class="side-foot">Outlier = engagement ÷ median of that account's scraped batch (not full history).<br>Metrics from Instagram &amp; TikTok via TikHub.<br><button class="syncbtn" onclick="setupSync()">⇄ Sync devices</button> <span id="syncstat">sync off</span><br><span id="genstamp"></span></div>
   </aside>
 
   <main class="main">
@@ -477,7 +490,8 @@ select:hover{border-color:var(--teal)}
     <!-- ACCOUNTS -->
     <section class="view hidden" id="v-accounts">
       <div class="vhead"><h1>Reference <em>Accounts</em></h1>
-        <p class="sub">The creator pool every scrape draws from. Add accounts you spot on IG / TikTok; remove ones that have drifted off-niche. Changes apply on the next weekly run and feed into snowballing too. Syncs across devices when you've signed in via ⇄ Sync devices.</p></div>
+        <p class="sub">The creator pool every scrape draws from. Add accounts you spot on IG / TikTok; remove ones that have drifted off-niche. Changes apply on the next weekly run and feed into snowballing too. Syncs across devices when you've signed in via ⇄ Sync devices.</p>
+        <p class="prov" id="prov-accounts"></p></div>
       <div class="sec acct-cols">
         <div class="acct-col">
           <div class="acct-h"><h2>Instagram</h2><span class="acct-n" id="acct-ig-n">0</span></div>
@@ -502,6 +516,7 @@ select:hover{border-color:var(--teal)}
         <button data-bk="posts">Posts</button>
         <button data-bk="trends">Trends</button>
         <button data-bk="sounds">Sounds</button>
+        <button data-bk="links">Links</button>
       </div>
       <div id="bk-content"></div>
     </section>
@@ -555,7 +570,7 @@ $('#genstamp').textContent='Generated '+DATA.generated;
   const n=x=>(x==null?'—':Number(x).toLocaleString());
   const sw=$('#prov-swipe');
   const unres=v.igAccounts-v.igResolved;
-  if(sw) sw.innerHTML=`<button class="pl-btn" data-method="swipe">Sources ▸</button><b>${n(v.igAccounts)}</b> Instagram accounts tracked (${n(v.igSeed)} seed · ${n(v.igDiscovered)} discovered · ${n(v.igBootstrap)} bootstrapped) → <b>${n(v.igResolved)}</b> resolved &amp; scraped${unres>0?` (${n(unres)} renamed/private/unresolved)`:''}, plus <b>${n(v.tiktokCreators)}</b> TikTok creators. Each run pulls the latest ${v.postsPerIg} posts/account (IG) &amp; ${v.postsPerTt}/creator (TikTok) over a ${v.daysBack}-day window, ranked by outlier score. This board: <b>${n(v.igCurated)}</b> IG + <b>${n(v.tiktokCurated)}</b> TikTok curated top performers + <b>${n(v.keywordFinds)}</b> trending off-seed finds (from ${n(v.keywordScanned)} keyword-scanned), across <b>${n(v.boardAccounts)}</b> creators.`;
+  if(sw) sw.innerHTML=`<button class="pl-btn" data-method="swipe">Sources ▸</button><b>${n(v.igAccounts)}</b> Instagram accounts tracked (${n(v.igSeed)} seed · ${n(v.igDiscovered)} discovered via related-profiles graph · ${n(v.igBootstrap)} bootstrapped via keyword/hashtag search) → <b>${n(v.igResolved)}</b> resolved &amp; scraped${unres>0?` (${n(unres)} renamed/private/unresolved)`:''}, plus <b>${n(v.tiktokCreators)}</b> TikTok creators. Each run pulls the latest ${v.postsPerIg} posts/account (IG) &amp; ${v.postsPerTt}/creator (TikTok) over a ${v.daysBack}-day window, ranked by per-account outlier score (each post's engagement ÷ the median of that account's scraped batch (the same ${v.postsPerIg} posts, not full history) — follower-blind). This board: <b>${n(v.igCurated)}</b> IG + <b>${n(v.tiktokCurated)}</b> TikTok curated top performers + <b>${n(v.keywordFinds)}</b> trending off-seed finds (from ${n(v.keywordScanned)} keyword-scanned), across <b>${n(v.boardAccounts)}</b> creators.`;
   const au=$('#prov-audio');
   if(au) au.innerHTML=`<button class="pl-btn" data-method="audio">Sources ▸</button>Niche sound chart scanned <b>${n(v.audioAccounts)}</b> accounts (the resolved set, same as the Swipe File) × ${v.audioReelsPer} recent reels → <b>${n(v.audioTracks)}</b> distinct tracks consolidated by canonical ID (<b>${n(v.audioMulti)}</b> used by ≥2 creators); showing top ${n(v.audioShown)}. TikTok: <b>${n(v.ttSounds)}</b> trending sounds (${n(v.ttXplatform)} also in the IG niche); showing ${n(v.ttShown)}.`;
 })();
@@ -683,6 +698,9 @@ function renderTrendRadar(){
     </article>`;}).join('');
 }
 (function(){const v=DATA.provenance;
+  const n=x=>(x==null?'—':Number(x).toLocaleString());
+  const pa=$('#prov-accounts');
+  if(pa&&v) pa.innerHTML=`<b>${n(v.igSeed)}</b> Instagram seed accounts (manually curated niche references) &nbsp;&plus;&nbsp; <b>${n(v.igDiscovered)}</b> discovered (snowballed via Instagram’s “related profiles” graph from seeds) &nbsp;&plus;&nbsp; <b>${n(v.igBootstrap)}</b> bootstrapped (from keyword &amp; hashtag searches on Instagram — e.g. “cinematic travel”, “travel filmmaker”) &nbsp;&equals;&nbsp; <b>${n(v.igAccounts)}</b> total IG. TikTok: <b>${n(v.tiktokCreators)}</b> creators — discovered from scratch via keyword search (no seed accounts, no related-graph on TikTok). For each niche keyword (e.g. \"cinematic travel\", \"travel filmmaker\"), we run two TikTok searches: (1) <b>creator search</b> — returns user profiles whose handle/bio match the keyword; (2) <b>video search</b> — returns matching videos, from which we extract the video authors. All candidates are then vetted: bio/nickname must pass a niche-signal check (cinematic, travel film, drone, b-roll, etc.), spam signals are excluded, and a minimum of 5,000 followers is required. Survivors are ranked by follower count and the top 80 are added to the watchlist.`;
   if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;})();
 
 /* ========== SWIPE FILE ========== */
@@ -702,6 +720,7 @@ let savedData={};try{savedData=JSON.parse(localStorage.getItem('td_saved_v2')||'
 LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u);if(p)savedData[u]=p;}}); // migrate old URL-only bookmarks
 let saved=new Set(Object.keys(savedData));
 let trendFilter='all', soundFilter='all', bookmarkFilter='all';
+let inspirationLinks=[];
 let trMode='list', scMode='list';
 let trIdx=0, trReel=0, scIdx=0, scReel=0;
 let savedTrends=LS.get('td_saved_trends');
@@ -715,14 +734,14 @@ function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT;
 function pushState(){saveLocal();apply();if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds]})})
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],inspirationLinks})})
     .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
     .catch(()=>setSync('err'));},500);}
 async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
-    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);saveLocal();
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.inspirationLinks))inspirationLinks=s.inspirationLinks;saveLocal();
       // strip videos the user has removed on any device, so popups fall back to the embed
       if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
     setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();if(typeof renderTrendRadar==='function')renderTrendRadar();if(typeof renderSoundChart==='function')renderSoundChart();
@@ -940,7 +959,7 @@ function openMethod(kind){
       {n:'Outlier Score',l:'every post ranked by it',hl:true},
       {n:`${n(v.igCurated)} + ${n(v.keywordFinds)}`,l:'hand-picked keepers + ⚡ trending off-seed finds',s:`across ${n(v.boardAccounts)} creators on this board`},
     ])
-    +`<div class="msec"><h4>What's the Outlier Score?</h4><p>A post's engagement (likes + comments) ÷ that account's <b>own median</b> engagement — measured across the recent posts we scraped from it (up to ${v.postsPerIg} posts from the last ${v.daysBack} days). So <b>10×</b> means it did ten times the account's typical result. It's <b>follower-blind</b>: a 5k-follower creator's breakout outranks a 5M-follower account's average post. We surface what's <i>over-performing</i>, not who's biggest.</p></div>`
+    +`<div class="msec"><h4>What's the Outlier Score?</h4><p>A post's engagement (likes + comments) ÷ that account's <b>own median</b> engagement — measured across <b>only</b> the posts we scraped from it in that same run (up to ${v.postsPerIg} posts from the last ${v.daysBack} days, not the account's full history). So <b>10×</b> means it did ten times the account's typical result. It's <b>follower-blind</b>: a 5k-follower creator's breakout outranks a 5M-follower account's average post. We surface what's <i>over-performing</i>, not who's biggest.</p></div>`
     +`<div class="msec"><h4>The "⚡ new find" off-seed posts</h4><p>Trending posts from creators we <b>don't</b> track. We search TikTok for niche keywords — <i>${(v.keywords||[]).join(', ')}</i> — keep recent ones (≤21 days) that actually got distribution (≥20k views), and rank them by <b>engagement rate</b> (engagement ÷ views), <b>not</b> total views — so a small creator's breakout isn't buried under a big account's traffic.</p></div>`
     +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
   } else if(kind==='audio'){
@@ -965,7 +984,7 @@ function openMethod(kind){
       {n:n(v.trendsAudio),l:'Claude watches sample reels → writes the card',hl:true},
     ])+`</div><div><h5>✎ Hook trends</h5>`+pipe([
       {n:n(v.audioReels),l:`recent reels we scanned (${platStr})`},
-      {n:n(v.hooksOcrd),l:`of those, the ones we OCR'd for an on-screen hook (top performers + recent activity)`},
+      {n:n(v.hooksOcrd),l:`of those, reels we've OCR'd for on-screen hook text (top performers by outlier score, result cached across runs)`},
       {n:n(v.hooksReadable),l:'had readable hook text in the first ~4 seconds'},
       {l:'each distinct phrase → searched on TikTok'},
       {n:n(v.hookValidated),l:`returned ≥${v.hookMinNiche} niche-relevant results &amp; ≥10K max likes → "confirmed trend"`,hl:true},
@@ -1160,6 +1179,27 @@ function renderBookmarks(){
       html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
     }
   }
+  // Inspiration Links
+  var showLinks=bookmarkFilter==='all'||bookmarkFilter==='links';
+  if(showLinks&&inspirationLinks.length){
+    var lrows=inspirationLinks.map(function(lk,i){
+      var platCls=lk.platform==='ig'?'ig':lk.platform==='tt'?'tt':'other';
+      var platTxt=lk.platform==='ig'?'IG':lk.platform==='tt'?'TT':'WEB';
+      var shortUrl=(lk.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
+      if(shortUrl.length>55)shortUrl=shortUrl.slice(0,52)+'...';
+      var dateStr=lk.savedAt?new Date(lk.savedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
+      var note=lk.note?'<div class="insp-url">'+lk.note+'</div>':'<div class="insp-url">'+shortUrl+'</div>';
+      return '<div class="insp-link" data-li="'+i+'">'
+        +'<span class="insp-plat '+platCls+'">'+platTxt+'</span>'
+        +'<div class="insp-body"><div class="insp-label">'+lk.label+'</div>'+note+'</div>'
+        +(dateStr?'<span class="insp-date">'+dateStr+'</span>':'')
+        +'<div class="insp-actions">'
+        +'<a class="insp-open" href="'+lk.url+'" target="_blank" rel="noopener">Open</a>'
+        +'<button class="insp-rm" data-rm-link="'+i+'">Remove</button>'
+        +'</div></div>';
+    }).join('');
+    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspirationLinks.length+'</span></h3>'+lrows+'</div>';
+  }
   if(!html)html='<div class="empty" style="margin:48px auto">Nothing saved yet &mdash; use &#9733; Save on any post, trend, or sound.</div>';
   con.innerHTML=html;
   // Post card interactions
@@ -1212,6 +1252,14 @@ function renderBookmarks(){
         var o=b.textContent;b.textContent='copied';setTimeout(function(){b.textContent=o;},1600);
       };
     });
+  });
+  // Inspiration link remove
+  con.querySelectorAll('[data-rm-link]').forEach(function(btn){
+    btn.onclick=function(){
+      var idx=parseInt(btn.dataset.rmLink,10);
+      inspirationLinks.splice(idx,1);
+      pushState();renderBookmarks();
+    };
   });
   // Filter bar
   el.querySelectorAll('[data-bk]').forEach(function(b){
