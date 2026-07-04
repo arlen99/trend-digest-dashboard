@@ -867,6 +867,32 @@ function card(p){
       ${actionsRow(p,false)}
     </div></article>`;
 }
+// Inspiration link, once save-link.js has enriched it with real TikHub metrics
+// (thumbnail/video/views/likes/comments/account/caption) — rendered like a Swipe
+// File card. `hook` here is just the post's own caption (no hand-written headline,
+// same reasoning as skipping chips/outlier — that's curation, not something to fake).
+// videoText is genuine on-screen OCR, backfilled locally by enrich_links.py.
+function linkCard(l){
+  const plat=l.platform==='tt'?'tiktok':'instagram';
+  const dateStr=l.timestamp?l.timestamp.slice(0,10):(l.savedAt||'').slice(0,10);
+  return `<article class="card" data-url="${l.url}" data-platform="${plat}" data-video="${l.video||''}" data-thumb="${l.thumbnail||''}">
+    <div class="media">
+      <div class="fmt">${l.label||''}</div>
+      <div class="scrim"></div>
+      <button class="play" type="button" title="Play in page">${playIcon()}</button>
+      <img class="poster" src="${l.thumbnail||''}" alt="@${l.account||''}" onerror="this.style.display='none'">
+    </div>
+    <div class="body">
+      <div class="acct"><span class="h">${l.account?accountLink(plat==='tiktok'?'tt':'ig',l.account):''}</span><span class="wk">${dateStr?fmtDate(dateStr):''}</span></div>
+      ${l.caption?`<div class="hook">${l.caption}</div>`:''}
+      ${l.videoText?`<div class="vtext"><span class="lab">On-screen</span><span class="tx">${l.videoText}</span></div>`:''}
+      <div class="metrics"><div class="m"><b>${fmtN(l.views||0)}</b>views</div><div class="m"><b>${fmtN(l.likes||0)}</b>likes</div><div class="m"><b>${fmtN(l.comments||0)}</b>comments</div></div>
+      <div class="actions">
+        <a class="act" href="${l.url}" target="_blank" rel="noopener">${ICON.ig} Open</a>
+        <button class="act dis" data-rm-link="${encodeURIComponent(l.url)}" type="button">${ICON.x} Remove</button>
+      </div>
+    </div></article>`;
+}
 function igCode(u){const m=(u||'').match(/\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);return m?m[1]:'';}
 function ttId(u){const m=(u||'').match(/\/video\/(\d+)/);return m?m[1]:'';}
 function injectEmbed(media,src){
@@ -1184,17 +1210,20 @@ function renderBookmarks(){
       html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
     }
   }
-  // Inspiration Links
+  // Inspiration Links — enriched ones (have a fetched thumbnail) render as full
+  // Swipe File cards via linkCard(); anything not yet enriched (TIKHUB_TOKEN unset,
+  // metrics fetch failed, or a non-IG/TikTok link) falls back to a plain row.
   var showLinks=bookmarkFilter==='all'||bookmarkFilter==='links';
   if(showLinks&&inspirationLinks.length){
-    var lrows=inspirationLinks.map(function(lk,i){
+    var lcards=inspirationLinks.filter(function(lk){return lk.thumbnail;}).map(linkCard).join('');
+    var lrows=inspirationLinks.filter(function(lk){return !lk.thumbnail;}).map(function(lk){
       var platCls=lk.platform==='ig'?'ig':lk.platform==='tt'?'tt':'other';
       var platTxt=lk.platform==='ig'?'IG':lk.platform==='tt'?'TT':'WEB';
       var shortUrl=(lk.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
       if(shortUrl.length>55)shortUrl=shortUrl.slice(0,52)+'...';
       var dateStr=lk.savedAt?new Date(lk.savedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
       var note=lk.note?'<div class="insp-url">'+lk.note+'</div>':'<div class="insp-url">'+shortUrl+'</div>';
-      return '<div class="insp-link" data-li="'+i+'">'
+      return '<div class="insp-link">'
         +'<span class="insp-plat '+platCls+'">'+platTxt+'</span>'
         +'<div class="insp-body"><div class="insp-label">'+lk.label+'</div>'+note+'</div>'
         +(dateStr?'<span class="insp-date">'+dateStr+'</span>':'')
@@ -1203,7 +1232,8 @@ function renderBookmarks(){
         +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
         +'</div></div>';
     }).join('');
-    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspirationLinks.length+'</span></h3>'+lrows+'</div>';
+    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspirationLinks.length+'</span></h3>'
+      +(lcards?'<div class="grid">'+lcards+'</div>':'')+lrows+'</div>';
   }
   if(!html)html='<div class="empty" style="margin:48px auto">Nothing saved yet &mdash; use &#9733; Save on any post, trend, or sound.</div>';
   con.innerHTML=html;
