@@ -42,6 +42,14 @@ function deep(obj, ...keys) {
 function isAudioLink(url) {
   return /instagram\.com\/reels?\/audio\//.test(url);
 }
+function audioIdFromUrl(url) {
+  const m = (url || "").match(/\/reels?\/audio\/(\d+)/);
+  return m ? m[1] : "";
+}
+function shortcodeFromUrl(url) {
+  const m = (url || "").match(/\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);
+  return m ? m[1] : "";
+}
 
 async function tikhub(path_) {
   const r = await fetch("https://api.tikhub.io" + path_, {
@@ -51,43 +59,35 @@ async function tikhub(path_) {
   return r.json();
 }
 
-function extractFromMedia(m) {
-  if (!m || !m.code) return null;
-  const cm = m.clips_metadata || {};
-  const mi = cm.music_info || {};
-  const ai = mi.music_asset_info || {};
-  const osi = cm.original_sound_info || {};
-  const audioId = ai.audio_cluster_id || cm.music_canonical_id || osi.audio_asset_id || "";
-  return {
-    account: deep(m, "user", "username") || "",
-    video: deep(m, "video_versions", 0, "url") || "",
-    audioId: String(audioId || ""),
-  };
-}
-
+// fetch_post_by_url's response (Instagram's public/web shape) doesn't expose an
+// audio/music asset ID at all — verified by walking its full response tree for any
+// audio/music/sound/asset_id key; only a boolean `has_audio` is present. So for a
+// direct reel/post link we fall back to the shortcode as the traceable identifier
+// (still lets you find the exact reel, just not IG's internal audio ID).
 async function lookupByPostUrl(url) {
   const j = await tikhub(`/api/v1/instagram/v1/fetch_post_by_url?post_url=${encodeURIComponent(url)}`);
   const d = (j && j.data) || {};
   if (!d.id) return null;
-  const cm = d.clips_metadata || {}; // fetch_post_by_url's shape mirrors the app API closely
-  const audioId = deep(cm, "music_info", "music_asset_info", "audio_cluster_id")
-    || cm.music_canonical_id
-    || deep(cm, "original_sound_info", "audio_asset_id") || "";
   return {
     account: deep(d, "owner", "username") || "",
     video: d.video_url || "",
-    audioId: String(audioId || ""),
+    audioId: "reel_" + (shortcodeFromUrl(url) || d.shortcode || ""),
   };
 }
 
+// For a reels/audio/<id> link, the audio ID is already the ID in the URL itself —
+// no need to dig it back out of the API response. fetch_music_posts is only used
+// here to find a representative post using that audio, for its video_url/account.
 async function lookupByMusicUrl(url) {
+  const audioId = audioIdFromUrl(url);
   for (let attempt = 0; attempt < 3; attempt++) {
     const j = await tikhub(`/api/v1/instagram/v1/fetch_music_posts?music_url=${encodeURIComponent(url)}`);
     const items = deep(j, "data", "items");
     if (Array.isArray(items) && items.length) {
       for (const it of items) {
-        const found = extractFromMedia(it.media);
-        if (found && found.video) return found;
+        const m = it.media;
+        const video = m && deep(m, "video_versions", 0, "url");
+        if (video) return { account: deep(m, "user", "username") || "", video, audioId };
       }
     }
     if (attempt < 2) await new Promise((res) => setTimeout(res, 3000));
