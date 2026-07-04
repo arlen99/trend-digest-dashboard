@@ -378,6 +378,7 @@ select:hover{border-color:var(--teal)}
 .trk .ti{flex:1;min-width:0}
 .trk .ti .sg{font-family:'Fraunces',serif;font-size:18px;line-height:1.2;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .trk .ti .sg a{border-bottom:1px solid var(--line2)}.trk .ti .sg a:hover{color:var(--teal)}
+.ht-lk,.spl-title-lk{border-bottom:1px solid var(--line2)}.ht-lk:hover,.spl-title-lk:hover{color:var(--teal)}
 .trk .ti .ar{color:var(--muted);font-size:13px;margin-top:2px}
 .trk .ti .us{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);margin-top:6px}
 .trk .ti .us b{color:var(--teal)}
@@ -808,9 +809,9 @@ async function downloadAudio(url,btn){
     }else{
       const j=await r.json().catch(function(){return{};});
       if(j.fallback==='instasaver'){
-        if(navigator.clipboard)navigator.clipboard.writeText(url).catch(function(){});
-        alert('Direct download failed — copied the link. Paste it into the instasaver.io tab that just opened.');
-        window.open('https://instasaver.io/','_blank','noopener');
+        // /en/audio/?url=... pre-fills AND auto-submits their form (confirmed by hand) —
+        // the bare root domain does neither, which is why this used to require a manual paste.
+        window.open('https://instasaver.io/en/audio/?url='+encodeURIComponent(url),'_blank','noopener');
       }else{
         alert('Download failed: '+(j.reason||'unknown error'));
       }
@@ -1295,11 +1296,15 @@ function renderBookmarks(){
         var skey=soundKey(t);
         var isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
         var detb=det?(t.detectedVerified?'<span class="det-badge">&#9835; detected</span>':'<span class="det-badge unv">&#9835; detected &middot; unverified</span>'):'';
-        // Prefer the audio-page URL (raw track) — IG via audioId, TikTok via its own
-        // music link — falling back to a sample reel's own audio if neither is known.
-        var dlUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||(t.samples&&t.samples.length?t.samples[0]:''));
+        // The audio-page URL specifically (IG via audioId, TikTok via its own music
+        // link) — used for the title hyperlink. Falls back to a sample reel for the
+        // Get Audio button when neither is known, but a reel isn't "the audio page"
+        // so it's not used for the hyperlink.
+        var audioPageUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||'');
+        var dlUrl=audioPageUrl||(t.samples&&t.samples.length?t.samples[0]:'');
         var dlBtn=dlUrl?'<button class="dl" type="button" data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'';
-        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+dlBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headline+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
+        var headlineHtml=audioPageUrl?'<a class="ht-lk" href="'+audioPageUrl+'" target="_blank" rel="noopener">'+headline+'</a>':headline;
+        return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'">'+dlBtn+'<div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headlineHtml+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></div>';
       }).join('');
       html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
     }
@@ -1449,10 +1454,12 @@ function renderSoundChart(){
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     // Prefer the audio-page URL (raw original track, no creator foley/SFX mixed in)
     // over a reel URL — download-audio.js only gets the clean track from that path.
-    const dlUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:t.sample;
+    const audioPageUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:'';
+    const dlUrl=audioPageUrl||t.sample;
     const dl=dlUrl?`<button class="lk dl" type="button" data-get-audio="${dlUrl}" title="Download the raw audio">⬇ Get audio</button>`:'';
+    const headlineHtml=audioPageUrl?`<a href="${audioPageUrl}" target="_blank" rel="noopener">${headline}</a>`:headline;
     return `<div class="trk${isSaved?' saved-sound':''}" data-skey="${encodeURIComponent(skey)}">${play}<div class="r">${i+1}</div><div class="ti">
-      <div class="sg">${headline} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
+      <div class="sg">${headlineHtml} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
       ${reels?`<div class="reels">${reels}</div>`:''}</div>
       <div class="links">${dz}${dl}<div class="trk-actions"><button data-sact="save" class="${isSaved?'active':''}">★ ${isSaved?'Saved':'Save'}</button><button data-sact="dismiss" class="${isDis?'active':''}">✕ ${isDis?'Dismissed':'Dismiss'}</button></div></div></div>`;
@@ -1463,8 +1470,9 @@ function renderSoundChart(){
     const uc=t.useCount?` · ${fmtN(t.useCount)} uses`:'';
     const lk=t.link?`<a class="lk" href="${t.link}" target="_blank" rel="noopener">▶ TikTok</a>`:'';
     const dl=t.link?`<button class="lk dl" type="button" data-get-audio="${t.link}" title="Download the raw audio">⬇ Get audio</button>`:'';
+    const titleHtml=t.link?`<a href="${t.link}" target="_blank" rel="noopener">${t.title}</a>`:t.title;
     return `<div class="trk">${ic}<div class="r">${i+1}</div><div class="ti">
-      <div class="sg">${t.title} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
+      <div class="sg">${titleHtml} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
       <div class="links">${lk}${dl}</div></div>`;}).join('');
 }
 /* ===== TREND SPOTLIGHT ===== */
@@ -1537,9 +1545,11 @@ function renderSoundSpotlight(items){
     const isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
     const playerHtml=isActive?splPlayer(reels[scReel]):'';
     const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===scReel?' on':'')+'" data-screel="'+i+'">&#9654; Reel '+(i+1)+'</button>';}).join(''):'';
-    const dlUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||(reels.length?reels[0]:''));
+    const audioPageUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||'');
+    const dlUrl=audioPageUrl||(reels.length?reels[0]:'');
     const actBtns=isActive?'<div class="tcard-actions">'+(dlUrl?'<button data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'')+'<button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
-    const body='<div class="spl-body"><div class="spl-count">'+(scIdx+1)+' / '+items.length+'</div><div class="spl-title">'+headline+' '+detb+'</div><div class="spl-sub">'+sub+'</div><div class="spl-stat">used in <b>'+t.uses+'</b> reel'+(t.uses!==1?'s':'')+' &nbsp;&middot;&nbsp; <b>'+t.creators+'</b> creator'+(t.creators!==1?'s':'')+accts+'</div>'+(reels.length?'<div class="spl-reels">'+reelBtns+'</div>':'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>')+actBtns+'</div>';
+    const titleHtml=audioPageUrl?'<a class="spl-title-lk" href="'+audioPageUrl+'" target="_blank" rel="noopener">'+headline+'</a>':headline;
+    const body='<div class="spl-body"><div class="spl-count">'+(scIdx+1)+' / '+items.length+'</div><div class="spl-title">'+titleHtml+' '+detb+'</div><div class="spl-sub">'+sub+'</div><div class="spl-stat">used in <b>'+t.uses+'</b> reel'+(t.uses!==1?'s':'')+' &nbsp;&middot;&nbsp; <b>'+t.creators+'</b> creator'+(t.creators!==1?'s':'')+accts+'</div>'+(reels.length?'<div class="spl-reels">'+reelBtns+'</div>':'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>')+actBtns+'</div>';
     const ghost=rawIdx<0?' spl-ghost':'';
     const nav=(!isActive&&rawIdx>=0)?(' data-scgo="'+rawIdx+'"'):'';
     return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+playerHtml+'</div>'+body+'</div>';
@@ -1623,10 +1633,11 @@ document.getElementById('soundchart').addEventListener('click',e=>{
     const igl=t.igLink?`<a class="lk" href="${t.igLink}" target="_blank" rel="noopener">▶ IG audio</a>`:'';
     const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     const dl=t.igLink?`<button class="lk dl" type="button" data-get-audio="${t.igLink}" title="Download the raw audio">⬇ Get audio</button>`:'';
+    const songHtml=t.igLink?`<a href="${t.igLink}" target="_blank" rel="noopener">${t.song}</a>`:t.song;
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
       :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
     return `<div class="trk">${play}<div class="r">${i+1}</div><div class="ti">
-      <div class="sg">${t.song} ${det}</div><div class="ar">${t.artist||''}</div>
+      <div class="sg">${songHtml} ${det}</div><div class="ar">${t.artist||''}</div>
       <div class="us">used by <b>${t.n}</b> post${t.n>1?'s':''} · ${[...new Set(t.accts)].map(a=>'@'+a).join(', ')}</div></div>
       <div class="links">${igl}${dz}${dl}</div></div>`;
   };
