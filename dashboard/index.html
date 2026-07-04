@@ -794,7 +794,13 @@ function renderPasteAudioList(){
 }
 async function downloadAudio(url,btn){
   if(!SECRET){alert('Set up ⇄ Sync devices first.');return;}
-  const orig=btn.textContent;btn.disabled=true;btn.textContent='Downloading…';
+  const orig=btn.textContent;btn.disabled=true;
+  // The IG audio-page lookup can retry for 20-40+ seconds server-side (a genuinely
+  // flaky upstream endpoint) — without live feedback that just looks like the button
+  // is stuck/broken. Show elapsed time so it's clear it's still actively working.
+  const t0=Date.now();
+  btn.textContent='Downloading… 0s';
+  const tick=setInterval(function(){btn.textContent='Downloading… '+Math.round((Date.now()-t0)/1000)+'s';},1000);
   try{
     const r=await fetch('/api/download-audio',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})});
     const ct=r.headers.get('content-type')||'';
@@ -817,6 +823,7 @@ async function downloadAudio(url,btn){
       }
     }
   }catch(e){alert('Download failed: network error');}
+  clearInterval(tick);
   btn.disabled=false;btn.textContent=orig;
 }
 // Single delegated handler for every "Get audio" button on the board, regardless of
