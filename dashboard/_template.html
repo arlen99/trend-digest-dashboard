@@ -114,11 +114,13 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .trends-bar button.on,.sounds-bar button.on,.view-toggle button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
 .view-toggle{display:flex;gap:6px}
 /* Spotlight carousel */
-.spl-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:20px 0}
-.spl-nav{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--muted);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;padding:0}
-.spl-nav:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
-.spl-nav:disabled{opacity:.18;cursor:default}
-.spl-card{flex:1;max-width:400px;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.spl-stage{overflow:hidden;width:100%;padding:20px 0}
+.spl-track{display:flex;gap:20px;position:relative;will-change:transform}
+.spl-slide{flex:none;width:clamp(280px,72vw,360px);background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:opacity .35s,transform .35s;cursor:pointer;position:relative}
+.spl-slide.active{cursor:default;opacity:1;transform:scale(1)}
+.spl-slide:not(.active){opacity:.3;transform:scale(0.96)}
+.spl-slide:not(.active)::after{content:'';position:absolute;inset:0;background:rgba(10,12,14,.6);z-index:5;border-radius:16px;pointer-events:none}
+.spl-slide.spl-ghost{visibility:hidden;pointer-events:none}
 .spl-player{position:relative;background:#000;aspect-ratio:9/16;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .spl-player video{width:100%;height:100%;object-fit:contain;display:block}
 .spl-player iframe{width:100%;height:100%;border:0;display:block}
@@ -1153,70 +1155,95 @@ function splPlayer(reelUrl){
   const src=istt&&tid?`https://www.tiktok.com/embed/v2/${tid}`:code?`https://www.instagram.com/reel/${code}/embed/`:'';
   return src?`<iframe src="${src}" allow="autoplay;encrypted-media;fullscreen" allowfullscreen scrolling="no"></iframe>`:'<div class="spl-no-reel">No embed available</div>';
 }
+function centerTrack(el){
+  const stage=el.querySelector('.spl-stage');
+  const track=el.querySelector('.spl-track');
+  const active=el.querySelector('.spl-slide.active');
+  if(!stage||!track||!active)return;
+  const x=stage.offsetWidth/2-active.offsetLeft-active.offsetWidth/2;
+  track.style.transform='translateX('+x+'px)';
+}
 function renderTrendSpotlight(items){
   const el=$('#spl-trends');if(!el)return;
   if(!items||!items.length){el.innerHTML='<div class="empty">No trends to show.</div>';return;}
   if(trIdx>=items.length)trIdx=0;
-  const t=items[trIdx], ICN={audio:'♪',hook:'✎'};
-  const reels=t.examples||[];
-  if(trReel>=reels.length)trReel=0;
-  const reelBtns=reels.map((u,i)=>`<button class="spl-reel${i===trReel?' on':''}" data-trreel="${i}">▶ Example ${i+1}</button>`).join('');
-  const mom=(t.momentum||'new').toLowerCase();
-  const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'';
-  el.innerHTML=`<div class="spl-wrap">
-    <button class="spl-nav" id="spl-tr-prev"${trIdx===0?' disabled':''}>&#8249;</button>
-    <div class="spl-card">
-      <div class="spl-player">${splPlayer(reels[trReel])}</div>
-      <div class="spl-body">
-        <div class="spl-count">${trIdx+1} / ${items.length} &nbsp;·&nbsp; <span class="tmom ${mom}" style="display:inline-block">${mom}</span> &nbsp;${ICN[t.type]||''} ${t.type}</div>
-        <div class="spl-title">${t.name}</div>
-        <div class="spl-sub">${t.anchor}</div>
-        ${t.format?`<div class="spl-stat">${t.format}</div>`:''}
-        <div class="spl-stat">${trig?trig+'&ensp;':''}<b>${t.creators}</b> creators &nbsp;·&nbsp; <b>${t.uses}</b> uses</div>
-        ${t.howTo?`<div class="spl-howto">${t.howTo}</div>`:''}
-        ${reels.length?`<div class="spl-reels">${reelBtns}</div>`:''}
-      </div>
-    </div>
-    <button class="spl-nav" id="spl-tr-next"${trIdx===items.length-1?' disabled':''}>&#8250;</button>
-  </div>
-  <p class="spl-hint">‹ › to navigate &nbsp;·&nbsp; select a reel tab to switch</p>`;
-  $('#spl-tr-prev').onclick=()=>{trIdx--;trReel=0;renderTrendRadar();};
-  $('#spl-tr-next').onclick=()=>{trIdx++;trReel=0;renderTrendRadar();};
-  el.querySelectorAll('[data-trreel]').forEach(b=>b.onclick=()=>{trReel=+b.dataset.trreel;renderTrendSpotlight(items);});
+  const ICN={audio:'&#9836;',hook:'&#9998;'};
+  function buildTrCard(t,isActive,rawIdx){
+    const reels=t.examples||[];
+    const mom=(t.momentum||'new').toLowerCase();
+    const trig=t.trigger?'<span class="ttrig" style="color:'+col(t.trigger)+'">'+t.trigger+'</span>':'';
+    const k=t.name+'|'+t.type;
+    const isSaved=savedTrends.has(k),isDis=dismissedTrends.has(k);
+    const playerHtml=isActive?splPlayer(reels[trReel]):'';
+    const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===trReel?' on':'')+'" data-trreel="'+i+'">&#9654; Example '+(i+1)+'</button>';}).join(''):'';
+    const actBtns=isActive?'<div class="tcard-actions"><button data-tact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-tact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
+    const count='<div class="spl-count">'+(trIdx+1)+' / '+items.length+' &nbsp;&middot;&nbsp; <span class="tmom '+mom+'" style="display:inline-block">'+mom+'</span></div>';
+    const body='<div class="spl-body">'+count+'<div class="spl-title">'+t.name+'</div><div class="spl-sub">'+t.anchor+'</div>'+(isActive&&t.format?'<div class="spl-stat">'+t.format+'</div>':'')+(isActive?'<div class="spl-stat">'+(trig?trig+'&ensp;':'')+'<b>'+t.creators+'</b> creators &nbsp;&middot;&nbsp; <b>'+t.uses+'</b> uses</div>':'')+(isActive&&t.howTo?'<div class="spl-howto">'+t.howTo+'</div>':'')+(reelBtns?'<div class="spl-reels">'+reelBtns+'</div>':'')+actBtns+'</div>';
+    const ghost=rawIdx<0?' spl-ghost':'';
+    const nav=(!isActive&&rawIdx>=0)?(' data-trgo="'+rawIdx+'"'):'';
+    return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+playerHtml+'</div>'+body+'</div>';
+  }
+  const prev=trIdx>0?buildTrCard(items[trIdx-1],false,trIdx-1):'<div class="spl-slide spl-ghost"></div>';
+  const curr=buildTrCard(items[trIdx],true,trIdx);
+  const next=trIdx<items.length-1?buildTrCard(items[trIdx+1],false,trIdx+1):'<div class="spl-slide spl-ghost"></div>';
+  el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
+  centerTrack(el);
+  el.querySelectorAll('[data-trreel]').forEach(function(b){b.onclick=function(){trReel=+b.dataset.trreel;renderTrendSpotlight(items);};});
+  el.querySelectorAll('[data-trgo]').forEach(function(b){b.onclick=function(){trIdx=+b.dataset.trgo;trReel=0;renderTrendRadar();};});
+  el.querySelectorAll('[data-tact]').forEach(function(btn){
+    btn.onclick=function(){
+      var t2=items[trIdx],k=t2.name+'|'+t2.type,act=btn.dataset.tact;
+      if(act==='save'){savedTrends.has(k)?savedTrends.delete(k):savedTrends.add(k);}
+      else{dismissedTrends.has(k)?dismissedTrends.delete(k):dismissedTrends.add(k);}
+      pushState();renderTrendRadar();
+    };
+  });
 }
 /* ===== SOUND SPOTLIGHT ===== */
+function soundKey(t){var det=t.detected,h=det?t.detectedSong:t.title;return h+'|'+(det?(t.detectedArtist||'')+'|'+t.artist:(t.artist||''));}
 function renderSoundSpotlight(items){
   const el=$('#spl-sounds');if(!el)return;
   if(!items||!items.length){el.innerHTML='<div class="empty">No sounds to show.</div>';return;}
   if(scIdx>=items.length)scIdx=0;
-  const t=items[scIdx];
-  const det=t.detected, headline=det?t.detectedSong:t.title;
-  const artist=det?t.detectedArtist||'':t.artist||'';
-  const sub=det?`${artist} · tagged "original audio" by @${t.artist}`:artist;
-  const reels=t.samples||[];
-  if(scReel>=reels.length)scReel=0;
-  const detb=det?(t.detectedVerified?'<span class="det-badge">♫ detected</span>':'<span class="det-badge unv">♫ detected · unverified</span>'):'';
-  const reelBtns=reels.map((u,i)=>`<button class="spl-reel${i===scReel?' on':''}" data-screel="${i}">▶ Reel ${i+1}</button>`).join('');
-  const accts=t.accounts&&t.accounts.length?'<br>'+t.accounts.map(a=>'@'+a).join(', '):'';
-  el.innerHTML=`<div class="spl-wrap">
-    <button class="spl-nav" id="spl-sc-prev"${scIdx===0?' disabled':''}>&#8249;</button>
-    <div class="spl-card">
-      <div class="spl-player">${splPlayer(reels[scReel])}</div>
-      <div class="spl-body">
-        <div class="spl-count">${scIdx+1} / ${items.length}</div>
-        <div class="spl-title">${headline} ${detb}</div>
-        <div class="spl-sub">${sub}</div>
-        <div class="spl-stat">used in <b>${t.uses}</b> reel${t.uses!==1?'s':''} &nbsp;·&nbsp; <b>${t.creators}</b> creator${t.creators!==1?'s':''}${accts}</div>
-        ${reels.length?`<div class="spl-reels">${reelBtns}</div>`:'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>'}
-      </div>
-    </div>
-    <button class="spl-nav" id="spl-sc-next"${scIdx===items.length-1?' disabled':''}>&#8250;</button>
-  </div>
-  <p class="spl-hint">‹ › to navigate &nbsp;·&nbsp; select a reel tab to switch</p>`;
-  $('#spl-sc-prev').onclick=()=>{scIdx--;scReel=0;renderSoundChart();};
-  $('#spl-sc-next').onclick=()=>{scIdx++;scReel=0;renderSoundChart();};
-  el.querySelectorAll('[data-screel]').forEach(b=>b.onclick=()=>{scReel=+b.dataset.screel;renderSoundSpotlight(items);});
+  function buildScCard(t,isActive,rawIdx){
+    const det=t.detected,headline=det?t.detectedSong:t.title;
+    const artist=det?t.detectedArtist||'':t.artist||'';
+    const sub=det?artist+' · tagged "original audio" by @'+t.artist:artist;
+    const reels=t.samples||[];
+    const detb=det?(t.detectedVerified?'<span class="det-badge">&#9835; detected</span>':'<span class="det-badge unv">&#9835; detected &middot; unverified</span>'):'';
+    const accts=t.accounts&&t.accounts.length?'<br>'+t.accounts.map(function(a){return '@'+a;}).join(', '):'';
+    const skey=soundKey(t);
+    const isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
+    const playerHtml=isActive?splPlayer(reels[scReel]):'';
+    const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===scReel?' on':'')+'" data-screel="'+i+'">&#9654; Reel '+(i+1)+'</button>';}).join(''):'';
+    const actBtns=isActive?'<div class="tcard-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
+    const body='<div class="spl-body"><div class="spl-count">'+(scIdx+1)+' / '+items.length+'</div><div class="spl-title">'+headline+' '+detb+'</div><div class="spl-sub">'+sub+'</div><div class="spl-stat">used in <b>'+t.uses+'</b> reel'+(t.uses!==1?'s':'')+' &nbsp;&middot;&nbsp; <b>'+t.creators+'</b> creator'+(t.creators!==1?'s':'')+accts+'</div>'+(reels.length?'<div class="spl-reels">'+reelBtns+'</div>':'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>')+actBtns+'</div>';
+    const ghost=rawIdx<0?' spl-ghost':'';
+    const nav=(!isActive&&rawIdx>=0)?(' data-scgo="'+rawIdx+'"'):'';
+    return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+playerHtml+'</div>'+body+'</div>';
+  }
+  const prev=scIdx>0?buildScCard(items[scIdx-1],false,scIdx-1):'<div class="spl-slide spl-ghost"></div>';
+  const curr=buildScCard(items[scIdx],true,scIdx);
+  const next=scIdx<items.length-1?buildScCard(items[scIdx+1],false,scIdx+1):'<div class="spl-slide spl-ghost"></div>';
+  el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
+  centerTrack(el);
+  el.querySelectorAll('[data-screel]').forEach(function(b){b.onclick=function(){scReel=+b.dataset.screel;renderSoundSpotlight(items);};});
+  el.querySelectorAll('[data-scgo]').forEach(function(b){b.onclick=function(){scIdx=+b.dataset.scgo;scReel=0;renderSoundChart();};});
+  el.querySelectorAll('[data-sact]').forEach(function(btn){
+    btn.onclick=function(){
+      var t2=items[scIdx],sk=soundKey(t2),act=btn.dataset.sact;
+      if(act==='save'){savedSounds.has(sk)?savedSounds.delete(sk):savedSounds.add(sk);}
+      else{dismissedSounds.has(sk)?dismissedSounds.delete(sk):dismissedSounds.add(sk);}
+      pushState();renderSoundChart();
+    };
+  });
 }
+/* ===== RESIZE: re-centre spotlight ===== */
+window.addEventListener('resize',function(){
+  var elTr=$('#spl-trends'),elSc=$('#spl-sounds');
+  if(trMode==='spotlight'&&elTr&&elTr.style.display!=='none')centerTrack(elTr);
+  if(scMode==='spotlight'&&elSc&&elSc.style.display!=='none')centerTrack(elSc);
+});
 /* ===== VIEW TOGGLES ===== */
 document.getElementById('tr-view-toggle').addEventListener('click',e=>{
   const b=e.target.closest('[data-trv]');if(!b)return;
