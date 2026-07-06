@@ -15,6 +15,7 @@ Usage: python3 scrape_dedupe.py
 import glob
 import json
 import os
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -22,23 +23,41 @@ ROOT = Path(__file__).parent
 DASH = ROOT / "dashboard"
 OUT = ROOT / "output"
 
+# Same post can surface as /reel/<code>/ or /p/<code>/ (IG) depending on which
+# scrape/endpoint produced it — comparing raw URL strings let identical posts
+# through under the other prefix. Compare on the extracted shortcode/id instead.
+_IG_RE = re.compile(r"/(?:reel|reels|p|tv)/([A-Za-z0-9_-]+)")
+_TT_RE = re.compile(r"/video/(\d+)")
+
+
+def canonical(url: str) -> str:
+    if not url:
+        return ""
+    m = _IG_RE.search(url)
+    if m:
+        return "ig:" + m.group(1)
+    m = _TT_RE.search(url)
+    if m:
+        return "tt:" + m.group(1)
+    return url
+
 
 def prior_urls():
-    """Every post URL ever curated, across the archive + current top-level."""
+    """Every post's canonical shortcode/id ever curated, across the archive + current top-level."""
     if not (DASH / "data.json").exists():
         return set()
     data = json.loads((DASH / "data.json").read_text())
-    urls = {p["url"] for p in (data.get("posts") or []) if p.get("url")}
+    urls = {canonical(p["url"]) for p in (data.get("posts") or []) if p.get("url")}
     for week, slice_ in (data.get("weeks") or {}).items():
         for p in (slice_.get("posts") or []):
             if p.get("url"):
-                urls.add(p["url"])
+                urls.add(canonical(p["url"]))
     return urls
 
 
 def dedupe_file(path: Path, prior: set):
     rows = json.loads(path.read_text())
-    fresh = [r for r in rows if r.get("url") not in prior]
+    fresh = [r for r in rows if canonical(r.get("url")) not in prior]
     out = path.with_name(path.stem + "_fresh.json")
     out.write_text(json.dumps(fresh, indent=2))
     excluded = len(rows) - len(fresh)
@@ -49,8 +68,8 @@ def dedupe_file(path: Path, prior: set):
 def main():
     prior = prior_urls()
     if not prior:
-        print("No prior-week URLs to filter against — no-op (probably the first run).")
-        return
+        print("No prior-week URLs to filter against (probably the first run) — "
+              "writing *_fresh.json unchanged so downstream steps still find it.")
     today = datetime.now().strftime("%Y-%m-%d")
     targets = [OUT / f"top_posts_{today}.json", OUT / f"top_posts_tiktok_{today}.json"]
     for f in targets:

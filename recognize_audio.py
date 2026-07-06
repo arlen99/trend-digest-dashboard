@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Identify the real background song behind Instagram "original audio" labels by
-audio-fingerprinting each reel's audio (AudD.io).
-
-Instagram only exposes the real song+artist when the creator used a *tagged*
-track. When they pick "original audio" (often a licensed song under a voiceover),
-IG just says "Original audio". This sends those clips' audio_url to AudD, which
-returns the matched song.
+Identify the real background song behind each post's audio by fingerprinting
+it with AudD.io. fetch_user_posts (what scrape.py calls) used to expose a real
+song+artist for tagged tracks via clips_metadata.music_info, but that field
+(and original_sound_info) is now null on every post regardless of whether the
+track is licensed or a creator's own original audio — verified even against a
+post independently confirmed to use a fully licensed track. So this fingerprints
+every post's audio_url now, not just ones IG used to flag as "original audio".
 
 Usage:
   python3 recognize_audio.py output/top_posts_<date>.json
@@ -52,8 +52,12 @@ def main() -> None:
     rows = json.loads(Path(path).read_text())
     out, n = {}, 0
     for r in rows:
-        if not r.get("audio_is_original"):
-            continue  # tagged songs already carry the real title from IG
+        # `audio_is_original` used to skip posts IG already tags with a real
+        # song — but fetch_user_posts no longer returns clips_metadata's
+        # music_info/original_sound_info at all (verified even against a post
+        # independently confirmed to use a licensed track), so that flag is
+        # always False now and this guard would skip everything. Fingerprint
+        # every post instead.
         au = r.get("audio_url")
         if not au:
             out[r["url"]] = {"reason": "no audio_url"}

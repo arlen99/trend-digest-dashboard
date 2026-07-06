@@ -1,9 +1,16 @@
 name: Weekly Trend Digest (data layer)
 
-# Refreshes the DETERMINISTIC layers (scrape, sound chart, TikTok trends, trend
-# candidates, provenance) and redeploys the dashboard — no Mac required.
-# The CURATION + trend-card prose still need Claude (see CLOUD_SETUP.md): either a
-# separate /schedule cloud routine, or add an Agent-SDK step below.
+# Refreshes the full pipeline — scrape, sound chart, TikTok trends, trend
+# candidates, provenance, AND the IG Swipe File curation itself — and redeploys
+# the dashboard. No Mac required, no manual curation step.
+#
+# curate_posts.py (Claude vision, via ANTHROPIC_API_KEY) replaces what used to
+# be a human/Claude session looking at thumbnails by hand: it decides which
+# fresh candidates belong on the board and tags them (hook, hookTypes, triggers,
+# visualStyles, notes). It runs fully automatically — no review gate — so its
+# own prompt is the only filter against monetization bait, sponsored/branded
+# posts, and off-niche content. Trend Radar card prose is a separate, still-
+# manual concern (see CLOUD_SETUP.md).
 
 on:
   schedule:
@@ -25,10 +32,11 @@ jobs:
       - name: Install system deps (ffmpeg + Tesseract OCR)
         run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr
 
-      - name: Run the deterministic pipeline
+      - name: Run the full pipeline (scrape, curate, build)
         env:
           TIKHUB_TOKEN: ${{ secrets.TIKHUB_TOKEN }}
           AUDD_TOKEN: ${{ secrets.AUDD_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
           OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
           CLIPS_PER_ACCOUNT: "20"
@@ -39,23 +47,24 @@ jobs:
           python3 accumulate.py            # archive prior week's data BEFORE this week's pipeline writes over it
           python3 scrape.py
           python3 tiktok_scrape.py
-          python3 scrape_dedupe.py         # strip any post URL ever curated in a prior week
+          python3 scrape_dedupe.py         # strip any post ever curated before (by shortcode/id, not raw URL) → *_fresh.json
           python3 keyword_posts.py
           python3 audio_trends.py
           python3 tiktok_trends.py
           python3 chart_audd.py
-          python3 hook_text.py output/top_posts_${TODAY}.json --limit 150
+          python3 hook_text.py output/top_posts_${TODAY}_fresh.json --limit 150
+          python3 fetch_thumbs.py output/top_posts_${TODAY}_fresh.json
+          python3 fetch_carousels.py output/top_posts_${TODAY}_fresh.json
           python3 trends.py
           python3 hook_search.py
-          # dashboard data refresh (deterministic parts only)
+          # dashboard data refresh
+          python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
           python3 audio_chart_to_dashboard.py
           python3 tiktok_to_dashboard.py --top 12
           python3 keyword_posts_to_dashboard.py --top 12
           python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
           python3 provenance.py
           python3 build_dashboard.py
-          # NOTE: curated swipe-file posts + Trend Radar card prose are NOT refreshed
-          # here (they need Claude). See CLOUD_SETUP.md for the options.
 
       - name: Commit & deploy (push from repo root → Vercel)
         run: |
