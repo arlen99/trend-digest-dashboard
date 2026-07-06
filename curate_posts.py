@@ -171,11 +171,25 @@ def main() -> None:
             print(f"  {i:02d} @{acct} -> excluded ({result.get('exclude_reason','no reason given')})")
             continue
 
-        audio = {}
-        if fmt != "Carousel" and r.get("video"):
-            audio = audd_recognize(r["video"])
+        # scrape.py now overlays real audio_id/audio_song/audio_artist onto Reels
+        # from fetch_user_reels (fetch_user_posts itself no longer returns it).
+        # AudD fingerprinting is still needed when audio_is_original is True — IG's
+        # own metadata just says "original audio" there even when a real (often
+        # licensed-under-a-voiceover) song is playing underneath; a canonical ID
+        # existing doesn't mean IG revealed what the track actually is. It's also
+        # the fallback when the overlay found nothing at all.
+        audio_id = r.get("audio_id") or ""
+        audio_song = r.get("audio_song") or ""
+        audio_artist = r.get("audio_artist") or ""
+        audio_is_original = r.get("audio_is_original", True)
+        audd = {}
+        if fmt != "Carousel" and r.get("video") and (audio_is_original or not audio_id):
+            audd = audd_recognize(r["video"])
             time.sleep(0.3)
+            if audd:
+                audio_song, audio_artist = audd.get("song", ""), audd.get("artist", "")
 
+        real_song = bool(audio_song) and audio_song != "Original audio"
         views = r.get("views") or 0
         engRate = round(r["engagement"] / views * 100, 1) if views else None
         post = {
@@ -191,16 +205,16 @@ def main() -> None:
             "hookTypes": [h for h in result.get("hookTypes", []) if h in HOOK_TYPES],
             "triggers": [t for t in result.get("triggers", []) if t in TRIGGERS],
             "visualStyles": [v for v in result.get("visualStyles", []) if v in VISUAL_STYLES],
-            "audio": f"{audio['song']} · {audio['artist']}" if audio else f"Original audio · @{r['account']}",
+            "audio": f"{audio_song} · {audio_artist}" if real_song else f"Original audio · @{r['account']}",
             "notes": result.get("notes", ""),
             "week": date.today().isoformat(),
             "video": r.get("video", "") if fmt != "Carousel" else "",
-            "audioId": "",
-            "audioLink": "",
-            "audioSongLink": audio.get("link", ""),
-            "audioDetected": bool(audio),
-            "audioSong": audio.get("song") or "Original audio",
-            "audioArtist": audio.get("artist") or r["account"],
+            "audioId": audio_id,
+            "audioLink": f"https://www.instagram.com/reels/audio/{audio_id}/" if audio_id else "",
+            "audioSongLink": audd.get("link", ""),
+            "audioDetected": real_song and bool(audd),  # "detected" = AudD fingerprint match specifically, matches existing dashboard semantics
+            "audioSong": audio_song or "Original audio",
+            "audioArtist": audio_artist or r["account"],
             "date": (r.get("timestamp") or "")[:10],
             "videoText": htext,
             "audioPreview": "",

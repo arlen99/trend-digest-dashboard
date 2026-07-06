@@ -100,6 +100,18 @@ def resolve_ids(accounts):
     return out
 
 
+def extract_audio(cm):
+    """clips_metadata -> (audio_song, audio_artist, audio_id, is_original)."""
+    mi = cm.get("music_info") or {}
+    ai = mi.get("music_asset_info") or {}
+    osi = cm.get("original_sound_info") or {}
+    is_original = bool(osi) and not mi
+    audio_song = ai.get("title") or (osi.get("original_audio_title") if osi else "") or ""
+    audio_artist = ai.get("display_artist") or deep(osi, "ig_artist", "username", default="") or ""
+    audio_id = ai.get("audio_cluster_id") or cm.get("music_canonical_id") or (osi.get("audio_asset_id") if osi else "")
+    return audio_song, audio_artist, str(audio_id or ""), is_original
+
+
 def normalize(media, fallback_acct):
     code = media.get("code")
     if not code:
@@ -118,23 +130,22 @@ def normalize(media, fallback_acct):
     carousel = [deep(c, "image_versions2", "candidates", 0, "url", default="")
                 for c in (media.get("carousel_media") or [])]
     carousel = [c for c in carousel if c]
-    cm = media.get("clips_metadata") or {}
-    mi = cm.get("music_info") or {}
-    ai = mi.get("music_asset_info") or {}
-    osi = cm.get("original_sound_info") or {}
-    is_original = bool(osi) and not mi
-    audio_song = ai.get("title") or (osi.get("original_audio_title") if osi else "") or ""
-    audio_artist = ai.get("display_artist") or deep(osi, "ig_artist", "username", default="") or ""
-    audio_id = ai.get("audio_cluster_id") or cm.get("music_canonical_id") or (osi.get("audio_asset_id") if osi else "")
+    # fetch_user_posts's clips_metadata.music_info/original_sound_info is null on
+    # every post regardless of platform state — verified even against a post
+    # independently confirmed to use a licensed track. fetch_user_reels still
+    # returns it (confirmed: 16/16 reels across two accounts), so fetch_account()
+    # overlays real audio data from that endpoint after this initial normalize().
+    audio_song, audio_artist, audio_id, is_original = extract_audio(media.get("clips_metadata") or {})
     return {
         "account": deep(media, "user", "username", default=fallback_acct),
         "url": f"https://www.instagram.com/{'reel' if fmt == 'Reel' else 'p'}/{code}/",
+        "code": code,
         "thumbnail": thumb, "video": video, "carousel_urls": carousel,
         "format": fmt, "caption": (deep(media, "caption", "text", default="") or "").strip(),
         "timestamp": iso, "likes": likes, "comments": comments, "views": views,
         "music": audio_song, "audio_song": audio_song, "audio_artist": audio_artist,
-        "audio_id": str(audio_id or ""), "audio_is_original": is_original,
-        "audio_url": video,  # AudD extracts audio from the video URL
+        "audio_id": audio_id, "audio_is_original": is_original,
+        "audio_url": video,  # AudD fallback extracts audio from the video URL
         "engagement": likes + comments,
     }
 
@@ -148,6 +159,31 @@ def fetch_account(pk, username):
         n = normalize(media, username)
         if n:
             out.append(n)
+
+    # Overlay real audio metadata for Reels from fetch_user_reels (fetch_user_posts
+    # no longer carries it). Best-effort: on any failure, posts just keep whatever
+    # normalize() already found (usually nothing), and recognize_audio.py-style
+    # fingerprinting can fill the gap later.
+    reels = [r for r in out if r["format"] == "Reel"]
+    if reels:
+        try:
+            rd = th(f"/api/v1/instagram/v1/fetch_user_reels?user_id={pk}&count={POSTS_PER_ACCOUNT}")
+            by_code = {}
+            for it in deep(rd, "data", "items", default=[]) or []:
+                m = it.get("media") or it
+                if m.get("code"):
+                    by_code[m["code"]] = m.get("clips_metadata") or {}
+            for r in reels:
+                cm = by_code.get(r["code"])
+                if cm:
+                    song, artist, aid, is_orig = extract_audio(cm)
+                    if song or aid:
+                        r["audio_song"], r["audio_artist"], r["audio_id"], r["audio_is_original"] = song, artist, aid, is_orig
+                        r["music"] = song
+        except Exception:  # noqa: BLE001 - best-effort overlay, never fail the scrape over it
+            pass
+    for r in out:
+        r.pop("code", None)  # internal join key only, not part of the public row shape
     return out
 
 
