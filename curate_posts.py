@@ -57,6 +57,7 @@ TOOL_SCHEMA = {
             "hookTypes": {"type": "array", "items": {"type": "string", "enum": HOOK_TYPES}, "description": "0-2 that genuinely apply."},
             "triggers": {"type": "array", "items": {"type": "string", "enum": TRIGGERS}, "description": "0-2 emotional triggers driving engagement."},
             "visualStyles": {"type": "array", "items": {"type": "string", "enum": VISUAL_STYLES}, "description": "0-2 visual style tags, judged from the image(s)."},
+            "rotate": {"type": "integer", "enum": [0, 90, 180, 270], "description": "Some source videos have their content baked in sideways (e.g. a landscape-shot scene stored in a portrait-shaped frame — horizon lines vertical instead of horizontal, people lying on their side instead of standing). Look at the image(s): if upright, 0. If the content needs rotating CLOCKWISE by this many degrees to look correctly oriented, specify that (90, 180, or 270). This is about the actual scene orientation, not the container's width/height."},
             "notes": {"type": "string", "description": "1-2 sentences: why this performed / what's notable about the hook or execution. Curatorial voice, not a caption restatement."},
         },
         "required": ["include"],
@@ -220,6 +221,12 @@ def main() -> None:
             "audioPreview": "",
             "audioDeezer": "",
             "platform": "instagram",
+            # Some source videos have their content baked in sideways (not a
+            # container rotation flag ffmpeg/browsers would auto-correct — the
+            # actual pixels are rotated). Claude judges this from the same
+            # thumbnail it already reviewed for tagging; fetch_videos.py applies
+            # the correction when self-hosting.
+            "rotate": (result.get("rotate") or 0) if fmt != "Carousel" else 0,
         }
         if fmt == "Carousel":
             post["thumb"] = (r.get("carousel_paths") or [""])[0]

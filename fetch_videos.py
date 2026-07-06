@@ -16,6 +16,8 @@ Env: TIKHUB_TOKEN, BLOB_READ_WRITE_TOKEN.
 import json
 import os
 import re
+import subprocess
+import tempfile
 import time
 import urllib.parse
 import urllib.request
@@ -28,6 +30,27 @@ BLOB = os.environ.get("BLOB_READ_WRITE_TOKEN")
 BLOB_API = "https://blob.vercel-storage.com"
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
       "(KHTML, like Gecko) Version/16 Safari/605.1.15")
+
+# ffmpeg transpose filter values for a CLOCKWISE correction of N degrees (some
+# source videos have their content baked in sideways — not a container rotation
+# flag ffmpeg/browsers would auto-correct on their own, the actual pixels are
+# rotated — curate_posts.py's Claude vision pass judges this from the thumbnail
+# it already reviewed and sets post["rotate"] to the clockwise degrees needed).
+_ROTATE_FILTER = {90: "transpose=1", 180: "transpose=1,transpose=1", 270: "transpose=2"}
+
+
+def rotate_mp4(mp4_bytes, degrees):
+    vf = _ROTATE_FILTER.get(degrees)
+    if not vf:
+        return mp4_bytes
+    with tempfile.TemporaryDirectory() as td:
+        src, dst = f"{td}/in.mp4", f"{td}/out.mp4"
+        Path(src).write_bytes(mp4_bytes)
+        r = subprocess.run(["ffmpeg", "-y", "-i", src, "-vf", vf, "-c:a", "copy", dst],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
+        if r.returncode != 0 or not Path(dst).exists():
+            return mp4_bytes  # best-effort — ship the unrotated video rather than fail the post
+        return Path(dst).read_bytes()
 
 
 def ig_code(u):
@@ -157,6 +180,8 @@ def main():
             mp4 = download(src)
             if len(mp4) < 5000:
                 fail += 1; continue
+            if p.get("rotate"):
+                mp4 = rotate_mp4(mp4, p["rotate"])
             p["video"] = blob_put(pathname, mp4)
             ok += 1
             print(f"  ✓ {plat:9} @{p['account'][:16]:<16} {len(mp4)//1024:>5}KB")
