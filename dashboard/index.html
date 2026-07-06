@@ -935,9 +935,18 @@ async function saveWithConfirm(p){
   if(yes)await addAccount(plat,p.account,{silent:true});
 }
 async function dismissWithConfirm(p){
-  if(dismissed.has(p.url)){toggleDismiss(p.url);return;} // restoring — no prompt
+  if(dismissed.has(p.url)){toggleDismiss(p.url);return;} // restoring — no prompt, and leaves any already-removed video removed
   const plat=platOf(p), tracked=inPool(plat,p.account);
   toggleDismiss(p.url);
+  // Dismissing already signals "I don't want this" — silently free its self-hosted
+  // video too (no separate confirm; that's reserved for the explicit "Remove
+  // download" button elsewhere, a deliberate action independent of dismissing).
+  if(SECRET&&p.video&&p.video.includes('blob.vercel-storage')){
+    fetch('/api/blob-delete',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:p.url})})
+      .then(function(r){return r.json();})
+      .then(function(j){if(j&&j.ok){p.video='';if(DATA.videos)delete DATA.videos[p.url];}})
+      .catch(function(){});
+  }
   if(!tracked)return; // not in watchlist — no prompt
   const yes=await appConfirm({title:'Dismissed.',body:`Also REMOVE @${p.account} from your ${plat==='tt'?'TikTok':'Instagram'} watchlist? It won't be scraped on future runs.`,yes:'Remove from watchlist',no:'Just dismiss'});
   if(yes)removeAccount(plat,p.account);
