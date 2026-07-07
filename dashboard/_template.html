@@ -245,6 +245,8 @@ select:hover{border-color:var(--teal)}
 .vhead h1 em{font-style:italic;color:var(--orange)}
 .vhead .sub{margin-top:12px;max-width:560px;color:var(--muted);font-size:14.5px}
 .vhead .sub b{color:var(--ink)}
+.week-select-mini{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--bg2);border:1px solid var(--line2);border-radius:8px;padding:6px 10px;color:var(--ink);cursor:pointer}
+.week-select-mini:focus{outline:none;border-color:var(--teal)}
 
 .stats{display:flex;flex-wrap:wrap;gap:13px;margin:26px 0 4px}
 .stat{flex:1;min-width:120px;background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);
@@ -443,7 +445,8 @@ select:hover{border-color:var(--teal)}
     <section class="view hidden" id="v-trends">
       <div class="vhead"><h1>Trend <em>Radar</em></h1>
         <p class="sub">Repeatable <b>templates</b> the niche is copying — recurring sounds and on-screen hooks, with momentum, so you can ride a format instead of guessing.</p>
-        <p class="prov" id="prov-trends"></p></div>
+        <p class="prov" id="prov-trends"></p>
+        <select class="week-select-mini" id="f-week-trends"></select></div>
       <div class="sec-bar">
         <div class="trends-bar" id="trends-bar">
           <button data-tf="all" class="on">All</button>
@@ -472,7 +475,8 @@ select:hover{border-color:var(--teal)}
     <section class="view hidden" id="v-audio">
       <div class="vhead"><h1>Audio <em>Trends</em></h1>
         <p class="sub">What the niche is scoring to — the sounds its creators actually use, the same song consolidated across all its audio IDs, plus what's trending on TikTok.</p>
-        <p class="prov" id="prov-audio"></p></div>
+        <p class="prov" id="prov-audio"></p>
+        <select class="week-select-mini" id="f-week-audio"></select></div>
       <div class="sec" id="sec-paste-audio"><h2>Paste an IG audio link</h2>
         <p class="lead">Paste an Instagram "original audio" link (instagram.com/reels/audio/...) — or a direct reel link — to save it and download the real audio file, named account-audioID so you can trace it back later.</p>
         <div class="paste-audio-bar">
@@ -880,7 +884,21 @@ function uniq(key){const s=new Set();posts.forEach(p=>{const v=p[key];(Array.isA
 function fill(sel,label,vals){$(sel).innerHTML=`<option value="">${label} · all</option>`+vals.map(v=>`<option value="${v}">${v}</option>`).join('');}
 $('#f-show').innerHTML=[['active','Show · Active'],['newfind','Show · ⚡ New finds'],['saved','Show · ★ Bookmarked'],['dismissed','Show · ✕ Dismissed'],['all','Show · All']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
 // Week filter: includes EVERY week present in the archive (not just weeks tagged on visible posts), with human-readable labels.
-$('#f-week').innerHTML=`<option value="">Week · all</option>`+WEEK_IDS.map(w=>`<option value="${w}">${weekLabel(w)}</option>`).join('');
+// #f-week (Swipe File sidebar) is canonical; the mini selects on Trend Radar/Audio
+// Trends mirror it so the week can be changed from any of the three views — they
+// were previously only reachable from Swipe File since #filters is hidden elsewhere.
+const WEEK_OPTS=`<option value="">Week · all</option>`+WEEK_IDS.map(w=>`<option value="${w}">${weekLabel(w)}</option>`).join('');
+$('#f-week').innerHTML=WEEK_OPTS;
+$('#f-week-trends').innerHTML=WEEK_OPTS;
+$('#f-week-audio').innerHTML=WEEK_OPTS;
+function syncWeekSelects(v){['#f-week','#f-week-trends','#f-week-audio'].forEach(function(s){if($(s).value!==v)$(s).value=v;});}
+['#f-week-trends','#f-week-audio'].forEach(function(s){
+  $(s).addEventListener('change',function(){
+    syncWeekSelects(this.value);
+    $('#f-week').dispatchEvent(new Event('change'));
+  });
+});
+$('#f-week').addEventListener('change',function(){syncWeekSelects(this.value);});
 fill('#f-format','Format',uniq('format'));fill('#f-hook','Hook',uniq('hookTypes'));
 fill('#f-trigger','Trigger',uniq('triggers'));fill('#f-style','Style',uniq('visualStyles'));
 $('#f-sort').innerHTML=[['outlier','Sort · Outlier'],['views','Sort · Views'],['engRate','Sort · Eng. rate'],['likes','Sort · Likes'],['date','Sort · Newest']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
