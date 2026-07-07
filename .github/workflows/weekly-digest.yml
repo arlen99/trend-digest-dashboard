@@ -72,5 +72,17 @@ jobs:
           git config user.name "Trend Digest Bot"
           git add -A
           git commit -m "weekly data refresh $(date +%F)" || echo "no changes"
-          git push
+          # The full pipeline can run 30+ min (curate_posts.py alone makes ~35
+          # sequential Claude calls) — if origin/main moved during that window
+          # (e.g. a manual push), a plain `git push` gets rejected as non-fast-
+          # forward and the whole run's work is silently lost. Rebase onto
+          # whatever's there now before pushing, retrying once if a second push
+          # also lands in between.
+          for attempt in 1 2 3; do
+            git fetch -q origin main
+            git rebase origin/main && git push && break
+            echo "Push attempt $attempt lost a race with origin/main — retrying..."
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
         # Vercel auto-deploys from this repo's main branch (Root Directory = dashboard/).
