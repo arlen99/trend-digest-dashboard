@@ -156,7 +156,10 @@ def fetch_account(pk, username):
     out = []
     for it in items:
         media = it.get("media") or it
-        n = normalize(media, username)
+        try:
+            n = normalize(media, username)
+        except Exception:  # noqa: BLE001 - one malformed post shouldn't kill the whole scrape
+            continue
         if n:
             out.append(n)
 
@@ -235,7 +238,11 @@ def main():
     ids = resolve_ids(accounts)
     rows, calls = [], 0
     for u, pk in ids.items():
-        rows.extend(fetch_account(pk, u)); calls += 1
+        try:
+            rows.extend(fetch_account(pk, u))
+        except Exception as e:  # noqa: BLE001 - one bad account shouldn't kill the whole scrape
+            print(f"  ! @{u} -> {str(e)[:80]}")
+        calls += 1
         time.sleep(0.15)
     if not rows:
         die("No posts returned. Check token/balance and account handles.")

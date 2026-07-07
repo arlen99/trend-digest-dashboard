@@ -125,7 +125,10 @@ def main():
         d = th(f"/api/v1/tiktok/web/fetch_user_post?secUid={sec}&count={POSTS_PER}")
         calls += 1
         for a in (find_aweme_list(d) or []):
-            n = normalize(a)
+            try:
+                n = normalize(a)
+            except Exception:  # noqa: BLE001 - one malformed post shouldn't kill the whole scrape
+                continue
             if n:
                 rows.append(n)
         time.sleep(0.2)
