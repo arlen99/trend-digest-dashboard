@@ -40,6 +40,7 @@ ROOT = Path(__file__).parent
 OUT = ROOT / "output"
 DASH = ROOT / "dashboard"
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+TIKHUB = os.environ.get("TIKHUB_TOKEN", "")
 MODEL = "claude-sonnet-5"
 MAX_AUDIO = 10
 MAX_HOOK = 8
@@ -89,16 +90,47 @@ def call_claude(images: list, text: str) -> dict:
     return {"usable": False, "skip_reason": "no tool_use in response"}
 
 
-def fetch_thumb(url: str, dest: Path) -> bool:
-    """Prefer an already-self-hosted thumb (board post/curated), else scrape og:image."""
+def tiktok_cover(url: str) -> str:
+    """TikTok pages don't expose a scrapable og:image logged-out (unlike Instagram),
+    so resolve the video's cover via TikHub — the same source tiktok_scrape.py uses.
+    Hook-anchored trend samples are all TikTok URLs, so without this every hook card
+    silently gets skipped for 'no thumbnail available'."""
+    m = re.search(r"/video/(\d+)", url)
+    if not (m and TIKHUB):
+        return ""
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=20) as r:
-            html = r.read().decode("utf-8", "ignore")
-        m = OG.search(html)
-        if not m:
+        req = urllib.request.Request(
+            f"https://api.tikhub.io/api/v1/tiktok/app/v3/fetch_one_video?aweme_id={m.group(1)}",
+            headers={"Authorization": "Bearer " + TIKHUB, "User-Agent": UA, "accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            aw = ((json.loads(r.read().decode()).get("data") or {}).get("aweme_detail")) or {}
+    except Exception:  # noqa: BLE001
+        return ""
+    for keys in (("video", "cover", "url_list", 0), ("video", "origin_cover", "url_list", 0)):
+        cur = aw
+        for k in keys:
+            cur = cur[k] if isinstance(cur, list) and isinstance(k, int) and len(cur) > k else (cur.get(k) if isinstance(cur, dict) else None)
+            if cur is None:
+                break
+        if cur:
+            return cur
+    return ""
+
+
+def fetch_thumb(url: str, dest: Path) -> bool:
+    """Scrape og:image for Instagram (audio samples); resolve via TikHub for TikTok
+    (hook samples), which don't serve og:image to logged-out requests."""
+    try:
+        if "tiktok.com" in url:
+            img_url = tiktok_cover(url)
+        else:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                html = r.read().decode("utf-8", "ignore")
+            m = OG.search(html)
+            img_url = m.group(1).replace("&amp;", "&") if m else ""
+        if not img_url:
             return False
-        img_url = m.group(1).replace("&amp;", "&")
         req2 = urllib.request.Request(img_url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req2, timeout=20) as r:
             data = r.read()
