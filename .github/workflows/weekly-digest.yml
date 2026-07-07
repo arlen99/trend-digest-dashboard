@@ -1,16 +1,17 @@
 name: Weekly Trend Digest (data layer)
 
 # Refreshes the full pipeline — scrape, sound chart, TikTok trends, trend
-# candidates, provenance, AND the IG Swipe File curation itself — and redeploys
-# the dashboard. No Mac required, no manual curation step.
+# candidates, provenance, the IG Swipe File curation, AND the Trend Radar cards
+# themselves — and redeploys the dashboard. No Mac required, no manual step.
 #
 # curate_posts.py (Claude vision, via ANTHROPIC_API_KEY) replaces what used to
 # be a human/Claude session looking at thumbnails by hand: it decides which
 # fresh candidates belong on the board and tags them (hook, hookTypes, triggers,
-# visualStyles, notes). It runs fully automatically — no review gate — so its
-# own prompt is the only filter against monetization bait, sponsored/branded
-# posts, and off-niche content. Trend Radar card prose is a separate, still-
-# manual concern (see CLOUD_SETUP.md).
+# visualStyles, notes). curate_trends.py does the same for Trend Radar — turns
+# trends.py's + hook_search.py's raw evidence packs into actual cards (name,
+# format description, trigger, "Ride it" copy). Both run fully automatically —
+# no review gate — so their prompts are the only filter against noise,
+# monetization bait, sponsored/branded posts, and off-niche content.
 
 on:
   schedule:
@@ -59,6 +60,7 @@ jobs:
           python3 hook_search.py
           # dashboard data refresh
           python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
+          python3 curate_trends.py output/trends_${TODAY}.json output/hook_trends_${TODAY}.json   # Trend Radar cards — Claude writes name/format/trigger/howTo
           python3 audio_chart_to_dashboard.py
           python3 tiktok_to_dashboard.py --top 12
           python3 keyword_posts_to_dashboard.py --top 12
