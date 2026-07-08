@@ -24,6 +24,34 @@ async function readState(token) {
   return r.ok ? await r.json() : {};
 }
 
+// Profile URLs shared via /api/save-link are queued as their own atomic blobs at
+// account-adds/<platform>_<handle>.json (see save-link.js for why they can't be
+// written into this state blob directly). Merge them into the accountEdits we
+// return so the Accounts panel shows them as pending immediately; the weekly
+// apply_account_edits.py run consumes and deletes the blobs. Display-side merge
+// only — never written back here. Caveat: un-queuing a SHARED add in the panel
+// won't stick (it re-merges on next load) until the weekly run consumes it.
+async function mergePendingAdds(token, state) {
+  try {
+    const r = await fetch(`${BLOB}?prefix=account-adds/`, { headers: { authorization: `Bearer ${token}` } });
+    if (!r.ok) return state;
+    const blobs = (await r.json()).blobs || [];
+    if (!blobs.length) return state;
+    const ed = (state.accountEdits = state.accountEdits || {});
+    ed.igAdd = ed.igAdd || []; ed.ttAdd = ed.ttAdd || [];
+    await Promise.all(blobs.map(async (b) => {
+      try {
+        const j = await (await fetch(`${b.url}?t=${Date.now()}`, { cache: "no-store" })).json();
+        if (!j || !j.handle) return;
+        const key = j.platform === "tt" ? "ttAdd" : "igAdd";
+        const n = j.handle.toLowerCase();
+        if (!ed[key].some((x) => x.toLowerCase() === n)) ed[key].push(n);
+      } catch (e) { /* skip unreadable entries */ }
+    }));
+  } catch (e) { /* pending-adds merge is best-effort */ }
+  return state;
+}
+
 async function writeState(token, state) {
   await fetch(`${BLOB}/${PATH}`, {
     method: "PUT",
@@ -54,7 +82,7 @@ module.exports = async (req, res) => {
   }
   try {
     if (req.method === "GET") {
-      res.status(200).json(await readState(token));
+      res.status(200).json(await mergePendingAdds(token, await readState(token)));
       return;
     }
     if (req.method === "POST") {

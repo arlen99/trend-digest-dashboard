@@ -227,38 +227,20 @@ async function writeLink(token, url, patch) {
 }
 
 // ---- Profile shares -> Accounts watchlist queue ----
-// Queues the handle into accountEdits.{igAdd|ttAdd} on the synced state blob —
-// the exact queue the dashboard's Accounts panel writes and apply_account_edits.py
-// consumes before each weekly scrape. Same direct-URL read as api/state.js (the
-// ?prefix= list index is eventually consistent and can lag recent writes).
-// Note: this is a read-modify-write on the shared state blob, so it can in theory
-// race a simultaneous dashboard sync (last-write-wins) — acceptable for the rare
-// single-user case, same trade-off the Accounts panel itself already makes.
-const STATE_PATH = "state/dashboard-state.json";
-
-function stateUrl(token) {
-  const storeId = (token.split("_")[3] || "").toLowerCase();
-  return storeId ? `https://${storeId}.public.blob.vercel-storage.com/${STATE_PATH}` : null;
-}
+// Each share is its OWN blob at account-adds/<platform>_<handle>.json — the same
+// atomic pattern links use (see header). Deliberately NOT a read-modify-write of
+// the shared state blob: the state blob's public URL serves CDN-cached content
+// that can lag a minute-plus behind writes (verified live — ?t= cache-busters
+// don't help), so a share landing shortly after dashboard activity would write
+// back a stale copy and silently revert bookmarks/dismissals/earlier shares.
+// Consumers: apply_account_edits.py folds these into accounts.json before each
+// weekly scrape (then deletes them); api/state.js GET merges them into the
+// accountEdits it returns so the Accounts panel shows them as pending right away.
+const ADDS_PREFIX = "account-adds/";
 
 async function queueAccountAdd(token, platform, handle) {
-  const u = stateUrl(token);
-  if (!u) return { queued: false, reason: "no state url" };
-  let state = {};
-  try {
-    const r = await fetch(`${u}?t=${Date.now()}`, { cache: "no-store" });
-    if (r.ok) state = await r.json();
-  } catch (e) { /* first-ever state write is fine */ }
-  const ed = (state.accountEdits = state.accountEdits || {});
-  const addKey = platform === "ig" ? "igAdd" : "ttAdd";
-  const remKey = platform === "ig" ? "igRemove" : "ttRemove";
-  ed[addKey] = ed[addKey] || [];
-  ed[remKey] = ed[remKey] || [];
   const n = handle.toLowerCase();
-  ed[remKey] = ed[remKey].filter((x) => x.toLowerCase() !== n);  // re-adding cancels a pending remove
-  const already = ed[addKey].some((x) => x.toLowerCase() === n);
-  if (!already) ed[addKey].push(n);
-  const put = await fetch(`${BLOB}/${STATE_PATH}`, {
+  const put = await fetch(`${BLOB}/${ADDS_PREFIX}${platform}_${n}.json`, {
     method: "PUT",
     headers: {
       authorization: `Bearer ${token}`,
@@ -268,15 +250,15 @@ async function queueAccountAdd(token, platform, handle) {
       "x-api-version": "7",
       "x-cache-control-max-age": "0",
     },
-    body: JSON.stringify(state),
+    body: JSON.stringify({ platform, handle: n, sharedAt: new Date().toISOString() }),
   });
   // Surface failures instead of claiming success — e.g. a full Blob store rejects
   // every PUT with 400 "Storage quota exceeded", which would otherwise be silent.
   if (!put.ok) {
     const msg = (await put.text().catch(() => "")).slice(0, 140);
-    return { queued: false, already, reason: `blob PUT ${put.status}: ${msg}` };
+    return { queued: false, reason: `blob PUT ${put.status}: ${msg}` };
   }
-  return { queued: true, already };
+  return { queued: true };
 }
 
 async function deleteLink(token, url) {
@@ -332,7 +314,7 @@ module.exports = async (req, res) => {
         const q = await queueAccountAdd(token, parsed.platform, parsed.handle);
         res.status(q.queued ? 200 : 507).json({
           ok: q.queued, action: "account-add", platform: parsed.platform,
-          account: parsed.handle, queued: q.queued, alreadyQueued: !!q.already,
+          account: parsed.handle.toLowerCase(), queued: q.queued,
           ...(q.reason ? { error: q.reason } : {}),
         });
         return;

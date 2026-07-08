@@ -48,6 +48,44 @@ def blob_get_state():
         return {}
 
 
+def blob_pending_adds():
+    """Profile URLs shared via /api/save-link are queued as their own atomic blobs
+    at account-adds/<platform>_<handle>.json (they can't be merged into the shared
+    state blob server-side — its CDN-cached reads lag writes by a minute-plus, so a
+    read-modify-write there could clobber recent dashboard state). Returns
+    ({'ig': [handles], 'tt': [handles]}, [blob urls to delete after applying])."""
+    adds, urls = {"ig": [], "tt": []}, []
+    if not BLOB:
+        return adds, urls
+    try:
+        r = urllib.request.Request(f"{BLOB_API}?prefix=account-adds/", headers={"authorization": "Bearer " + BLOB})
+        with urllib.request.urlopen(r, timeout=30) as resp:
+            blobs = json.loads(resp.read()).get("blobs", [])
+        for b in blobs:
+            try:
+                with urllib.request.urlopen(b["url"], timeout=30) as resp:
+                    j = json.loads(resp.read())
+                plat = "tt" if j.get("platform") == "tt" else "ig"
+                if j.get("handle"):
+                    adds[plat].append(j["handle"])
+                urls.append(b["url"])
+            except Exception as e:  # noqa: BLE001 - skip one unreadable entry, keep the rest
+                print(f"  pending-add blob unreadable ({b.get('pathname')}): {str(e)[:60]}")
+    except Exception as e:  # noqa: BLE001
+        print(f"  pending-adds list failed: {str(e)[:80]}")
+    return adds, urls
+
+
+def blob_delete(urls):
+    if not (BLOB and urls):
+        return
+    r = urllib.request.Request(f"{BLOB_API}/delete", method="POST",
+                               data=json.dumps({"urls": urls}).encode(),
+                               headers={"authorization": "Bearer " + BLOB,
+                                        "content-type": "application/json", "x-api-version": "7"})
+    urllib.request.urlopen(r, timeout=30).read()
+
+
 def blob_put_state(state):
     r = urllib.request.Request(f"{BLOB_API}/{PATH}", data=json.dumps(state).encode(),
                                method="PUT", headers={
@@ -88,12 +126,25 @@ def main():
     edits = (state or {}).get("accountEdits") or {}
     ig_add, ig_rem = edits.get("igAdd") or [], edits.get("igRemove") or []
     tt_add, tt_rem = edits.get("ttAdd") or [], edits.get("ttRemove") or []
+    pending, pending_urls = blob_pending_adds()
+    ig_add = ig_add + pending["ig"]
+    tt_add = tt_add + pending["tt"]
+    if pending_urls:
+        print(f"  shared-profile queue: +{len(pending['ig'])} IG / +{len(pending['tt'])} TikTok")
     if not (ig_add or ig_rem or tt_add or tt_rem):
         print("No queued account edits."); return
 
     ia, ir = apply_to(ROOT / "accounts.json", ig_add, ig_rem)
     ta, tr = apply_to(ROOT / "tiktok_accounts.json", tt_add, tt_rem)
     print(f"Applied IG: +{ia} / -{ir}  |  TikTok: +{ta} / -{tr}")
+
+    # consume the shared-profile blobs now they're applied (apply_to already
+    # dedupes, so a failed delete just means a harmless re-apply next run)
+    if pending_urls:
+        try:
+            blob_delete(pending_urls); print(f"Consumed {len(pending_urls)} shared-profile blobs.")
+        except Exception as e:  # noqa: BLE001
+            print(f"  could not delete shared-profile blobs (will re-apply next run): {str(e)[:80]}")
 
     # clear the queue (keep the rest of the state — bookmarks, dismissals)
     state["accountEdits"] = {"igAdd": [], "igRemove": [], "ttAdd": [], "ttRemove": []}
