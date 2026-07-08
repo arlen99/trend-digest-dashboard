@@ -173,6 +173,57 @@ async function fetchTtMetrics(url, token) {
   };
 }
 
+// ---- Audio-page shares: resolve the TRACK's title/artist (not a post's metrics) ----
+// A shared audio page (instagram.com/reels/audio/<id> or tiktok.com/music/x-<id>) is
+// a sound, not a post — fetchIgMetrics/fetchTtMetrics (which look up a post/video)
+// return nothing for it. Resolve the track's own metadata so the "Saved" section on
+// the Audio Trends page can show a real song title instead of a bare URL.
+function igAudioId(url) {
+  const m = (url || "").match(/\/reels?\/audio\/(\d+)/);
+  return m ? m[1] : "";
+}
+function ttMusicId(url) {
+  const m = (url || "").match(/\/music\/[^/?]*-(\d+)/);
+  return m ? m[1] : "";
+}
+
+const IG_AUDIO_META_ATTEMPTS = 8;
+async function fetchIgAudioMeta(url, token) {
+  const audioId = igAudioId(url);
+  // fetch_music_posts is a genuinely flaky IG-internal endpoint — empirically it can
+  // return an empty payload 7× before resolving (same one download-audio.js retries
+  // for the download), so retry persistently. The share just waits; it stays within
+  // the function budget download-audio.js already uses (up to 10×3s).
+  for (let i = 0; i < IG_AUDIO_META_ATTEMPTS; i++) {
+    const j = await tikhub(`/api/v1/instagram/v1/fetch_music_posts?music_url=${encodeURIComponent(url)}`, token);
+    const ai = deep(j, "data", "metadata", "music_info", "music_asset_info");
+    if (ai && (ai.title || ai.display_artist)) {
+      return {
+        title: ai.title || "",
+        artist: ai.display_artist || "",
+        thumbnail: ai.cover_artwork_thumbnail_uri || ai.cover_artwork_uri || "",
+        audioId,
+      };
+    }
+    if (i < IG_AUDIO_META_ATTEMPTS - 1) await new Promise((res) => setTimeout(res, 2500));
+  }
+  return { audioId };  // title unresolved — the row falls back to a generic label
+}
+
+async function fetchTtMusicMeta(url, token) {
+  const id = ttMusicId(url);
+  if (!id) return null;
+  const j = await tikhub(`/api/v1/tiktok/app/v3/fetch_music_detail?music_id=${id}`, token);
+  const mi = deep(j, "data", "music_info");
+  if (!mi) return { audioId: id };
+  return {
+    title: mi.title || "",
+    artist: mi.author || "",
+    thumbnail: deep(mi, "cover_large", "url_list", 0) || deep(mi, "cover_medium", "url_list", 0) || deep(mi, "cover_thumb", "url_list", 0) || "",
+    audioId: id,
+  };
+}
+
 async function listLinks(token) {
   const r = await fetch(`${BLOB}?prefix=${encodeURIComponent(PREFIX)}`, {
     headers: { authorization: `Bearer ${token}` },
@@ -320,6 +371,7 @@ module.exports = async (req, res) => {
         return;
       }
       const { platform } = parsed;
+      const isAudioPage = parsed.type === "audio" || parsed.type === "sound";
       let metrics = null;
       // videoText (on-screen OCR from enrich_links.py) is passed straight through in
       // `patch` alongside note — writeLink merges rather than replaces.
@@ -327,7 +379,9 @@ module.exports = async (req, res) => {
       if (body.videoText !== undefined) patch.videoText = body.videoText;
       if (tikhubToken && (platform === "ig" || platform === "tt")) {
         try {
-          metrics = platform === "ig" ? await fetchIgMetrics(url, tikhubToken) : await fetchTtMetrics(url, tikhubToken);
+          metrics = isAudioPage
+            ? (platform === "tt" ? await fetchTtMusicMeta(url, tikhubToken) : await fetchIgAudioMeta(url, tikhubToken))
+            : (platform === "ig" ? await fetchIgMetrics(url, tikhubToken) : await fetchTtMetrics(url, tikhubToken));
         } catch (e) { metrics = null; }
       }
       if (metrics) Object.assign(patch, metrics);

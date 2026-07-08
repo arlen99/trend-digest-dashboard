@@ -474,13 +474,13 @@ select:hover{border-color:var(--teal)}
       <div class="vhead"><h1>Audio <em>Trends</em></h1>
         <p class="sub">What the niche is scoring to — the sounds its creators actually use, the same song consolidated across all its audio IDs, plus what's trending on TikTok.</p>
         <p class="prov" id="prov-audio"></p></div>
-      <div class="sec" id="sec-paste-audio"><h2>Paste an IG audio link</h2>
-        <p class="lead">Paste an Instagram "original audio" link (instagram.com/reels/audio/...) — or a direct reel link — to save it and download the real audio file, named account-audioID so you can trace it back later.</p>
+      <div class="sec" id="sec-saved-audio"><h2>Saved</h2>
+        <p class="lead">Audio pages you've shared to the digest (or pasted below) — each is kept (★ Saved). Download the real track with Get audio, or Dismiss to remove it.</p>
         <div class="paste-audio-bar">
-          <input type="text" id="paste-audio-input" placeholder="https://www.instagram.com/reels/audio/...">
+          <input type="text" id="paste-audio-input" placeholder="Paste an instagram.com/reels/audio/… or tiktok.com/music/… link">
           <button id="paste-audio-save" type="button">Save</button>
         </div>
-        <div id="paste-audio-list"></div></div>
+        <div class="tracks" id="saved-audio-list"></div></div>
       <div class="sec" id="sec-chart"><h2>Niche sound chart</h2>
         <p class="lead">Sounds ranked by how many niche creators use them, across a wide account scan. Instagram splinters one song into many "audio" IDs — these are consolidated back into a single track.</p>
         <div class="sec-bar">
@@ -601,7 +601,7 @@ document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>{
   $('#v-'+v).classList.remove('hidden');
   $('#filters').style.display = v==='swipe' ? '' : 'none';
   if(v==='bookmarks'){pullLinks().then(renderBookmarks);renderBookmarks();}
-  if(v==='audio'){pullLinks().then(renderPasteAudioList);renderPasteAudioList();}
+  if(v==='audio'){pullLinks().then(renderSavedAudio);renderSavedAudio();}
 }));
 
 /* ---- platform toggle (IG / TikTok) ---- */
@@ -769,27 +769,34 @@ async function pullLinks(){if(!SECRET)return;
     if(!r.ok)return;const j=await r.json();
     if(Array.isArray(j.links))inspirationLinks=j.links;
   }catch(e){}}
-/* ---- Paste-in IG audio link (Audio Trends page) ---- */
-function renderPasteAudioList(){
-  const con=$('#paste-audio-list');if(!con)return;
-  if(!SECRET){con.innerHTML='<div class="empty">Set up ⇄ Sync devices (sidebar) to save & download audio links.</div>';return;}
-  const rows=inspirationLinks.filter(function(l){return l.type==='audio'||/reels?\/audio\//.test(l.url);});
-  if(!rows.length){con.innerHTML='';return;}
-  con.innerHTML=rows.map(function(l){
+/* ---- Saved audio pages (Audio Trends page) — shared via /api/save-link or pasted ---- */
+function escA(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function isAudioLink(l){return l.type==='audio'||l.type==='sound'||/reels?\/audio\//.test(l.url)||/tiktok\.com\/music\//.test(l.url);}
+function renderSavedAudio(){
+  const con=$('#saved-audio-list');if(!con)return;
+  if(!SECRET){con.innerHTML='<div class="empty">Set up ⇄ Sync devices (sidebar) to save & download audio pages.</div>';return;}
+  const rows=inspirationLinks.filter(isAudioLink);
+  if(!rows.length){con.innerHTML='<div class="empty">No saved audio yet. Share an Instagram or TikTok audio page to the digest, or paste a link above.</div>';return;}
+  con.innerHTML=rows.map(function(l,i){
+    const isTt=l.platform==='tt'||l.type==='sound'||/tiktok\.com/.test(l.url);
     const shortUrl=(l.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
-    return '<div class="insp-link" data-audio-url="'+encodeURIComponent(l.url)+'">'
-      +'<span class="insp-plat ig">IG</span>'
-      +'<div class="insp-body"><div class="insp-label">'+(l.account?'@'+l.account:'Audio link')+'</div><div class="insp-url">'+shortUrl+'</div></div>'
-      +'<div class="insp-actions">'
-      +'<button class="insp-dl" data-get-audio="'+l.url+'">⬇ Get audio</button>'
-      +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(l.url)+'">Remove</button>'
-      +'</div></div>';
+    const title=l.title||(l.account?('@'+l.account):'Saved audio');
+    const sub=l.artist||shortUrl;
+    const headline='<a href="'+escA(l.url)+'" target="_blank" rel="noopener">'+escA(title)+'</a>';
+    return '<div class="trk saved-sound" data-audio-url="'+encodeURIComponent(l.url)+'"><div class="r">'+(i+1)+'</div>'
+      +'<div class="ti"><div class="ht">'+headline+' <span class="det-badge">'+(isTt?'TikTok':'IG')+' audio</span></div><div class="ha">'+escA(sub)+'</div></div>'
+      +'<div class="trk-actions-wrap"><div class="trk-actions">'
+      +'<button data-said="save" class="active">&#9733; Saved</button>'
+      +'<button data-said="dismiss">&#10005; Dismiss</button>'
+      +'</div><button class="lk dl" type="button" data-get-audio="'+escA(l.url)+'">&#8681; Get audio</button></div></div>';
   }).join('');
-  con.querySelectorAll('[data-rm-link]').forEach(function(btn){
+  // Both un-saving and dismissing remove the shared audio from the Saved list.
+  con.querySelectorAll('[data-said]').forEach(function(btn){
     btn.onclick=function(){
-      const url=decodeURIComponent(btn.dataset.rmLink);
+      const row=btn.closest('[data-audio-url]');if(!row)return;
+      const url=decodeURIComponent(row.dataset.audioUrl);
       inspirationLinks=inspirationLinks.filter(function(l){return l.url!==url;});
-      renderPasteAudioList();
+      renderSavedAudio();
       if(SECRET)fetch('/api/save-link',{method:'DELETE',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})}).catch(function(){});
     };
   });
@@ -845,7 +852,7 @@ $('#paste-audio-save').addEventListener('click',async function(){
   const btn=this;const orig=btn.textContent;btn.disabled=true;btn.textContent='Saving…';
   try{
     const r=await fetch('/api/save-link',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})});
-    if(r.ok){inp.value='';await pullLinks();renderPasteAudioList();}
+    if(r.ok){inp.value='';await pullLinks();renderSavedAudio();}
     else{const j=await r.json().catch(function(){return{};});alert('Save failed: '+(j.error||'unknown error'));}
   }catch(e){alert('Save failed: network error');}
   btn.disabled=false;btn.textContent=orig;
@@ -1334,9 +1341,11 @@ function renderBookmarks(){
   // Swipe File cards via linkCard(); anything not yet enriched (TIKHUB_TOKEN unset,
   // metrics fetch failed, or a non-IG/TikTok link) falls back to a plain row.
   var showLinks=bookmarkFilter==='all'||bookmarkFilter==='links';
-  if(showLinks&&inspirationLinks.length){
-    var lcards=inspirationLinks.filter(function(lk){return lk.thumbnail;}).map(linkCard).join('');
-    var lrows=inspirationLinks.filter(function(lk){return !lk.thumbnail;}).map(function(lk){
+  // Audio pages live in the Audio Trends > Saved section, not here — exclude them.
+  var inspLinks=inspirationLinks.filter(function(lk){return !isAudioLink(lk);});
+  if(showLinks&&inspLinks.length){
+    var lcards=inspLinks.filter(function(lk){return lk.thumbnail;}).map(linkCard).join('');
+    var lrows=inspLinks.filter(function(lk){return !lk.thumbnail;}).map(function(lk){
       var platCls=lk.platform==='ig'?'ig':lk.platform==='tt'?'tt':'other';
       var platTxt=lk.platform==='ig'?'IG':lk.platform==='tt'?'TT':'WEB';
       var shortUrl=(lk.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
@@ -1353,7 +1362,7 @@ function renderBookmarks(){
         +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
         +'</div></div>';
     }).join('');
-    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspirationLinks.length+'</span></h3>'
+    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspLinks.length+'</span></h3>'
       +(lcards?'<div class="grid">'+lcards+'</div>':'')+lrows+'</div>';
   }
   if(!html)html='<div class="empty" style="margin:48px auto">Nothing saved yet &mdash; use &#9733; Save on any post, trend, or sound.</div>';
