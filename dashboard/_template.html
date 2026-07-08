@@ -475,10 +475,14 @@ select:hover{border-color:var(--teal)}
         <p class="sub">What the niche is scoring to — the sounds its creators actually use, the same song consolidated across all its audio IDs, plus what's trending on TikTok.</p>
         <p class="prov" id="prov-audio"></p></div>
       <div class="sec" id="sec-saved-audio"><h2>Saved</h2>
-        <p class="lead">Audio pages you've shared to the digest (or pasted below) — each is kept (★ Saved). Download the real track with Get audio, or Dismiss to remove it.</p>
+        <p class="lead">Audio pages you've shared to the digest (or pasted below) — each is kept (★ Saved). Download the real track with Get audio, or Dismiss to hide it (Dismiss is recoverable — it never deletes the link).</p>
         <div class="paste-audio-bar">
           <input type="text" id="paste-audio-input" placeholder="Paste an instagram.com/reels/audio/… or tiktok.com/music/… link">
           <button id="paste-audio-save" type="button">Save</button>
+        </div>
+        <div class="sounds-bar" id="saved-audio-bar" style="margin-bottom:12px">
+          <button data-saf="all" class="on">All</button>
+          <button data-saf="dismissed">✕ Dismissed</button>
         </div>
         <div class="tracks" id="saved-audio-list"></div></div>
       <div class="sec" id="sec-chart"><h2>Niche sound chart</h2>
@@ -745,21 +749,22 @@ let savedTrends=LS.get('td_saved_trends');
 let dismissedTrends=LS.get('td_dis_trends');
 let savedSounds=LS.get('td_saved_sounds');
 let dismissedSounds=LS.get('td_dis_sounds');
+let dismissedAudioLinks=LS.get('td_dis_audiolinks');
 // accountEdits is declared earlier (before the Accounts panel block) to avoid a TDZ; nothing else to init here
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
-function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);}
+function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);}
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT;
 function pushState(){saveLocal();apply();if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds]})})
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks]})})
     .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
     .catch(()=>setSync('err'));},500);}
 async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
-    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);saveLocal();
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.dismissedAudioLinks))dismissedAudioLinks=new Set(s.dismissedAudioLinks);saveLocal();
       // strip videos the user has removed on any device, so popups fall back to the embed
       if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
     setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();if(typeof renderTrendRadar==='function')renderTrendRadar();if(typeof renderSoundChart==='function')renderSoundChart();
@@ -769,16 +774,24 @@ async function pullLinks(){if(!SECRET)return;
     if(!r.ok)return;const j=await r.json();
     if(Array.isArray(j.links))inspirationLinks=j.links;
   }catch(e){}}
-/* ---- Saved audio pages (Audio Trends page) — shared via /api/save-link or pasted ---- */
+/* ---- Saved audio pages (Audio Trends page) — shared via /api/save-link or pasted ----
+   Dismiss is a SOFT hide (dismissedAudioLinks, synced like dismissedSounds) — it never
+   deletes the underlying link, so it's always recoverable via the Dismissed filter.
+   Only the ★ Saved button actually removes the link (DELETE /api/save-link) — that's
+   the one genuinely destructive action, matching what "un-saving" implies. */
 function escA(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function isAudioLink(l){return l.type==='audio'||l.type==='sound'||/reels?\/audio\//.test(l.url)||/tiktok\.com\/music\//.test(l.url);}
+let savedAudioFilter='all';
 function renderSavedAudio(){
   const con=$('#saved-audio-list');if(!con)return;
+  document.querySelectorAll('#saved-audio-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.saf===savedAudioFilter);});
   if(!SECRET){con.innerHTML='<div class="empty">Set up ⇄ Sync devices (sidebar) to save & download audio pages.</div>';return;}
-  const rows=inspirationLinks.filter(isAudioLink);
-  if(!rows.length){con.innerHTML='<div class="empty">No saved audio yet. Share an Instagram or TikTok audio page to the digest, or paste a link above.</div>';return;}
+  const all=inspirationLinks.filter(isAudioLink);
+  const rows=all.filter(function(l){return savedAudioFilter==='dismissed'?dismissedAudioLinks.has(l.url):!dismissedAudioLinks.has(l.url);});
+  if(!rows.length){con.innerHTML='<div class="empty">'+(savedAudioFilter==='dismissed'?'No dismissed audio.':'No saved audio yet. Share an Instagram or TikTok audio page to the digest, or paste a link above.')+'</div>';return;}
   con.innerHTML=rows.map(function(l,i){
     const isTt=l.platform==='tt'||l.type==='sound'||/tiktok\.com/.test(l.url);
+    const isDis=dismissedAudioLinks.has(l.url);
     const shortUrl=(l.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
     const title=l.title||(l.account?('@'+l.account):'Saved audio');
     const sub=l.artist||shortUrl;
@@ -787,20 +800,31 @@ function renderSavedAudio(){
       +'<div class="ti"><div class="ht">'+headline+' <span class="det-badge">'+(isTt?'TikTok':'IG')+' audio</span></div><div class="ha">'+escA(sub)+'</div></div>'
       +'<div class="trk-actions-wrap"><div class="trk-actions">'
       +'<button data-said="save" class="active">&#9733; Saved</button>'
-      +'<button data-said="dismiss">&#10005; Dismiss</button>'
+      +'<button data-said="dismiss" class="'+(isDis?'active':'')+'">'+(isDis?'&#8630; Restore':'&#10005; Dismiss')+'</button>'
       +'</div><button class="lk dl" type="button" data-get-audio="'+escA(l.url)+'">&#8681; Get audio</button></div></div>';
   }).join('');
-  // Both un-saving and dismissing remove the shared audio from the Saved list.
-  con.querySelectorAll('[data-said]').forEach(function(btn){
+  con.querySelectorAll('[data-said="dismiss"]').forEach(function(btn){
+    btn.onclick=function(){
+      const row=btn.closest('[data-audio-url]');if(!row)return;
+      const url=decodeURIComponent(row.dataset.audioUrl);
+      dismissedAudioLinks.has(url)?dismissedAudioLinks.delete(url):dismissedAudioLinks.add(url);
+      pushState();renderSavedAudio();
+    };
+  });
+  con.querySelectorAll('[data-said="save"]').forEach(function(btn){
     btn.onclick=function(){
       const row=btn.closest('[data-audio-url]');if(!row)return;
       const url=decodeURIComponent(row.dataset.audioUrl);
       inspirationLinks=inspirationLinks.filter(function(l){return l.url!==url;});
-      renderSavedAudio();
+      dismissedAudioLinks.delete(url);pushState();renderSavedAudio();
       if(SECRET)fetch('/api/save-link',{method:'DELETE',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})}).catch(function(){});
     };
   });
 }
+document.getElementById('saved-audio-bar').addEventListener('click',function(e){
+  const b=e.target.closest('button');if(!b)return;
+  savedAudioFilter=b.dataset.saf;renderSavedAudio();
+});
 async function downloadAudio(url,btn){
   if(!SECRET){alert('Set up ⇄ Sync devices first.');return;}
   const orig=btn.textContent;btn.disabled=true;
