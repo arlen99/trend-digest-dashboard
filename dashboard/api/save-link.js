@@ -17,7 +17,14 @@
 // run in this serverless environment. Run `python3 enrich_links.py` locally to backfill
 // on-screen text for saved links (same OCR mechanism the weekly pipeline already uses).
 //
+// PROFILE shares are special-cased: a bare profile URL (instagram.com/<user> or
+// tiktok.com/@<user>) doesn't become an Inspiration Link — it queues the handle
+// into accountEdits.{igAdd|ttAdd} on the synced state blob, i.e. the same
+// "Accounts" watchlist queue the dashboard's Accounts panel uses, which
+// apply_account_edits.py folds into accounts.json before each weekly scrape.
+//
 //   POST   /api/save-link   { url, note? }        -> save/update one link (+ metrics)
+//                                                    (profile URL -> queue account add)
 //   GET    /api/save-link                          -> list all links
 //   DELETE /api/save-link   { url }                -> remove one link
 // Auth: X-Edit-Secret header (or ?secret=), same as /api/state.
@@ -32,21 +39,31 @@ function keyFor(url) {
   return PREFIX + crypto.createHash("md5").update(url).digest("hex") + ".json";
 }
 
+// IG path segments that are site sections, not usernames — a single-segment path
+// like /iykezachariah is a PROFILE share (routed to the Accounts watchlist queue,
+// not the Inspiration Links list); everything else keeps its existing handling.
+const IG_RESERVED = new Set(["p", "reel", "reels", "tv", "stories", "explore", "accounts", "direct", "about", "legal", "web"]);
+
 function parseLink(url) {
   try {
     const u = new URL(url);
     const h = u.hostname.replace("www.", "");
     const p = u.pathname;
+    const segs = p.split("/").filter(Boolean);
     if (h === "instagram.com") {
       if (p.includes("/reels/audio/")) return { platform: "ig", type: "audio", label: "IG Audio" };
       if (p.includes("/reel/"))        return { platform: "ig", type: "reel",  label: "IG Reel" };
       if (p.includes("/p/"))           return { platform: "ig", type: "post",  label: "IG Post" };
       if (p.includes("/stories/"))     return { platform: "ig", type: "story", label: "IG Story" };
+      if (segs.length === 1 && !IG_RESERVED.has(segs[0]) && /^[A-Za-z0-9._]+$/.test(segs[0]))
+        return { platform: "ig", type: "profile", label: "IG Profile", handle: segs[0] };
       return { platform: "ig", type: "post", label: "Instagram" };
     }
     if (h === "tiktok.com" || h === "vm.tiktok.com" || h === "vt.tiktok.com") {
       if (p.includes("/music/")) return { platform: "tt", type: "sound", label: "TikTok Sound" };
       if (p.includes("/video/")) return { platform: "tt", type: "video", label: "TikTok Video" };
+      if (segs.length === 1 && segs[0].startsWith("@"))
+        return { platform: "tt", type: "profile", label: "TikTok Profile", handle: segs[0].slice(1) };
       return { platform: "tt", type: "video", label: "TikTok" };
     }
     return { platform: "other", type: "link", label: h };
@@ -209,6 +226,59 @@ async function writeLink(token, url, patch) {
   return merged;
 }
 
+// ---- Profile shares -> Accounts watchlist queue ----
+// Queues the handle into accountEdits.{igAdd|ttAdd} on the synced state blob —
+// the exact queue the dashboard's Accounts panel writes and apply_account_edits.py
+// consumes before each weekly scrape. Same direct-URL read as api/state.js (the
+// ?prefix= list index is eventually consistent and can lag recent writes).
+// Note: this is a read-modify-write on the shared state blob, so it can in theory
+// race a simultaneous dashboard sync (last-write-wins) — acceptable for the rare
+// single-user case, same trade-off the Accounts panel itself already makes.
+const STATE_PATH = "state/dashboard-state.json";
+
+function stateUrl(token) {
+  const storeId = (token.split("_")[3] || "").toLowerCase();
+  return storeId ? `https://${storeId}.public.blob.vercel-storage.com/${STATE_PATH}` : null;
+}
+
+async function queueAccountAdd(token, platform, handle) {
+  const u = stateUrl(token);
+  if (!u) return { queued: false, reason: "no state url" };
+  let state = {};
+  try {
+    const r = await fetch(`${u}?t=${Date.now()}`, { cache: "no-store" });
+    if (r.ok) state = await r.json();
+  } catch (e) { /* first-ever state write is fine */ }
+  const ed = (state.accountEdits = state.accountEdits || {});
+  const addKey = platform === "ig" ? "igAdd" : "ttAdd";
+  const remKey = platform === "ig" ? "igRemove" : "ttRemove";
+  ed[addKey] = ed[addKey] || [];
+  ed[remKey] = ed[remKey] || [];
+  const n = handle.toLowerCase();
+  ed[remKey] = ed[remKey].filter((x) => x.toLowerCase() !== n);  // re-adding cancels a pending remove
+  const already = ed[addKey].some((x) => x.toLowerCase() === n);
+  if (!already) ed[addKey].push(n);
+  const put = await fetch(`${BLOB}/${STATE_PATH}`, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${token}`,
+      "x-content-type": "application/json",
+      "x-add-random-suffix": "0",
+      "x-allow-overwrite": "1",
+      "x-api-version": "7",
+      "x-cache-control-max-age": "0",
+    },
+    body: JSON.stringify(state),
+  });
+  // Surface failures instead of claiming success — e.g. a full Blob store rejects
+  // every PUT with 400 "Storage quota exceeded", which would otherwise be silent.
+  if (!put.ok) {
+    const msg = (await put.text().catch(() => "")).slice(0, 140);
+    return { queued: false, already, reason: `blob PUT ${put.status}: ${msg}` };
+  }
+  return { queued: true, already };
+}
+
 async function deleteLink(token, url) {
   const pathname = keyFor(url);
   const r = await fetch(`${BLOB}?prefix=${encodeURIComponent(pathname)}`, {
@@ -256,7 +326,18 @@ module.exports = async (req, res) => {
     if (!url) { res.status(400).json({ error: "url required" }); return; }
 
     if (req.method === "POST") {
-      const { platform } = parseLink(url);
+      const parsed = parseLink(url);
+      // Profile shares go to the Accounts watchlist queue, not Inspiration Links.
+      if (parsed.type === "profile" && parsed.handle) {
+        const q = await queueAccountAdd(token, parsed.platform, parsed.handle);
+        res.status(q.queued ? 200 : 507).json({
+          ok: q.queued, action: "account-add", platform: parsed.platform,
+          account: parsed.handle, queued: q.queued, alreadyQueued: !!q.already,
+          ...(q.reason ? { error: q.reason } : {}),
+        });
+        return;
+      }
+      const { platform } = parsed;
       let metrics = null;
       // videoText (on-screen OCR from enrich_links.py) is passed straight through in
       // `patch` alongside note — writeLink merges rather than replaces.
