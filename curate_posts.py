@@ -218,8 +218,7 @@ def main() -> None:
             "audioArtist": audio_artist or r["account"],
             "date": (r.get("timestamp") or "")[:10],
             "videoText": htext,
-            "audioPreview": "",
-            "audioDeezer": "",
+            "audioPreview": "",  # filled by fetch_audio.py when this post's audio is also a self-hosted chart track
             "platform": "instagram",
             # Some source videos have their content baked in sideways (not a
             # container rotation flag ffmpeg/browsers would auto-correct — the

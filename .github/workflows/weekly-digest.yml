@@ -65,6 +65,7 @@ jobs:
           python3 tiktok_to_dashboard.py --top 12
           python3 keyword_posts_to_dashboard.py --top 12
           python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
+          python3 fetch_audio.py         # self-host each sound-chart track's REAL audio → durable inline previews (replaces Deezer)
           python3 provenance.py
           python3 build_dashboard.py
 

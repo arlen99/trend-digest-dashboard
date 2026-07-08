@@ -1089,7 +1089,7 @@ function openMethod(kind){
   const v=DATA.provenance||{}; const n=x=>(x==null?'—':Number(x).toLocaleString());
   const stack=`<div class="mstack">`+[
     ['TikHub','scraping — IG + TikTok posts, search &amp; sounds'],['Apify','original scraper, now a dormant fallback'],
-    ['AudD','audio fingerprinting (names the real song)'],['Deezer','30-second song previews + match check'],
+    ['AudD','audio fingerprinting (names the real song)'],['Vercel Blob','self-hosts each track\'s real audio for inline previews'],
     ['macOS Vision / Tesseract','on-screen text OCR (free, on-device)'],['ffmpeg','pulls video frames'],
     ['Claude','curation, vision tagging &amp; trend write-ups'],['GitHub Actions + Vercel','weekly cloud run + hosting']
   ].map(([a,b])=>`<span class="mchip"><b>${a}</b> ${b}</span>`).join('')+`</div>`;
@@ -1114,7 +1114,7 @@ function openMethod(kind){
       {l:'The sound on each reel pulled out'},
       {n:n(v.audioTracks),l:'distinct tracks — the same song merged across its many "audio IDs"',hl:true},
       {n:n(v.audioMulti),l:'used by ≥2 different creators (the real signal)'},
-      {n:`Top ${n(v.audioShown)}`,l:'shown · AudD names the song behind "original audio" · Deezer adds 30-sec players'},
+      {n:`Top ${n(v.audioShown)}`,l:'shown · AudD names the song behind "original audio" · previews play the real track from IG\'s audio page'},
     ])
     +`<div class="msec"><h4>Why "consolidate"?</h4><p>Instagram splits one song into hundreds of separate "audio" entries — every creator's upload gets its own ID. We merge them back using Instagram's own "same song" key so a track counts <b>once</b>; otherwise a single hit would look like 100 unrelated sounds.</p></div>`
     +`<div class="msec"><h4>Plus TikTok</h4><p>We also pull TikTok's trending-sounds chart and flag the <b>${v.ttXplatform}</b> sounds already appearing in your Instagram niche — an early cross-platform signal.</p></div>`
@@ -1460,9 +1460,7 @@ function renderSoundChart(){
   if(scTracks)scTracks.style.display='';if(splSounds)splSounds.style.display='none';
   if(chart.length) $('#soundchart').innerHTML=(visChart.length?visChart:[]).map((t,i)=>{
     const det=t.detected;
-    const detb=det?(t.detectedVerified
-      ? `<span class="det-badge" title="Real song behind IG's 'original audio', fingerprinted by AudD and confirmed in a music catalogue">♫ detected</span>`
-      : `<span class="det-badge unv" title="AudD fingerprint match, but NOT found in a music catalogue — treat as approximate/unconfirmed">♫ detected · unverified</span>`):'';
+    const detb=det?`<span class="det-badge" title="AudD's best guess at the song behind IG's 'original audio' — a label only; the preview plays the real audio-page track regardless">♫ detected · may be approximate</span>`:'';
     const orig=(t.original&&!det)?`<span class="det-badge" title="Creator's own original audio">original</span>`:'';
     const cons=t.ids>1?`<span class="xref" title="${t.ids} audio IDs merged into one song">${t.ids} IDs merged</span>`:'';
     const headline=det?t.detectedSong:t.title;
@@ -1470,9 +1468,8 @@ function renderSoundChart(){
     const skey=`${headline}|${det?`${t.detectedArtist||''}|${t.artist}`:(t.artist||'')}`;
     const isSaved=savedSounds.has(skey), isDis=dismissedSounds.has(skey);
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
-      :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
+      :`<span class="trk-play np" title="Preview unavailable">${PLAY}</span>`;
     const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ reel ${k+1}</button>`).join('');
-    const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     // Prefer the audio-page URL (raw original track, no creator foley/SFX mixed in)
     // over a reel URL — download-audio.js only gets the clean track from that path.
     const audioPageUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:'';
@@ -1483,7 +1480,7 @@ function renderSoundChart(){
       <div class="sg">${headlineHtml} ${detb}${orig}${cons}</div><div class="ar">${sub}</div>
       <div class="us">used in <b>${t.uses}</b> niche reel${t.uses!==1?'s':''} · <b>${t.creators}</b> creator${t.creators!==1?'s':''}${t.accounts&&t.accounts.length?' · '+t.accounts.map(a=>'@'+a).join(', '):''}</div>
       ${reels?`<div class="reels">${reels}</div>`:''}</div>
-      <div class="links">${dz}${dl}<div class="trk-actions"><button data-sact="save" class="${isSaved?'active':''}">★ ${isSaved?'Saved':'Save'}</button><button data-sact="dismiss" class="${isDis?'active':''}">✕ ${isDis?'Dismissed':'Dismiss'}</button></div></div></div>`;
+      <div class="links">${dl}<div class="trk-actions"><button data-sact="save" class="${isSaved?'active':''}">★ ${isSaved?'Saved':'Save'}</button><button data-sact="dismiss" class="${isDis?'active':''}">✕ ${isDis?'Dismissed':'Dismiss'}</button></div></div></div>`;
   }).join('')+(visChart.length===0?`<div class="empty">${soundFilter==='saved'?'No saved sounds yet.':'No dismissed sounds.'}</div>`:'');
   const stt=$('#sec-tt');if(stt)stt.style.display=tt.length?'':'none';
   if(tt.length) $('#ttsounds').innerHTML=tt.map((t,i)=>{
@@ -1640,10 +1637,10 @@ document.getElementById('soundchart').addEventListener('click',e=>{
   posts.forEach(p=>{
     const key=(p.audioSong||'').toLowerCase();
     if(!key||key==='original audio') return;
-    const t=m[key]=m[key]||{song:p.audioSong,artist:p.audioArtist,accts:[],n:0,views:0,detected:p.audioDetected,igLink:p.audioLink,preview:p.audioPreview,deezer:p.audioDeezer};
+    const t=m[key]=m[key]||{song:p.audioSong,artist:p.audioArtist,accts:[],n:0,views:0,detected:p.audioDetected,igLink:p.audioLink,preview:p.audioPreview};
     t.n++;t.views+=p.views||0;t.accts.push(p.account);
     if(p.audioLink&&!t.igLink)t.igLink=p.audioLink;
-    if(p.audioPreview&&!t.preview){t.preview=p.audioPreview;t.deezer=p.audioDeezer;}
+    if(p.audioPreview&&!t.preview)t.preview=p.audioPreview;
   });
   const all=Object.values(m).sort((a,b)=>b.n-a.n||b.views-a.views);
   const tagged=all.filter(t=>!t.detected), detected=all.filter(t=>t.detected);
@@ -1652,20 +1649,19 @@ document.getElementById('soundchart').addEventListener('click',e=>{
   const trk=(t,i)=>{
     const det=t.detected?`<span class="det-badge" title="Identified by audio fingerprinting from the reel">♫ detected</span>`:'';
     const igl=t.igLink?`<a class="lk" href="${t.igLink}" target="_blank" rel="noopener">▶ IG audio</a>`:'';
-    const dz=t.deezer?`<a class="lk" href="${t.deezer}" target="_blank" rel="noopener">♪ Deezer</a>`:'';
     const dl=t.igLink?`<button class="lk dl" type="button" data-get-audio="${t.igLink}" title="Download the raw audio">⬇ Get audio</button>`:'';
     const songHtml=t.igLink?`<a href="${t.igLink}" target="_blank" rel="noopener">${t.song}</a>`:t.song;
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
-      :`<span class="trk-play np" title="No preview found">${PLAY}</span>`;
+      :`<span class="trk-play np" title="Preview unavailable">${PLAY}</span>`;
     return `<div class="trk">${play}<div class="r">${i+1}</div><div class="ti">
       <div class="sg">${songHtml} ${det}</div><div class="ar">${t.artist||''}</div>
       <div class="us">used by <b>${t.n}</b> post${t.n>1?'s':''} · ${[...new Set(t.accts)].map(a=>'@'+a).join(', ')}</div></div>
-      <div class="links">${igl}${dz}${dl}</div></div>`;
+      <div class="links">${igl}${dl}</div></div>`;
   };
   const grp=(label,list)=>list.length?`<h3 style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:6px 0 12px">${label}</h3>`+list.map(trk).join(''):'';
   $('#tracks').innerHTML=(grp('Tagged on Instagram',tagged)+grp('Detected background music · fingerprinted',detected))
     || `<div class="empty">No identified tracks yet.</div>`;
-  // native 30s-preview player (Deezer) — one shared audio element, only one plays at a time
+  // native audio preview player (self-hosted real track) — one shared audio element, only one plays at a time
   const PAUSE='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
   const player=new Audio(); let curBtn=null;
   const reset=b=>{if(b){b.classList.remove('playing');b.innerHTML=PLAY;}};
@@ -1675,7 +1671,7 @@ document.getElementById('soundchart').addEventListener('click',e=>{
     if(curBtn===b){ if(player.paused){player.play();b.classList.add('playing');b.innerHTML=PAUSE;} else {player.pause();reset(b);} return; }
     reset(curBtn); player.src=b.dataset.preview; player.play().catch(()=>{}); curBtn=b; b.classList.add('playing'); b.innerHTML=PAUSE;
   });
-  $('.audio-note').innerHTML=`Tap ▶ to play a 30-second preview (via Deezer). Tracks IG labels "original audio" were run through audio fingerprinting (AudD) to surface the real background song — these carry a <span class="det-badge">♫ detected</span> badge and may be approximate. ${origN} post${origN!==1?'s':''} had genuinely original audio with no recognisable track.`;
+  $('.audio-note').innerHTML=`Tap ▶ to play the real track, self-hosted from Instagram's audio page. Tracks IG labels "original audio" were run through audio fingerprinting (AudD) to surface the real background song — these carry a <span class="det-badge">♫ detected</span> badge and may be approximate. ${origN} post${origN!==1?'s':''} had genuinely original audio with no recognisable track.`;
 })();
 </script>
 </body>

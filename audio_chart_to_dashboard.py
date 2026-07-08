@@ -9,41 +9,25 @@ Sources (latest in output/):
   tiktok_trends_*.json — TikTok trending sounds, each flagged also_in_ig_niche.
 
 Writes two top-level keys into dashboard/data.json: `soundChart` and `tiktokSounds`.
-Pure transform, no network.
+Pure transform, no network. Preview audio is NOT set here — fetch_audio.py fills
+each row's `preview` with a durable Blob URL of the REAL track from the IG audio
+page (Deezer catalogue previews were deprecated: they sometimes matched the wrong
+song and sometimes wouldn't play at all).
 
 Usage: python3 audio_chart_to_dashboard.py [--chart 30] [--tt 20]
 """
 import argparse
 import glob
 import json
-import time
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).parent
 DASH = ROOT / "dashboard"
-UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari/605.1.15"
 
 
 def latest(pattern):
     fs = sorted(glob.glob(str(ROOT / "output" / pattern)))
     return json.loads(Path(fs[-1]).read_text()) if fs else []
-
-
-def deezer(title, artist):
-    """Public Deezer search (no key) → (preview mp3 url, deezer page url). Best-effort."""
-    if not title or title.lower() == "original audio":
-        return "", ""
-    q = urllib.parse.quote(f'{title} {artist}'.strip())
-    try:
-        req = urllib.request.Request(f"https://api.deezer.com/search?q={q}&limit=1", headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=15) as r:
-            d = json.loads(r.read().decode())
-        hit = (d.get("data") or [{}])[0]
-        return hit.get("preview", "") or "", hit.get("link", "") or ""
-    except Exception:  # noqa: BLE001
-        return "", ""
 
 
 def main():
@@ -58,21 +42,14 @@ def main():
     af = ROOT / "output" / "chart_audd.json"
     audd = json.loads(af.read_text()) if af.exists() else {}
     chart = []
-    unverified = 0
     for t in named[:args.chart]:
-        # AudD-identified real song behind an "original audio" bucket (keyed by its audio_id)
+        # AudD-identified real song behind an "original audio" bucket (keyed by its
+        # audio_id) — an informational label only. The preview PLAYBACK is always the
+        # real audio-page/reel track (self-hosted by fetch_audio.py), so it's ground
+        # truth regardless of whether AudD's name guess is right.
         aid = str((t.get("audio_ids") or [""])[0])
         det = audd.get(aid) if (t.get("original") and aid) else None
         det = det if (det and det.get("song")) else None
-        # the player + Deezer link resolve to the DETECTED song when we have one
-        verified = False
-        if det:
-            preview, dz = deezer(det["song"], det.get("artist", ""))
-            verified = bool(preview or dz)   # corroborated by a music catalogue? if not → keep but mark unverified
-            if not verified:
-                unverified += 1
-        else:
-            preview, dz = deezer(t.get("title"), t.get("artist"))
         chart.append({
             "title": t.get("title") or "Original audio",
             "artist": t.get("artist", ""),
@@ -80,17 +57,15 @@ def main():
             "uses": t.get("niche_uses", 0),
             "original": bool(t.get("original")),
             "ids": len(t.get("audio_ids") or []),
-            "audioId": aid,  # lets the dashboard build a reels/audio/<id> link → raw-track download, not a reel's mixed audio
+            "audioId": aid,  # → reels/audio/<id> link + fetch_audio.py's self-hosted preview clip
             "accounts": (t.get("accounts") or [])[:3],
             "samples": (t.get("samples") or [])[:4],   # reels that used it (within niche)
             "sample": (t.get("samples") or [None])[0],
-            "detected": bool(det), "detectedVerified": verified,
+            "detected": bool(det),
             "detectedSong": det["song"] if det else "",
             "detectedArtist": det.get("artist", "") if det else "", "detectedLink": det.get("link", "") if det else "",
-            "preview": preview, "deezer": dz,           # 30s inline player + Deezer page
+            "preview": "",  # filled by fetch_audio.py with a durable Blob URL (real track)
         })
-        time.sleep(0.15)
-    got = sum(1 for c in chart if c["preview"])
     det_n = sum(1 for c in chart if c["detected"])
 
     tt_raw = latest("tiktok_trends_*.json")
@@ -111,7 +86,7 @@ def main():
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     xref = sum(1 for s in tt if s["alsoInIgNiche"])
     print(f"Injected soundChart ({len(chart)} of {len(named)} named, from {len(raw)} consolidated; "
-          f"{got} with Deezer preview, {det_n} AudD-identified original audio ({unverified} unverified — no catalogue match)) "
+          f"{det_n} AudD-identified original audio; previews filled next by fetch_audio.py) "
           f"+ tiktokSounds ({len(tt)}, {xref} cross-platform) into data.json.")
 
 
