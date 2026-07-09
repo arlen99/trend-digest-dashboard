@@ -154,6 +154,19 @@ def main():
     removed = removed_set()
     if removed:
         print(f"Skipping {len(removed)} URLs the user removed from Blob (won't be re-downloaded).")
+        # A dismiss+remove only clears the CURRENT week's copy of a post at the moment
+        # it happens (client-side) — a post that's since rolled into an archived
+        # weeks[] snapshot keeps its old, un-cleared video field forever, since nothing
+        # else ever revisits frozen archives. Self-heal it here on every run: any post
+        # anywhere in the archive whose URL is in `removed` gets its blob URL stripped,
+        # so an old week can't keep serving a link to a video the user explicitly removed.
+        archived_scrubbed = 0
+        for wk_posts in (data.get("weeks") or {}).values():
+            for p in (wk_posts.get("posts") or []):
+                if p.get("url") in removed and "blob.vercel-storage" in (p.get("video") or ""):
+                    p["video"] = ""; archived_scrubbed += 1
+        if archived_scrubbed:
+            print(f"  scrubbed {archived_scrubbed} stale video links from archived weeks.")
     # displayed posts that are single videos (skip carousels/photos)
     vids = [p for p in data["posts"] if p.get("platform") == "tiktok"
             or (p.get("format") == "Reel" and not p.get("carousel"))]
