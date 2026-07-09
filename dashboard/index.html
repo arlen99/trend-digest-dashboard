@@ -114,6 +114,42 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .trends-bar button,.sounds-bar button,.view-toggle button{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--line2);border-radius:20px;padding:4px 12px;color:var(--muted);cursor:pointer;transition:.15s}
 .trends-bar button.on,.sounds-bar button.on,.view-toggle button.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
 .view-toggle{display:flex;gap:6px}
+.swipe-bar{display:flex;justify-content:flex-end;margin-top:22px}
+/* Reels-style vertical scroll-snap mode */
+.reelscroll{height:calc(100vh - 96px);overflow-y:auto;scroll-snap-type:y mandatory;margin-top:18px;
+  border:1px solid var(--line);border-radius:18px;background:#000;scrollbar-width:none}
+.reelscroll::-webkit-scrollbar{display:none}
+.reelslide{height:100%;scroll-snap-align:center;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative}
+.reelframe{position:relative;height:calc(100% - 32px);aspect-ratio:9/16;background:#0a0c0e;border-radius:14px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 20px 60px -20px rgba(0,0,0,.9)}
+.reelframe .rposter{width:100%;height:100%;object-fit:cover}
+.rmedia{position:absolute;inset:0;z-index:1}
+.rmedia video,.rmedia iframe,.rmedia .gallery{width:100%;height:100%}
+.reelframe video{width:100%;height:100%;object-fit:contain;background:#000}
+.reelframe iframe{width:100%;height:100%;border:0;background:#000}
+.reelframe .gallery,.reelframe .gimg{height:100%}.reelframe .gimg{aspect-ratio:auto;object-fit:contain}
+.reelplay{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.reelplay svg{width:66px;height:66px;filter:drop-shadow(0 2px 10px rgba(0,0,0,.6));opacity:.92}
+.reelframe.playing .reelplay{display:none}
+.reelidx{position:absolute;top:14px;left:14px;z-index:7;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;
+  color:#fff;background:rgba(0,0,0,.5);padding:4px 9px;border-radius:9px;backdrop-filter:blur(4px)}
+.reelovl{position:absolute;left:0;right:0;bottom:0;z-index:7;padding:44px 16px 16px 16px;
+  background:linear-gradient(0deg,rgba(0,0,0,.82),rgba(0,0,0,.5) 55%,transparent);color:#fff;pointer-events:none}
+.reelovl a,.reelovl .rhandle{pointer-events:auto}
+.reelovl .rhandle{font-weight:700;font-size:14px;color:#fff}
+.reelovl .rhook{font-family:'Fraunces',serif;font-size:16px;line-height:1.28;margin:5px 0 7px}
+.reelovl .rmeta{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:rgba(255,255,255,.82);display:flex;gap:12px;flex-wrap:wrap}
+.reelovl .rmeta b{color:#fff}
+.reelovl .rbadge{display:inline-block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;color:#0c0d0f;
+  background:linear-gradient(120deg,var(--gold),var(--orange));padding:3px 8px;border-radius:7px;margin-bottom:7px}
+.reelacts{position:absolute;right:12px;bottom:110px;z-index:8;display:flex;flex-direction:column;gap:14px;align-items:center}
+.reelacts button{width:46px;height:46px;border-radius:50%;border:0;background:rgba(20,22,26,.6);backdrop-filter:blur(6px);
+  color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-size:17px}
+.reelacts button:hover{background:rgba(76,199,182,.85);color:#0c0d0f}
+.reelacts button.on{background:var(--teal);color:#0c0d0f}
+.reelacts .rlabel{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:rgba(255,255,255,.7);letter-spacing:.04em;margin-top:-9px}
+.reelscroll .empty{color:#fff;height:100%;display:flex;align-items:center;justify-content:center}
+@media(max-width:680px){.reelframe{height:calc(100% - 12px);border-radius:10px}}
 /* Spotlight carousel */
 .spl-stage{overflow:hidden;width:100%;padding:20px 0}
 .spl-track{display:flex;gap:20px;position:relative;will-change:transform}
@@ -438,7 +474,16 @@ select:hover{border-color:var(--teal)}
         <div class="stats" id="stats"></div>
         <p class="prov" id="prov-swipe"></p>
       </div>
+      <div class="swipe-bar">
+        <div class="view-toggle" id="sw-view-toggle">
+          <button data-swv="grid" class="on">▦ Grid</button>
+          <button data-swv="spotlight">◉ Spotlight</button>
+          <button data-swv="scroll">⇅ Scroll</button>
+        </div>
+      </div>
       <div class="grid" id="grid"></div>
+      <div id="spl-swipe" style="display:none"></div>
+      <div class="reelscroll" id="swscroll" style="display:none"></div>
     </section>
     <!-- TREND RADAR -->
     <section class="view hidden" id="v-trends">
@@ -750,6 +795,7 @@ let trendFilter='all', soundFilter='all', bookmarkFilter='all';
 let inspirationLinks=[];
 let trMode='list', scMode='list';
 let trIdx=0, trReel=0, scIdx=0, scReel=0;
+let swMode='grid', swIdx=0, swRows=[], swFP='', _reelObs=null;  // Swipe File view mode (grid/spotlight/scroll)
 let savedTrends=LS.get('td_saved_trends');
 let dismissedTrends=LS.get('td_dis_trends');
 let savedSounds=LS.get('td_saved_sounds');
@@ -761,10 +807,14 @@ let SECRET=localStorage.getItem('td_secret')||'';
 function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);}
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT;
-function pushState(){saveLocal();apply();if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
+// Debounced backend save WITHOUT re-rendering — used by the Reels scroll mode so a
+// save/dismiss updates just the tapped button in place instead of tearing down and
+// rebuilding the scroll stack (which would reset scroll position & restart the video).
+function persistState(){if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
   fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks]})})
     .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
     .catch(()=>setSync('err'));},500);}
+function pushState(){saveLocal();apply();persistState();}
 async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
@@ -1109,7 +1159,7 @@ function stopVideos(root){
 function closeModal(){stopVideos(modal);modal.classList.add('hidden');modal.innerHTML='';document.body.style.overflow='';}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
 function stopAllMedia(){
-  document.querySelectorAll('.spl-stage video,.spl-stage iframe,.card video,.card iframe,.embed-frame').forEach(function(el){
+  document.querySelectorAll('.spl-stage video,.spl-stage iframe,.card video,.card iframe,.embed-frame,#swscroll video,#swscroll iframe').forEach(function(el){
     if(el.tagName==='VIDEO'){try{el.pause();el.removeAttribute('src');el.load();}catch(e){}}
     else{try{el.src='';}catch(e){}}
   });
@@ -1268,14 +1318,36 @@ function apply(){
     &&(!q||(p.account+' '+p.hook+' '+p.notes+' '+p.audio).toLowerCase().includes(q)));
   rows.sort((a,b)=>sort==='date'?(''+(b.date||'')).localeCompare(''+(a.date||'')):(b[sort]??-1)-(a[sort]??-1));
   $('#count').innerHTML=`<b>${rows.length}</b> shown · ${saved.size}★ · ${dismissed.size}✕`;
-  const grid=$('#grid');
-  // Fingerprint the row set so background sync pulls don't tear the grid down when nothing changed
-  const fp=rows.map(r=>r.url+'|'+(saved.has(r.url)?'s':'')+(dismissed.has(r.url)?'d':'')).join(',');
-  if(grid.dataset.fp===fp)return;
-  const wasFresh=!grid.dataset.fp;
-  grid.dataset.fp=fp;
+  swRows=rows;
+  if(swIdx>=rows.length)swIdx=0;
+  renderSwipe();
+}
+// Dispatch the filtered/sorted rows to the active Swipe File view mode.
+function renderSwipe(){
+  const rows=swRows;
+  const grid=$('#grid'),spl=$('#spl-swipe'),scr=$('#swscroll');
+  document.querySelectorAll('#sw-view-toggle button').forEach(b=>b.classList.toggle('on',b.dataset.swv===swMode));
+  // Skip a full rebuild when nothing that affects THIS mode changed (background sync
+  // pulls fire apply() every 30s). swIdx only matters to spotlight; excluding it for
+  // grid/scroll keeps the scroll-snap position from being reset by a sync tick.
+  const rowsFP=rows.map(r=>r.url+(saved.has(r.url)?'s':'')+(dismissed.has(r.url)?'d':'')).join(',');
+  const fp=swMode+'|'+(swMode==='spotlight'?swIdx:'')+'|'+rowsFP;
+  if(swFP===fp)return;
+  swFP=fp;
+  if(swMode==='spotlight'){
+    if(_reelObs){_reelObs.disconnect();_reelObs=null;}
+    grid.style.display='none';scr.style.display='none';spl.style.display='';
+    stopVideos(grid);stopVideos(scr);renderSwipeSpotlight(rows);return;
+  }
+  if(swMode==='scroll'){
+    grid.style.display='none';spl.style.display='none';scr.style.display='';
+    stopVideos(grid);stopVideos(spl);renderSwipeScroll(rows);return;
+  }
+  if(_reelObs){_reelObs.disconnect();_reelObs=null;}
+  spl.style.display='none';scr.style.display='none';grid.style.display='';
+  stopVideos(spl);stopVideos(scr);
+  const wasFresh=!grid.dataset.rendered;grid.dataset.rendered='1';
   grid.innerHTML=rows.length?rows.map(card).join(''):`<div class="empty">No posts match these filters.</div>`;
-  // only stagger the initial reveal — subsequent re-renders (filter changes etc.) shouldn't ripple
   if(wasFresh)grid.querySelectorAll('.card').forEach((c,i)=>c.style.animationDelay=(Math.min(i,12)*40)+'ms');
   else grid.querySelectorAll('.card').forEach(c=>{c.style.animation='none';c.style.animationDelay='0ms';});
 }
@@ -1628,11 +1700,123 @@ function renderSoundSpotlight(items){
 }
 /* ===== RESIZE: re-centre spotlight ===== */
 window.addEventListener('resize',function(){
-  var elTr=$('#spl-trends'),elSc=$('#spl-sounds');
+  var elTr=$('#spl-trends'),elSc=$('#spl-sounds'),elSw=$('#spl-swipe');
   if(trMode==='spotlight'&&elTr&&elTr.style.display!=='none')centerTrack(elTr);
   if(scMode==='spotlight'&&elSc&&elSc.style.display!=='none')centerTrack(elSc);
+  if(swMode==='spotlight'&&elSw&&elSw.style.display!=='none')centerTrack(elSw);
 });
+/* ===== SWIPE FILE — Spotlight + Reels-scroll modes ===== */
+// Media HTML for a post: native Blob <video>, carousel gallery, or platform embed.
+function swMediaHTML(p,opt){opt=opt||{};
+  if(p.carousel&&p.carousel.length)return '<div class="gallery" data-gal="'+encodeURIComponent(JSON.stringify(p.carousel))+'"></div>';
+  if(p.video)return '<video class="rv" controls playsinline '+(opt.autoplay?'autoplay ':'')+(opt.muted?'muted ':'')+'preload="metadata" poster="'+(p.thumb||'')+'" src="'+p.video+'"></video>';
+  const istt=(p.platform==='tiktok'),tid=istt?ttId(p.url):'',code=igCode(p.url);
+  const src=istt&&tid?('https://www.tiktok.com/embed/v2/'+tid):code?('https://www.instagram.com/reel/'+code+'/embed/'):'';
+  return src?'<iframe src="'+src+'" allow="autoplay;encrypted-media;fullscreen" allowfullscreen scrolling="no"></iframe>':'<img class="rposter" src="'+(p.thumb||'')+'">';
+}
+// init galleries + wire the native-video → platform-embed fallback (expired/failed Blob)
+function swInitMedia(root,p){
+  root.querySelectorAll('.gallery[data-gal]').forEach(g=>initGallery(g,JSON.parse(decodeURIComponent(g.dataset.gal))));
+  root.querySelectorAll('video.rv').forEach(v=>v.addEventListener('error',function(){
+    const m=v.parentNode;v.remove();const istt=(p.platform==='tiktok'),tid=istt?ttId(p.url):'',code=igCode(p.url);
+    const src=istt&&tid?('https://www.tiktok.com/embed/v2/'+tid):code?('https://www.instagram.com/reel/'+code+'/embed/'):'';
+    if(src){const f=document.createElement('iframe');f.src=src;f.setAttribute('allow','autoplay;encrypted-media;fullscreen');f.setAttribute('allowfullscreen','');f.setAttribute('scrolling','no');m.appendChild(f);}
+  }));
+}
+// --- Spotlight: active post centred, neighbours greyed at the sides (reuses .spl-*) ---
+function renderSwipeSpotlight(rows){
+  const el=$('#spl-swipe');if(!el)return;
+  if(!rows.length){stopVideos(el);el.innerHTML='<div class="empty">No posts match these filters.</div>';return;}
+  if(swIdx>=rows.length)swIdx=0;
+  function build(p,isActive,rawIdx){
+    const sv=saved.has(p.url),ds=dismissed.has(p.url);
+    const chips=isActive?[...p.hookTypes,...p.triggers,...p.visualStyles].map(t=>'<span class="chip" style="color:'+col(t)+';border-color:'+col(t)+'55">'+t+'</span>').join(''):'';
+    const media=isActive?swMediaHTML(p,{autoplay:true}):'<img style="width:100%;height:100%;object-fit:cover" src="'+(p.thumb||'')+'">';
+    const badge=p.newFind?(p.trendScore+'% ENG'):(p.outlier+'&times; OUTLIER');
+    const er=(p.engRate!=null)?' &nbsp;&middot;&nbsp; <b>'+p.engRate+'%</b> ER':'';
+    const acts=isActive?'<div class="tcard-actions"><button data-swact="save" class="'+(sv?'active':'')+'">&#9733; '+(sv?'Saved':'Save')+'</button><button data-swact="dismiss" class="'+(ds?'active':'')+'">&#10005; '+(ds?'Restore':'Dismiss')+'</button><button data-get-audio="'+p.url+'">&#8681; Get audio</button><a class="spl-reel" href="'+p.url+'" target="_blank" rel="noopener">&#8599; '+(p.platform==='tiktok'?'TikTok':'IG')+'</a></div>':'';
+    const body='<div class="spl-body"><div class="spl-count">'+(swIdx+1)+' / '+rows.length+' &nbsp;&middot;&nbsp; '+badge+'</div>'
+      +'<div class="spl-title">'+(p.hook||('@'+p.account))+'</div>'
+      +'<div class="spl-sub">'+accountLink(platOf(p),p.account)+' &middot; '+fmtDate(p.date)+'</div>'
+      +(isActive?'<div class="spl-stat"><b>'+fmtN(p.views)+'</b> views &nbsp;&middot;&nbsp; <b>'+fmtN(p.likes)+'</b> likes &nbsp;&middot;&nbsp; <b>'+fmtN(p.comments)+'</b> comments'+er+'</div>':'')
+      +(isActive&&p.videoText?'<div class="spl-stat">On-screen: &ldquo;'+p.videoText+'&rdquo;</div>':'')
+      +(chips?'<div class="spl-reels">'+chips+'</div>':'')
+      +(isActive&&p.notes?'<div class="spl-howto">'+p.notes+'</div>':'')
+      +acts+'</div>';
+    const ghost=rawIdx<0?' spl-ghost':'';
+    const nav=(!isActive&&rawIdx>=0)?(' data-swgo="'+rawIdx+'"'):'';
+    return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+media+'</div>'+body+'</div>';
+  }
+  const prev=swIdx>0?build(rows[swIdx-1],false,swIdx-1):'<div class="spl-slide spl-ghost"></div>';
+  const curr=build(rows[swIdx],true,swIdx);
+  const next=swIdx<rows.length-1?build(rows[swIdx+1],false,swIdx+1):'<div class="spl-slide spl-ghost"></div>';
+  stopVideos(el);
+  el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
+  centerTrack(el);
+  const active=el.querySelector('.spl-slide.active');if(active)swInitMedia(active,rows[swIdx]);
+  el.querySelectorAll('[data-swgo]').forEach(b=>b.onclick=()=>{swIdx=+b.dataset.swgo;renderSwipe();});
+  el.querySelectorAll('[data-swact]').forEach(btn=>btn.onclick=()=>{const p=rows[swIdx];btn.dataset.swact==='save'?saveWithConfirm(p):dismissWithConfirm(p);});
+  el.onclick=e=>{const al=e.target.closest('.acct-link');if(al){e.preventDefault();openProfile(al.dataset.plat,al.dataset.acct);}};
+}
+// --- Reels scroll: full-height vertical snap, centred post auto-plays ---
+function playReel(frame,p,fromClick){
+  if(!frame||frame.classList.contains('playing'))return;
+  const holder=document.createElement('div');holder.className='rmedia';
+  holder.innerHTML=swMediaHTML(p,{autoplay:true,muted:!fromClick});
+  frame.appendChild(holder);frame.classList.add('playing');
+  swInitMedia(holder,p);
+  const v=holder.querySelector('video');if(v){v.muted=!fromClick;v.play().catch(()=>{});}
+}
+function stopReel(frame){if(!frame||!frame.classList.contains('playing'))return;stopVideos(frame);const m=frame.querySelector('.rmedia');if(m)m.remove();frame.classList.remove('playing');}
+function renderSwipeScroll(rows){
+  const el=$('#swscroll');if(!el)return;
+  if(_reelObs){_reelObs.disconnect();_reelObs=null;}
+  if(!rows.length){el.innerHTML='<div class="empty">No posts match these filters.</div>';return;}
+  if(swIdx>=rows.length)swIdx=0;
+  el.innerHTML=rows.map((p,i)=>{
+    const sv=saved.has(p.url),ds=dismissed.has(p.url);
+    const badge=p.newFind?(p.trendScore+'% ENG'):(p.outlier+'&times; OUTLIER');
+    const er=(p.engRate!=null)?'<span><b>'+p.engRate+'%</b> ER</span>':'';
+    return '<div class="reelslide" data-idx="'+i+'" data-url="'+p.url+'"><div class="reelframe">'
+      +'<img class="rposter" src="'+(p.thumb||'')+'">'
+      +'<div class="reelidx">'+(i+1)+' / '+rows.length+'</div>'
+      +'<div class="reelplay">'+playIcon()+'</div>'
+      +'<div class="reelacts">'
+        +'<button data-swact="save" class="'+(sv?'on':'')+'" title="Save">&#9733;</button>'
+        +'<button data-swact="dismiss" class="'+(ds?'on':'')+'" title="Dismiss">&#10005;</button>'
+        +'<button data-get-audio="'+p.url+'" title="Get audio">&#8681;</button>'
+        +'<a href="'+p.url+'" target="_blank" rel="noopener"><button title="Open">&#8599;</button></a>'
+      +'</div>'
+      +'<div class="reelovl"><div class="rbadge">'+badge+'</div><div class="rhandle">'+accountLink(platOf(p),p.account)+'</div>'
+        +(p.hook?'<div class="rhook">'+p.hook+'</div>':'')
+        +'<div class="rmeta"><span><b>'+fmtN(p.views)+'</b> views</span><span><b>'+fmtN(p.likes)+'</b> likes</span><span><b>'+fmtN(p.comments)+'</b> comments</span>'+er+'</div></div>'
+      +'</div></div>';
+  }).join('');
+  _reelObs=new IntersectionObserver(ents=>ents.forEach(en=>{
+    const frame=en.target.querySelector('.reelframe');
+    if(en.isIntersecting&&en.intersectionRatio>=0.6){swIdx=+en.target.dataset.idx;playReel(frame,rows[swIdx]);}
+    else stopReel(frame);
+  }),{root:el,threshold:[0,0.6,1]});
+  el.querySelectorAll('.reelslide').forEach(s=>_reelObs.observe(s));
+  const target=el.querySelector('.reelslide[data-idx="'+swIdx+'"]');if(target)target.scrollIntoView({block:'center'});
+  el.onclick=e=>{
+    const slide=e.target.closest('.reelslide');if(!slide)return;const p=rows.find(x=>x.url===slide.dataset.url);if(!p)return;
+    const al=e.target.closest('.acct-link');if(al){e.preventDefault();openProfile(al.dataset.plat,al.dataset.acct);return;}
+    if(e.target.closest('[data-get-audio]')||e.target.closest('a'))return;
+    const act=e.target.closest('[data-swact]');
+    if(act){e.stopPropagation();
+      if(act.dataset.swact==='save'){if(savedData[p.url])delete savedData[p.url];else savedData[p.url]=JSON.parse(JSON.stringify(p));saved=new Set(Object.keys(savedData));act.classList.toggle('on',saved.has(p.url));saveLocal();persistState();}
+      else{dismissWithConfirm(p);act.classList.toggle('on',dismissed.has(p.url));}
+      return;}
+    const frame=e.target.closest('.reelframe');
+    if(frame){if(frame.classList.contains('playing')){const v=frame.querySelector('video');if(v)v.muted=!v.muted;}else playReel(frame,p,true);}
+  };
+}
 /* ===== VIEW TOGGLES ===== */
+document.getElementById('sw-view-toggle').addEventListener('click',e=>{
+  const b=e.target.closest('[data-swv]');if(!b)return;
+  swMode=b.dataset.swv;swFP='';renderSwipe();
+});
 document.getElementById('tr-view-toggle').addEventListener('click',e=>{
   const b=e.target.closest('[data-trv]');if(!b)return;
   trMode=b.dataset.trv;trIdx=0;trReel=0;renderTrendRadar();
@@ -1646,7 +1830,10 @@ document.addEventListener('keydown',e=>{
   if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
   const dir=e.key==='ArrowLeft'?-1:1;
-  const vTr=$('#v-trends'),vAu=$('#v-audio');
+  const vTr=$('#v-trends'),vAu=$('#v-audio'),vSw=$('#v-swipe');
+  if(swMode==='spotlight'&&vSw&&!vSw.classList.contains('hidden')){
+    swIdx=Math.max(0,Math.min(swRows.length-1,swIdx+dir));renderSwipe();return;
+  }
   if(trMode==='spotlight'&&vTr&&!vTr.classList.contains('hidden')){
     const items=(activeData().trends||[]).filter(t=>{const k=`${t.name}|${t.type}`;return trendFilter==='saved'?savedTrends.has(k):trendFilter==='dismissed'?dismissedTrends.has(k):!dismissedTrends.has(k);});
     trIdx=Math.max(0,Math.min(items.length-1,trIdx+dir));trReel=0;renderTrendRadar();
