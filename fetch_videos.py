@@ -13,6 +13,7 @@ Pure stdlib (urllib) — runs in CI with no extra deps.
 Usage: set -a && . ./.env && set +a && python3 fetch_videos.py
 Env: TIKHUB_TOKEN, BLOB_READ_WRITE_TOKEN.
 """
+import hashlib
 import json
 import os
 import re
@@ -105,9 +106,9 @@ def download(url):
         return r.read()
 
 
-def blob_put(pathname, data):
+def blob_put(pathname, data, content_type="video/mp4"):
     req = urllib.request.Request(f"{BLOB_API}/{pathname}", data=data, method="PUT", headers={
-        "authorization": "Bearer " + BLOB, "x-content-type": "video/mp4",
+        "authorization": "Bearer " + BLOB, "x-content-type": content_type,
         "x-add-random-suffix": "0", "x-allow-overwrite": "1", "x-api-version": "7"})
     with urllib.request.urlopen(req, timeout=180) as r:
         return json.loads(r.read().decode())["url"]
@@ -129,22 +130,41 @@ def blob_delete(urls):
 
 
 def removed_set():
-    """URLs the user explicitly removed from Blob via the dashboard → never re-download."""
+    """URLs to never (re-)download a video for: explicit removals (removedVideos —
+    also covers the "Remove download" button on a post that's NOT dismissed, a
+    separate valid action) UNION every currently-dismissed post (dismissed — dismissing
+    is supposed to free its download too, per dismissWithConfirm, so honour that
+    directly here rather than depending solely on removedVideos staying in sync).
+    dismissed is the older, far more heavily-used field — relying on it too makes this
+    robust even if removedVideos itself is incomplete (e.g. an active browser tab's
+    stale in-memory copy overwriting a fresher server value between visits — a real,
+    observed race in this single-user last-write-wins sync design).
+    NOTE: match["url"] is still the public CDN URL under the hood (just discovered via
+    the list API rather than hardcoded), so a read can be up to ~60s+ stale/incomplete
+    relative to a very recent write — documented elsewhere in this project, no full fix
+    without a timestamp to compare against. Harmless in real weekly-cadence usage (an
+    edit is always at least days old by the next run) and self-healing regardless
+    (every run re-reads this fresh). This retry only covers outright read failures,
+    not partial staleness."""
     if not BLOB:
         return set()
-    try:
-        req = urllib.request.Request(f"{BLOB_API}?prefix=state/dashboard-state.json",
-                                     headers={"authorization": "Bearer " + BLOB})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            blobs = json.loads(r.read()).get("blobs", [])
-        match = next((b for b in blobs if b["pathname"] == "state/dashboard-state.json"), None)
-        if not match:
-            return set()
-        with urllib.request.urlopen(match["url"], timeout=30) as r:
-            state = json.loads(r.read())
-        return set(state.get("removedVideos") or [])
-    except Exception:  # noqa: BLE001
-        return set()
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(f"{BLOB_API}?prefix=state/dashboard-state.json",
+                                         headers={"authorization": "Bearer " + BLOB})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                blobs = json.loads(r.read()).get("blobs", [])
+            match = next((b for b in blobs if b["pathname"] == "state/dashboard-state.json"), None)
+            if not match:
+                return set()
+            with urllib.request.urlopen(f"{match['url']}?t={int(time.time()*1000)}", timeout=30) as r:
+                state = json.loads(r.read())
+            return set(state.get("removedVideos") or []) | set(state.get("dismissed") or [])
+        except Exception:  # noqa: BLE001
+            if attempt == 2:
+                return set()
+            time.sleep(3)
+    return set()
 
 
 def main():
@@ -245,11 +265,71 @@ def main():
         time.sleep(0.2)
     data["videos"] = video_map
 
+    # ---- ALSO self-host Inspiration Links (dashboard/api/save-link.js) — that feature
+    # has never been wired into Blob hosting at all, so every saved link's `video` field
+    # is whatever raw, SIGNED, hours-lived CDN URL TikHub returned at save time. Once
+    # that expires the card silently falls back to the platform embed (or, if the post
+    # itself is gone, the platform's own "broken link" state) — same failure mode board
+    # posts had before this script existed. Reuses the SAME stable pathname scheme as
+    # board posts (videos/<platform>_<code>.mp4), so a reel that's both a board post and
+    # a saved link shares one Blob file — no duplicate storage, one fetch either way.
+    li_ok = li_kept = li_fail = 0
+    if BLOB:
+        try:
+            req = urllib.request.Request(f"{BLOB_API}?prefix=links/", headers={"authorization": "Bearer " + BLOB})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                link_blobs = json.loads(r.read().decode()).get("blobs", [])
+        except Exception:  # noqa: BLE001
+            link_blobs = []
+        for b in link_blobs:
+            try:
+                with urllib.request.urlopen(f"{b['url']}?t={int(time.time()*1000)}", timeout=30) as r:
+                    link = json.loads(r.read().decode())
+            except Exception:  # noqa: BLE001
+                continue
+            url = link.get("url", "")
+            if link.get("type") not in ("reel", "video", "post"):  # audio pages, TikTok sounds, profiles — no single video
+                continue
+            if url in removed:  # user explicitly removed this download — honour it, don't re-fetch
+                if "blob.vercel-storage" in (link.get("video") or ""):
+                    link["video"] = ""
+                    try:
+                        blob_put(f"links/{hashlib.md5(url.encode()).hexdigest()}.json", json.dumps(link, ensure_ascii=False).encode(), content_type="application/json")
+                    except Exception:  # noqa: BLE001
+                        pass
+                continue
+            if "blob.vercel-storage" in (link.get("video") or ""):
+                li_kept += 1; continue
+            plat = "tiktok" if link.get("platform") == "tt" else "instagram"
+            code = tt_id(url) if plat == "tiktok" else ig_code(url)
+            if not code:
+                continue
+            pathname = f"videos/{plat}_{code}.mp4"
+            try:
+                blob_url = by_url.get(url) or video_map.get(url)  # already hosted as a board post or example reel? reuse it
+                if not blob_url:
+                    src = fresh_source({"platform": plat, "url": url})
+                    if not src:
+                        li_fail += 1; continue
+                    mp4 = download(src)
+                    if len(mp4) < 5000:
+                        li_fail += 1; continue
+                    blob_url = blob_put(pathname, mp4)
+                link["video"] = blob_url
+                blob_put(f"links/{hashlib.md5(url.encode()).hexdigest()}.json", json.dumps(link, ensure_ascii=False).encode(), content_type="application/json")
+                li_ok += 1
+                print(f"  ✓ LINK {plat:9} @{(link.get('account') or '')[:16]:<16} {blob_url[-24:]}")
+            except Exception as e:  # noqa: BLE001
+                li_fail += 1
+                print(f"  ✗ LINK {plat} {url[-18:]}: {str(e)[:50]}")
+            time.sleep(0.2)
+
     # NO pruning — videos are kept PERMANENTLY so saved posts always play natively (no embed).
     total = len(blob_list())
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"\nBoard posts: {ok} new, {kept} kept, {fail} failed."
           f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed."
+          f"\nInspiration links: {li_ok} new, {li_kept} kept, {li_fail} failed."
           f"\nBlob now holds {total} videos (kept permanently).")
 
 
