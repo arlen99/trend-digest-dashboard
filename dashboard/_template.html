@@ -801,6 +801,15 @@ let dismissedTrends=LS.get('td_dis_trends');
 let savedSounds=LS.get('td_saved_sounds');
 let dismissedSounds=LS.get('td_dis_sounds');
 let dismissedAudioLinks=LS.get('td_dis_audiolinks');
+// URLs whose self-hosted video the user explicitly removed from Blob (via dismiss or
+// the "Remove download" button) — fetch_videos.py reads this to never re-download
+// them. Must round-trip through every /api/state write (stateBody()) or the next
+// unrelated save/dismiss silently wipes it (a full-document PUT, not a merge) —
+// that was the actual bug behind "dismissed videos still play natively": blob-delete
+// correctly deleted the file and recorded it, but the debounced persistState() write
+// that toggleDismiss() ALSO triggers landed ~500ms later and overwrote the state
+// document without this field, since the client never tracked/re-sent it.
+let removedVideos=LS.get('td_removed_videos');
 // accountEdits is declared earlier (before the Accounts panel block) to avoid a TDZ; nothing else to init here
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
@@ -811,10 +820,10 @@ let SECRET=localStorage.getItem('td_secret')||'';
 // POST can also be mid-flight on reload — either way the read comes back stale, and
 // without this guard it would clobber the change we just made.
 let localTs=+(localStorage.getItem('td_state_ts')||0);
-function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);}
+function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);LS.set('td_removed_videos',removedVideos);}
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
 let _pushT, _pendingWrite=false;
-function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],updatedAt:localTs});}
+function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],removedVideos:[...removedVideos],updatedAt:localTs});}
 // Debounced backend save WITHOUT re-rendering — used by the Reels scroll mode so a
 // save/dismiss updates just the tapped button in place instead of tearing down and
 // rebuilding the scroll stack (which would reset scroll position & restart the video).
@@ -842,8 +851,10 @@ async function pullState(){if(!SECRET){setSync('off');return;}
     }
     if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.dismissedAudioLinks))dismissedAudioLinks=new Set(s.dismissedAudioLinks);saveLocal();
       localTs=remoteTs;localStorage.setItem('td_state_ts',String(remoteTs));  // adopt the backend's clock so our next read compares correctly
-      // strip videos the user has removed on any device, so popups fall back to the embed
-      if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
+      // hydrate removedVideos (not just consume it) so our OWN next write round-trips
+      // it instead of silently dropping it — and strip them from DATA.videos so
+      // popups fall back to the embed for any removed on another device.
+      if(Array.isArray(s.removedVideos)){removedVideos=new Set(s.removedVideos);if(DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}}
     setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();if(typeof renderTrendRadar==='function')renderTrendRadar();if(typeof renderSoundChart==='function')renderSoundChart();
   }catch(e){setSync('err');}}
 async function pullLinks(){if(!SECRET)return;
@@ -1056,7 +1067,13 @@ async function dismissWithConfirm(p){
   if(SECRET&&p.video&&p.video.includes('blob.vercel-storage')){
     fetch('/api/blob-delete',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:p.url})})
       .then(function(r){return r.json();})
-      .then(function(j){if(j&&j.ok){p.video='';if(DATA.videos)delete DATA.videos[p.url];}})
+      .then(function(j){if(j&&j.ok){p.video='';if(DATA.videos)delete DATA.videos[p.url];
+        // Track it client-side too, then push again — otherwise the debounced
+        // /api/state write toggleDismiss() already queued (500ms) can overwrite the
+        // removedVideos blob-delete just wrote server-side (full-document PUT, not a
+        // merge). That race was why a dismissed video came back on the next weekly
+        // refresh (fetch_videos.py re-downloads anything not in removedVideos).
+        removedVideos.add(p.url);saveLocal();persistState();}})
       .catch(function(){});
   }
   if(!tracked)return; // not in watchlist — no prompt
@@ -1295,6 +1312,7 @@ async function removeReelDownload(url){
     const j=await r.json();
     if(!j.ok){alert(`Couldn't remove: ${j.reason||r.status}`);return;}
     if(DATA.videos)delete DATA.videos[url];
+    removedVideos.add(url);saveLocal();persistState();  // see dismissWithConfirm — must round-trip or a later write wipes it
     openReelPopup(url); // re-render — now without the native video
     setTimeout(()=>{const note=$('#mm-body .pp-spin')||$('#mm-body .mm-sub');if(note)note.insertAdjacentHTML('beforebegin',`<div class="pp-spin" style="color:var(--teal);padding:8px 0">✓ Removed (${j.freedKB?j.freedKB+' KB':'no blob found'} freed)</div>`);},80);
   }catch(e){alert('Remove failed: '+e.message);}
