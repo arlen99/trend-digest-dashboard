@@ -804,22 +804,44 @@ let dismissedAudioLinks=LS.get('td_dis_audiolinks');
 // accountEdits is declared earlier (before the Accounts panel block) to avoid a TDZ; nothing else to init here
 /* ---- cross-device sync: single-user, passphrase-gated /api/state (Vercel Blob). Falls back to localStorage. ---- */
 let SECRET=localStorage.getItem('td_secret')||'';
+// Monotonic "last local edit" clock. Every write stamps the state with `updatedAt`;
+// pullState refuses to overwrite local state with an OLDER read. This is what stops
+// a dismiss (or any edit) from bouncing back on refresh: the state blob's public URL
+// is CDN-cached and can lag a write by 60s+ (?t= busters don't help), and the debounced
+// POST can also be mid-flight on reload — either way the read comes back stale, and
+// without this guard it would clobber the change we just made.
+let localTs=+(localStorage.getItem('td_state_ts')||0);
 function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);}
 function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
-let _pushT;
+let _pushT, _pendingWrite=false;
+function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],updatedAt:localTs});}
 // Debounced backend save WITHOUT re-rendering — used by the Reels scroll mode so a
 // save/dismiss updates just the tapped button in place instead of tearing down and
 // rebuilding the scroll stack (which would reset scroll position & restart the video).
-function persistState(){if(!SECRET)return;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks]})})
-    .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}setSync('saved');setTimeout(()=>setSync('on'),1400);})
+function persistState(){if(!SECRET)return;
+  localTs=Date.now();localStorage.setItem('td_state_ts',String(localTs));  // stamp the edit NOW (survives an immediate refresh)
+  _pendingWrite=true;setSync('saving');clearTimeout(_pushT);_pushT=setTimeout(()=>{
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:stateBody()})
+    .then(r=>{if(!r.ok){setSync(r.status===401?'bad':'err');return;}_pendingWrite=false;setSync('saved');setTimeout(()=>setSync('on'),1400);})
     .catch(()=>setSync('err'));},500);}
+// If a debounced write is still pending when the page is hidden/closed (e.g. you
+// dismiss then immediately refresh), flush it with keepalive so it isn't dropped.
+window.addEventListener('pagehide',()=>{if(SECRET&&_pendingWrite){try{fetch('/api/state',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:stateBody()});}catch(e){}}});
 function pushState(){saveLocal();apply();persistState();}
 async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
+    const remoteTs=(s&&typeof s.updatedAt==='number')?s.updatedAt:0;
+    if(remoteTs<localTs){
+      // This read is OLDER than our last local edit — it's stale (CDN lag) or predates
+      // an in-flight write. Adopting it would revert the change we just made (the
+      // "dismissed post reappears on refresh" bug). Keep local, and re-assert it so the
+      // backend converges. Genuinely newer edits from another device have remoteTs>=localTs.
+      setSync('on');persistState();return;
+    }
     if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.dismissedAudioLinks))dismissedAudioLinks=new Set(s.dismissedAudioLinks);saveLocal();
+      localTs=remoteTs;localStorage.setItem('td_state_ts',String(remoteTs));  // adopt the backend's clock so our next read compares correctly
       // strip videos the user has removed on any device, so popups fall back to the embed
       if(Array.isArray(s.removedVideos)&&DATA.videos)s.removedVideos.forEach(u=>{delete DATA.videos[u];});}
     setSync('on');apply();if(typeof renderAccounts==='function')renderAccounts();if(typeof renderTrendRadar==='function')renderTrendRadar();if(typeof renderSoundChart==='function')renderSoundChart();
