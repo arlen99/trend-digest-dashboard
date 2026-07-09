@@ -28,7 +28,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -137,6 +137,13 @@ def main() -> None:
     rows.sort(key=lambda r: r.get("outlier_score", 0), reverse=True)
     rows = rows[:MAX_CANDIDATES]
 
+    # Monday-anchored, matching accumulate.py's weekOf (which runs first in the
+    # pipeline and owns this value) — NOT date.today(), which only matches the
+    # dashboard's week-dropdown/archive keys when curation happens to run on a
+    # Monday. Reading it from data.json avoids any clock-skew between scripts.
+    week_of = (json.loads((DASH / "data.json").read_text()).get("weekOf")
+               or (date.today() - timedelta(days=date.today().weekday())).isoformat())
+
     curated = []
     for i, r in enumerate(rows, 1):
         fmt = r.get("format", "Reel")
@@ -208,7 +215,7 @@ def main() -> None:
             "visualStyles": [v for v in result.get("visualStyles", []) if v in VISUAL_STYLES],
             "audio": f"{audio_song} · {audio_artist}" if real_song else f"Original audio · @{r['account']}",
             "notes": result.get("notes", ""),
-            "week": date.today().isoformat(),
+            "week": week_of,
             "video": r.get("video", "") if fmt != "Carousel" else "",
             "audioId": audio_id,
             "audioLink": f"https://www.instagram.com/reels/audio/{audio_id}/" if audio_id else "",

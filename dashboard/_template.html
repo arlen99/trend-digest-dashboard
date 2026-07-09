@@ -567,9 +567,14 @@ Object.entries(DATA.weeks||{}).forEach(([w,s])=>{WEEKS[w]=Object.assign({posts:[
 const WEEK_IDS=Object.keys(WEEKS).sort().reverse(); // newest first
 function weekLabel(w){if(!w||w==='current')return 'All weeks';const d=new Date(w+'T00:00:00');if(isNaN(d))return w;const end=new Date(d);end.setDate(d.getDate()+6);const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${M[d.getMonth()]} ${d.getDate()} → ${M[end.getMonth()]} ${end.getDate()}`;}
 // Swipe-file: posts flow as a flat list (dedupe by URL, keep oldest week's tag). The #f-week filter handles selection.
+// week is ALWAYS set to the bucket key `w` (the Monday-anchored weekOf this post's
+// snapshot lives under), never the post's own `.week` field — curate_posts.py stamps
+// that with the raw calendar date it ran, which only matches the dropdown's Monday
+// keys by coincidence. Trusting `w` here means the #f-week filter works even for
+// already-archived data with mismatched stamps.
 const _seen={};
 const posts=[];
-[CURRENT_WEEK,...Object.keys(DATA.weeks||{}).sort().reverse()].forEach(w=>{const slice=(WEEKS[w||'current']||{}).posts||[];slice.forEach(p=>{if(!p.url||_seen[p.url])return;_seen[p.url]=1;posts.push(Object.assign({},p,{week:p.week||w}));});});
+[CURRENT_WEEK,...Object.keys(DATA.weeks||{}).sort().reverse()].forEach(w=>{const slice=(WEEKS[w||'current']||{}).posts||[];slice.forEach(p=>{if(!p.url||_seen[p.url])return;_seen[p.url]=1;posts.push(Object.assign({},p,{week:w}));});});
 // Active week getter for sound chart / trends / audio (these don't flatten — they're per-week snapshots)
 function activeWeekId(){const v=$('#f-week')&&$('#f-week').value;return WEEKS[v]?v:CURRENT_WEEK;}
 function activeData(){return WEEKS[activeWeekId()]||WEEKS[CURRENT_WEEK]||{posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]};}
