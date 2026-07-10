@@ -195,6 +195,9 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .insp-rm:hover{border-color:var(--muted);color:var(--ink)}
 .insp-dl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 10px;border-radius:6px;background:var(--orange);color:#000;border:none;cursor:pointer}
 .insp-dl:disabled{opacity:.5;cursor:wait}
+.insp-watch{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 10px;border-radius:6px;background:none;border:1px solid var(--line2);color:var(--muted);cursor:pointer}
+.insp-watch:hover{border-color:var(--teal);color:var(--teal)}
+.insp-watch.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1);cursor:default}
 .paste-audio-bar{display:flex;gap:8px;margin:14px 0}
 .paste-audio-bar input{flex:1;background:var(--bg2);border:1px solid var(--line2);border-radius:8px;padding:9px 12px;color:var(--ink);font-size:13px}
 .paste-audio-bar input:focus{outline:none;border-color:var(--teal)}
@@ -1109,6 +1112,16 @@ function card(p){
 // File card. `hook` here is just the post's own caption (no hand-written headline,
 // same reasoning as skipping chips/outlier — that's curation, not something to fake).
 // videoText is genuine on-screen OCR, backfilled locally by enrich_links.py.
+// One-click "add this link's creator to the watchlist" — Inspiration Links have no
+// natural Save action to piggyback a confirm-prompt off of (unlike Swipe File posts,
+// they're already saved by virtue of being shared), so this is a direct toggle button
+// instead, reflecting live tracked/pending state via inPool() like everywhere else.
+function watchBtnHtml(cls,l){
+  if(!l.account)return '';
+  const plat=l.platform==='tt'?'tt':'ig';
+  const watching=inPool(plat,l.account);
+  return `<button class="${cls}${watching?' on':''}" data-watch-plat="${plat}" data-watch-acct="${l.account}" type="button"${watching?' disabled':''}>${watching?'★ Watching':'+ Watch'}</button>`;
+}
 function linkCard(l){
   const plat=l.platform==='tt'?'tiktok':'instagram';
   const dateStr=l.timestamp?l.timestamp.slice(0,10):(l.savedAt||'').slice(0,10);
@@ -1127,6 +1140,7 @@ function linkCard(l){
       <div class="actions">
         <a class="act" href="${l.url}" target="_blank" rel="noopener">${ICON.ig} Open</a>
         <button class="act" data-get-audio="${l.url}" type="button" title="Download this reel's own audio">⬇ Get audio</button>
+        ${watchBtnHtml('act',l)}
         <button class="act dis" data-rm-link="${encodeURIComponent(l.url)}" type="button">${ICON.x} Remove</button>
       </div>
     </div></article>`;
@@ -1500,6 +1514,7 @@ function renderBookmarks(){
         +'<div class="insp-actions">'
         +'<a class="insp-open" href="'+lk.url+'" target="_blank" rel="noopener">Open</a>'
         +'<button class="insp-dl" data-get-audio="'+lk.url+'">&#8681; Get audio</button>'
+        +watchBtnHtml('insp-watch',lk)
         +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
         +'</div></div>';
     }).join('');
@@ -1559,6 +1574,11 @@ function renderBookmarks(){
       renderBookmarks();
       if(SECRET)fetch('/api/save-link',{method:'DELETE',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})}).catch(function(){});
     };
+  });
+  // Inspiration link -> add creator to watchlist
+  con.querySelectorAll('[data-watch-plat]').forEach(function(btn){
+    if(btn.disabled)return; // already watching — nothing to do
+    btn.onclick=function(){addAccount(btn.dataset.watchPlat,btn.dataset.watchAcct).then(function(){renderBookmarks();});};
   });
   // Filter bar
   el.querySelectorAll('[data-bk]').forEach(function(b){
