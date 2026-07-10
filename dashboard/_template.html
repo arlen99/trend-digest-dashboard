@@ -1242,7 +1242,7 @@ function openMethod(kind){
       {n:n(v.igResolved),l:'reachable &amp; scraped',s:`${v.igAccounts-v.igResolved} handles renamed / private / gone`},
       {l:`Latest ${v.postsPerIg} posts each, from the last ${v.daysBack} days`},
       {n:'Outlier Score',l:'every post ranked by it',hl:true},
-      {n:`${n(v.igCurated)} + ${n(v.keywordFinds)}`,l:'hand-picked keepers + ⚡ trending off-seed finds',s:`across ${n(v.boardAccounts)} creators on this board`},
+      {n:`${n(v.igCurated)} + ${n(v.tiktokCurated)} + ${n(v.keywordFinds)}`,l:'IG + TikTok hand-picked keepers + &#9889; off-seed finds',s:`= ${n(v.igCurated+v.tiktokCurated+v.keywordFinds)} posts on this board, across ${n(v.boardAccounts)} creators`},
     ])
     +`<div class="msec"><h4>What's the Outlier Score?</h4><p>A post's engagement (likes + comments) ÷ that account's <b>own median</b> engagement — measured across <b>only</b> the posts we scraped from it in that same run (up to ${v.postsPerIg} posts from the last ${v.daysBack} days, not the account's full history). So <b>10×</b> means it did ten times the account's typical result. It's <b>follower-blind</b>: a 5k-follower creator's breakout outranks a 5M-follower account's average post. We surface what's <i>over-performing</i>, not who's biggest.</p></div>`
     +`<div class="msec"><h4>The "⚡ new find" off-seed posts</h4><p>Trending posts from creators we <b>don't</b> track. We search TikTok for niche keywords — <i>${(v.keywords||[]).join(', ')}</i> — keep recent ones (≤21 days) that actually got distribution (≥20k views), and rank them by <b>engagement rate</b> (engagement ÷ views), <b>not</b> total views — so a small creator's breakout isn't buried under a big account's traffic.</p></div>`

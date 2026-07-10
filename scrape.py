@@ -36,7 +36,7 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
 BASE = "https://api.tikhub.io"
 POSTS_PER_ACCOUNT = int(os.environ.get("POSTS_PER_ACCOUNT", "8"))
 DAYS_BACK = int(os.environ.get("DAYS_BACK", "30"))
-TOP_N = int(os.environ.get("TOP_N", "50"))
+TOP_N = int(os.environ.get("TOP_N", "80"))  # raised from 50 so curate_posts.py's larger MAX_CANDIDATES pool has enough fresh supply after scrape_dedupe.py removes previously-curated URLs
 ID_CACHE = OUT / "user_ids.json"
 
 

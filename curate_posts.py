@@ -37,7 +37,7 @@ DASH = ROOT / "dashboard"
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 AUDD_TOKEN = os.environ.get("AUDD_TOKEN", "")
 MODEL = "claude-sonnet-5"
-MAX_CANDIDATES = 35  # bound API cost; ranked by outlier score, best first
+MAX_CANDIDATES = 55  # raised from 35 to target ~40 kept IG posts/week (prior week: 35 evaluated -> 26 kept, ~74% pass rate); ranked by outlier score, best first. ~57% more Claude vision calls/week as a result.
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
       "(KHTML, like Gecko) Version/16 Safari/605.1.15")
 
