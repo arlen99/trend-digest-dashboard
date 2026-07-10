@@ -118,7 +118,7 @@ def main():
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),
         # rough cost + curation transparency (approximate — see cost_tracker.py)
         "costTikhubCalls": cost["totals"]["tikhubCalls"], "costClaudeCalls": cost["totals"]["claudeCalls"],
-        "costAuddCalls": cost["totals"]["auddCalls"],
+        "costAuddCalls": cost["totals"]["auddCalls"], "auddAuthDead": cost["totals"]["auddAuthDead"],
         "costTikhub": cost["tikhubCost"], "costClaude": cost["claudeCost"], "costTotal": cost["estCost"],
         "igExcluded": len(excludes), "igEvaluated": ig_curated + len(excludes),
         "igExcludeReasons": exclude_reasons.most_common(5),

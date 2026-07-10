@@ -40,6 +40,7 @@ CACHE = OUT / "chart_audd.json"
 
 th_calls = 0
 audd_calls = 0
+audd_auth_dead = False  # AUDD_TOKEN present but rejected (trial/subscription expired) — surfaced via cost_tracker
 
 
 def th_video_url(reel):
@@ -56,17 +57,32 @@ def th_video_url(reel):
         return ""
 
 
-def audd(video_url):
+def _audd_post(video_url, token):
     global audd_calls
     body = {"url": video_url, "return": "spotify"}
-    if AUDD:
-        body["api_token"] = AUDD
+    if token:
+        body["api_token"] = token
     req = urllib.request.Request("https://api.audd.io/", data=urllib.parse.urlencode(body).encode(), method="POST")
     audd_calls += 1
     try:
-        resp = json.loads(urllib.request.urlopen(req, timeout=60).read())
+        return json.loads(urllib.request.urlopen(req, timeout=60).read())
     except Exception as e:  # noqa: BLE001
-        return {"reason": str(e)[:60]}
+        return {"status": "error", "error": {"error_code": -1, "error_message": str(e)[:60]}}
+
+
+def audd(video_url):
+    """AUDD_TOKEN's trial/subscription can expire silently — verified 2026-07 that
+    error_code 900 ("api_token is incorrect, invalid, or inactive") means exactly
+    that, and that AudD's own unauthenticated free tier still works for the SAME
+    request (confirmed live: correctly re-identified a track the paid token used
+    to find). So on that specific error, retry once without the token instead of
+    just failing — free tier is rate-limited (~10/day) but that's strictly better
+    than silently getting nothing every time the token happens to be dead."""
+    global audd_auth_dead
+    resp = _audd_post(video_url, AUDD)
+    if AUDD and resp.get("status") == "error" and (resp.get("error") or {}).get("error_code") == 900:
+        audd_auth_dead = True
+        resp = _audd_post(video_url, None)
     res = resp.get("result")
     if resp.get("status") == "success" and res:
         return {"song": res.get("title"), "artist": res.get("artist"), "link": res.get("song_link", "")}
@@ -94,7 +110,10 @@ def main():
     new = hits = 0
     for t in cands:
         aid = str(t["audio_ids"][0])
-        if aid in cache:
+        # "error" (AudD's own failure status — e.g. the dead-token auth failure this
+        # cache can predate a fix for) is retried; a genuine "no match"/"no sample"/
+        # "no video_url" result is stable and stays skipped, same as a found song.
+        if aid in cache and not (cache[aid].get("reason") == "error" and not cache[aid].get("song")):
             continue
         reel = (t.get("samples") or [None])[0]
         if not reel:
@@ -111,7 +130,7 @@ def main():
     print(f"\nAudD on chart: {new} new buckets fingerprinted, {hits} identified "
           f"({sum(1 for v in cache.values() if v.get('song'))} total in cache) → output/chart_audd.json")
     import cost_tracker
-    cost_tracker.record("chart_audd", tikhub_calls=th_calls, audd_calls=audd_calls)
+    cost_tracker.record("chart_audd", tikhub_calls=th_calls, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead)
 
 
 if __name__ == "__main__":

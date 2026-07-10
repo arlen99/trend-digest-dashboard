@@ -107,20 +107,34 @@ def call_claude(images: list, text: str) -> dict:
 
 
 audd_calls = 0
+audd_auth_dead = False  # AUDD_TOKEN present but rejected (trial/subscription expired) — surfaced via cost_tracker
 
 
-def audd_recognize(audio_url: str) -> dict:
+def _audd_post(audio_url, token):
     global audd_calls
     body = {"url": audio_url, "return": "spotify"}
-    if AUDD_TOKEN:
-        body["api_token"] = AUDD_TOKEN
+    if token:
+        body["api_token"] = token
     data = urllib.parse.urlencode(body).encode()
     req = urllib.request.Request("https://api.audd.io/", data=data, method="POST")
     audd_calls += 1
     try:
-        resp = json.loads(urllib.request.urlopen(req, timeout=60).read())
+        return json.loads(urllib.request.urlopen(req, timeout=60).read())
     except Exception:  # noqa: BLE001
-        return {}
+        return {"status": "error", "error": {"error_code": -1}}
+
+
+def audd_recognize(audio_url: str) -> dict:
+    """AUDD_TOKEN's trial/subscription can expire silently — error_code 900 ("api_token
+    is incorrect, invalid, or inactive") means exactly that, and AudD's own
+    unauthenticated free tier still works for the same request (verified 2026-07: it
+    correctly re-identified a track the paid token used to find). Retry once without
+    the token on that specific error rather than just returning nothing."""
+    global audd_auth_dead
+    resp = _audd_post(audio_url, AUDD_TOKEN)
+    if AUDD_TOKEN and resp.get("status") == "error" and (resp.get("error") or {}).get("error_code") == 900:
+        audd_auth_dead = True
+        resp = _audd_post(audio_url, None)
     res = resp.get("result")
     if resp.get("status") == "success" and res:
         return {"song": res.get("title", ""), "artist": res.get("artist", ""), "link": res.get("song_link", "")}
@@ -270,7 +284,7 @@ def main() -> None:
     (OUT / f"curation_excludes_{week_of}.json").write_text(json.dumps(excluded_log, ensure_ascii=False, indent=2))
     import cost_tracker
     cost_tracker.record("curate_posts", claude_calls=claude_calls, claude_input_tokens=claude_input_tokens,
-                        claude_output_tokens=claude_output_tokens, audd_calls=audd_calls)
+                        claude_output_tokens=claude_output_tokens, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead)
 
 
 if __name__ == "__main__":
