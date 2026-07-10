@@ -1498,28 +1498,40 @@ function renderBookmarks(){
   var showLinks=bookmarkFilter==='all'||bookmarkFilter==='links';
   // Audio pages live in the Audio Trends > Saved section, not here — exclude them.
   var inspLinks=inspirationLinks.filter(function(lk){return !isAudioLink(lk);});
-  if(showLinks&&inspLinks.length){
-    var lcards=inspLinks.filter(function(lk){return lk.thumbnail;}).map(linkCard).join('');
-    var lrows=inspLinks.filter(function(lk){return !lk.thumbnail;}).map(function(lk){
-      var platCls=lk.platform==='ig'?'ig':lk.platform==='tt'?'tt':'other';
-      var platTxt=lk.platform==='ig'?'IG':lk.platform==='tt'?'TT':'WEB';
-      var shortUrl=(lk.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
-      if(shortUrl.length>55)shortUrl=shortUrl.slice(0,52)+'...';
-      var dateStr=lk.savedAt?new Date(lk.savedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
-      var note=lk.note?'<div class="insp-url">'+lk.note+'</div>':'<div class="insp-url">'+shortUrl+'</div>';
-      return '<div class="insp-link">'
-        +'<span class="insp-plat '+platCls+'">'+platTxt+'</span>'
-        +'<div class="insp-body"><div class="insp-label">'+lk.label+'</div>'+note+'</div>'
-        +(dateStr?'<span class="insp-date">'+dateStr+'</span>':'')
-        +'<div class="insp-actions">'
-        +'<a class="insp-open" href="'+lk.url+'" target="_blank" rel="noopener">Open</a>'
-        +'<button class="insp-dl" data-get-audio="'+lk.url+'">&#8681; Get audio</button>'
-        +watchBtnHtml('insp-watch',lk)
-        +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
-        +'</div></div>';
-    }).join('');
-    html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspLinks.length+'</span></h3>'
-      +(lcards?'<div class="grid">'+lcards+'</div>':'')+lrows+'</div>';
+  // Unlike every other saved list here (posts/trends/sounds all persist to
+  // localStorage via saveLocal()), inspirationLinks ONLY ever comes from a live
+  // /api/save-link fetch — there's no local cache. So if sync isn't connected (or
+  // that fetch silently failed), this section would previously just render nothing,
+  // indistinguishable from "you have no saved links" — always show SOME state here
+  // so that failure mode is visible instead of the section quietly vanishing.
+  if(showLinks){
+    if(!SECRET){
+      html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links</h3><div class="empty">Set up &#8644; Sync devices (sidebar) to see links you\'ve shared to the digest.</div></div>';
+    } else if(inspLinks.length){
+      var lcards=inspLinks.filter(function(lk){return lk.thumbnail;}).map(linkCard).join('');
+      var lrows=inspLinks.filter(function(lk){return !lk.thumbnail;}).map(function(lk){
+        var platCls=lk.platform==='ig'?'ig':lk.platform==='tt'?'tt':'other';
+        var platTxt=lk.platform==='ig'?'IG':lk.platform==='tt'?'TT':'WEB';
+        var shortUrl=(lk.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
+        if(shortUrl.length>55)shortUrl=shortUrl.slice(0,52)+'...';
+        var dateStr=lk.savedAt?new Date(lk.savedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
+        var note=lk.note?'<div class="insp-url">'+lk.note+'</div>':'<div class="insp-url">'+shortUrl+'</div>';
+        return '<div class="insp-link">'
+          +'<span class="insp-plat '+platCls+'">'+platTxt+'</span>'
+          +'<div class="insp-body"><div class="insp-label">'+lk.label+'</div>'+note+'</div>'
+          +(dateStr?'<span class="insp-date">'+dateStr+'</span>':'')
+          +'<div class="insp-actions">'
+          +'<a class="insp-open" href="'+lk.url+'" target="_blank" rel="noopener">Open</a>'
+          +'<button class="insp-dl" data-get-audio="'+lk.url+'">&#8681; Get audio</button>'
+          +watchBtnHtml('insp-watch',lk)
+          +'<button class="insp-rm" data-rm-link="'+encodeURIComponent(lk.url)+'">Remove</button>'
+          +'</div></div>';
+      }).join('');
+      html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspLinks.length+'</span></h3>'
+        +(lcards?'<div class="grid">'+lcards+'</div>':'')+lrows+'</div>';
+    } else {
+      html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links</h3><div class="empty">No links saved yet &mdash; share an Instagram or TikTok post to the digest to see it here.</div></div>';
+    }
   }
   if(!html)html='<div class="empty" style="margin:48px auto">Nothing saved yet &mdash; use &#9733; Save on any post, trend, or sound.</div>';
   con.innerHTML=html;
