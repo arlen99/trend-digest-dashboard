@@ -31,11 +31,16 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
 PAGES = int(os.environ.get("PAGES", "3"))   # ~ PAGES x chart page of sounds
 
 
+th_calls = 0
+
+
 def th(path):
+    global th_calls
     if not KEY:
         sys.exit("TIKHUB_TOKEN not set.")
     req = urllib.request.Request("https://api.tikhub.io" + path,
                                  headers={"Authorization": "Bearer " + KEY, "accept": "application/json", "User-Agent": UA})
+    th_calls += 1
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.loads(r.read().decode())
 
@@ -94,6 +99,8 @@ def main():
         lines.append(f"| {i} | {s['title']} | {s['artist'] or '—'} | {flag} |")
     (OUT / f"tiktok_trends_{stamp}.md").write_text("\n".join(lines))
     print(f"Wrote output/tiktok_trends_{stamp}.json/.md — {len(ranked)} sounds, {len(cross)} cross-platform with IG niche")
+    import cost_tracker
+    cost_tracker.record("tiktok_trends", tikhub_calls=th_calls)
 
 
 if __name__ == "__main__":

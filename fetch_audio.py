@@ -45,11 +45,16 @@ PREVIEW_SECS = int(os.environ.get("AUDIO_PREVIEW_SECS", "45"))
 LOOKUP_ATTEMPTS = 8
 
 
+th_calls = 0
+
+
 def th(path):
+    global th_calls
     for _ in range(3):
         try:
             req = urllib.request.Request("https://api.tikhub.io" + path,
                                          headers={"Authorization": "Bearer " + TIKHUB, "User-Agent": UA, "accept": "application/json"})
+            th_calls += 1
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read().decode())
         except Exception:  # noqa: BLE001
@@ -217,6 +222,8 @@ def main():
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"\nAudio previews: {ok} new, {kept} kept, {fail} unresolved. "
           f"Pruned {len(stale)} stale clips. Chart now self-hosts real audio (Deezer deprecated).")
+    import cost_tracker
+    cost_tracker.record("fetch_audio", tikhub_calls=th_calls)
 
 
 if __name__ == "__main__":

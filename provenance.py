@@ -89,6 +89,14 @@ def main():
     except Exception:  # noqa: BLE001
         kw_list = []
 
+    # rough weekly $ cost — see cost_tracker.py for rates/caveats (approximate, not billing-accurate)
+    import cost_tracker
+    cost = cost_tracker.summarize()
+
+    # why candidates got excluded from the IG Swipe File this run (curate_posts.py)
+    excludes = jload(latest("curation_excludes_*.json"), []) or []
+    exclude_reasons = Counter(e.get("reason", "") for e in excludes)
+
     prov = {
         "igAccounts": ig_total, "igResolved": ig_resolved,
         "igSeed": ig_seed, "igDiscovered": disc, "igBootstrap": boot,
@@ -108,6 +116,12 @@ def main():
         "keywords": kw_list, "tiktokCreators": tt_creators,
         "trendsAudio": sum(1 for t in data.get("trends", []) if t.get("type") == "audio"),
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),
+        # rough cost + curation transparency (approximate — see cost_tracker.py)
+        "costTikhubCalls": cost["totals"]["tikhubCalls"], "costClaudeCalls": cost["totals"]["claudeCalls"],
+        "costAuddCalls": cost["totals"]["auddCalls"],
+        "costTikhub": cost["tikhubCost"], "costClaude": cost["claudeCost"], "costTotal": cost["estCost"],
+        "igExcluded": len(excludes), "igEvaluated": ig_curated + len(excludes),
+        "igExcludeReasons": exclude_reasons.most_common(5),
     }
     data["provenance"] = prov
     # expose the live reference pools so the dashboard Accounts panel can render + edit them

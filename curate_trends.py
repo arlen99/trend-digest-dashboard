@@ -72,7 +72,14 @@ def img_block(path: Path) -> dict:
     return {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": data}}
 
 
+claude_calls = 0
+claude_input_tokens = 0
+claude_output_tokens = 0
+th_calls = 0
+
+
 def call_claude(images: list, text: str) -> dict:
+    global claude_calls, claude_input_tokens, claude_output_tokens
     body = {
         "model": MODEL, "max_tokens": 400,
         "tools": [TOOL_SCHEMA], "tool_choice": {"type": "tool", "name": "write_trend_card"},
@@ -84,6 +91,10 @@ def call_claude(images: list, text: str) -> dict:
     )
     with urllib.request.urlopen(req, timeout=60) as r:
         resp = json.loads(r.read().decode())
+    claude_calls += 1
+    usage = resp.get("usage") or {}
+    claude_input_tokens += usage.get("input_tokens", 0)
+    claude_output_tokens += usage.get("output_tokens", 0)
     for block in resp.get("content", []):
         if block.get("type") == "tool_use":
             return block.get("input", {})
@@ -95,6 +106,7 @@ def tiktok_cover(url: str) -> str:
     so resolve the video's cover via TikHub — the same source tiktok_scrape.py uses.
     Hook-anchored trend samples are all TikTok URLs, so without this every hook card
     silently gets skipped for 'no thumbnail available'."""
+    global th_calls
     m = re.search(r"/video/(\d+)", url)
     if not (m and TIKHUB):
         return ""
@@ -102,6 +114,7 @@ def tiktok_cover(url: str) -> str:
         req = urllib.request.Request(
             f"https://api.tikhub.io/api/v1/tiktok/app/v3/fetch_one_video?aweme_id={m.group(1)}",
             headers={"Authorization": "Bearer " + TIKHUB, "User-Agent": UA, "accept": "application/json"})
+        th_calls += 1
         with urllib.request.urlopen(req, timeout=60) as r:
             aw = ((json.loads(r.read().decode()).get("data") or {}).get("aweme_detail")) or {}
     except Exception:  # noqa: BLE001
@@ -254,6 +267,9 @@ def main() -> None:
     data["generatedHooks"] = data.get("generatedHooks", [])  # unrelated field, left untouched
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"Wrote {len(cards)} Trend Radar cards into dashboard/data.json.")
+    import cost_tracker
+    cost_tracker.record("curate_trends", tikhub_calls=th_calls, claude_calls=claude_calls,
+                        claude_input_tokens=claude_input_tokens, claude_output_tokens=claude_output_tokens)
 
 
 if __name__ == "__main__":

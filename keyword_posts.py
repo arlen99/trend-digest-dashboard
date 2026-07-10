@@ -133,6 +133,8 @@ def main():
     (OUT / f"keyword_posts_{stamp}.md").write_text("\n".join(lines))
     print(f"\nWrote output/keyword_posts_{stamp}.json/.md — {len(ranked)} trending posts "
           f"({new} from off-seed accounts), {calls} calls (~${calls*0.001:.3f})")
+    import cost_tracker
+    cost_tracker.record("keyword_posts", tikhub_calls=calls)
 
 
 if __name__ == "__main__":

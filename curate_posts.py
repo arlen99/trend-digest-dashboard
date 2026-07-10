@@ -71,7 +71,13 @@ def img_block(path: Path) -> dict:
     return {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}}
 
 
+claude_calls = 0
+claude_input_tokens = 0
+claude_output_tokens = 0
+
+
 def call_claude(images: list, text: str) -> dict:
+    global claude_calls, claude_input_tokens, claude_output_tokens
     body = {
         "model": MODEL,
         "max_tokens": 500,
@@ -90,18 +96,27 @@ def call_claude(images: list, text: str) -> dict:
     )
     with urllib.request.urlopen(req, timeout=60) as r:
         resp = json.loads(r.read().decode())
+    claude_calls += 1
+    usage = resp.get("usage") or {}
+    claude_input_tokens += usage.get("input_tokens", 0)
+    claude_output_tokens += usage.get("output_tokens", 0)
     for block in resp.get("content", []):
         if block.get("type") == "tool_use":
             return block.get("input", {})
     return {"include": False, "exclude_reason": "no tool_use in response"}
 
 
+audd_calls = 0
+
+
 def audd_recognize(audio_url: str) -> dict:
+    global audd_calls
     body = {"url": audio_url, "return": "spotify"}
     if AUDD_TOKEN:
         body["api_token"] = AUDD_TOKEN
     data = urllib.parse.urlencode(body).encode()
     req = urllib.request.Request("https://api.audd.io/", data=data, method="POST")
+    audd_calls += 1
     try:
         resp = json.loads(urllib.request.urlopen(req, timeout=60).read())
     except Exception:  # noqa: BLE001
@@ -145,6 +160,7 @@ def main() -> None:
                or (date.today() - timedelta(days=date.today().weekday())).isoformat())
 
     curated = []
+    excluded_log = []  # {account, reason} for every excluded candidate — surfaced via provenance.py so "why was X excluded" is answerable without digging through CI logs
     for i, r in enumerate(rows, 1):
         fmt = r.get("format", "Reel")
         acct = re.sub(r"[^a-z0-9_.]", "", r["account"].lower())
@@ -176,7 +192,9 @@ def main() -> None:
             continue
 
         if not result.get("include"):
-            print(f"  {i:02d} @{acct} -> excluded ({result.get('exclude_reason','no reason given')})")
+            reason = result.get("exclude_reason", "no reason given")
+            print(f"  {i:02d} @{acct} -> excluded ({reason})")
+            excluded_log.append({"account": r["account"], "url": r["url"], "reason": reason})
             continue
 
         # scrape.py now overlays real audio_id/audio_song/audio_artist onto Reels
@@ -249,6 +267,10 @@ def main() -> None:
     data["posts"] = curated + kept
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"Wrote {len(curated)} curated IG posts + kept {len(kept)} TikTok/keyword posts into dashboard/data.json.")
+    (OUT / f"curation_excludes_{week_of}.json").write_text(json.dumps(excluded_log, ensure_ascii=False, indent=2))
+    import cost_tracker
+    cost_tracker.record("curate_posts", claude_calls=claude_calls, claude_input_tokens=claude_input_tokens,
+                        claude_output_tokens=claude_output_tokens, audd_calls=audd_calls)
 
 
 if __name__ == "__main__":

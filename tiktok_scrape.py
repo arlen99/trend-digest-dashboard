@@ -36,11 +36,16 @@ TOP_N = int(os.environ.get("TT_TOP_N", "40"))
 def die(m): print(f"ERROR: {m}", file=sys.stderr); sys.exit(1)
 
 
+th_calls = 0
+
+
 def th(path):
+    global th_calls
     if not KEY:
         die("TIKHUB_TOKEN not set.")
     req = urllib.request.Request("https://api.tikhub.io" + path,
                                  headers={"Authorization": "Bearer " + KEY, "accept": "application/json", "User-Agent": UA})
+    th_calls += 1
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return json.loads(r.read().decode())
@@ -161,6 +166,8 @@ def main():
                      f"{r['likes']:,} | {r['comments']:,} | {r['shares']:,} | {r['caption'][:46].replace(chr(10),' ').replace('|','/')} |")
     (OUT / f"top_posts_tiktok_{stamp}.md").write_text("\n".join(lines))
     print(f"Wrote output/top_posts_tiktok_{stamp}.json/.md — {len(top)} ranked ({calls} calls)")
+    import cost_tracker
+    cost_tracker.record("tiktok_scrape", tikhub_calls=th_calls)
 
 
 if __name__ == "__main__":

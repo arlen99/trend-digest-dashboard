@@ -38,16 +38,19 @@ POSTS_PER_ACCOUNT = int(os.environ.get("POSTS_PER_ACCOUNT", "8"))
 DAYS_BACK = int(os.environ.get("DAYS_BACK", "30"))
 TOP_N = int(os.environ.get("TOP_N", "80"))  # raised from 50 so curate_posts.py's larger MAX_CANDIDATES pool has enough fresh supply after scrape_dedupe.py removes previously-curated URLs
 ID_CACHE = OUT / "user_ids.json"
+th_calls = 0  # every real TikHub HTTP call, regardless of caller — feeds cost_tracker
 
 
 def die(msg): print(f"ERROR: {msg}", file=sys.stderr); sys.exit(1)
 
 
 def th(path):
+    global th_calls
     if not KEY:
         die("TIKHUB_TOKEN not set. `set -a && . ./.env && set +a` first.")
     req = urllib.request.Request(BASE + path,
                                  headers={"Authorization": "Bearer " + KEY, "accept": "application/json", "User-Agent": UA})
+    th_calls += 1
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return json.loads(r.read().decode())
@@ -250,6 +253,8 @@ def main():
     write_outputs(ranked)
     print(f"Scraped {len(rows)} posts from {len(ids)} accounts ({calls} fetch calls). "
           "Next: review the .md, then build the digest.")
+    import cost_tracker
+    cost_tracker.record("scrape", tikhub_calls=th_calls)
 
 
 if __name__ == "__main__":

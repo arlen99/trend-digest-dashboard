@@ -62,11 +62,16 @@ def tt_id(u):
     m = re.search(r"/video/(\d+)", u or "");  return m.group(1) if m else ""
 
 
+th_calls = 0
+
+
 def th(path):
+    global th_calls
     for _ in range(4):
         try:
             req = urllib.request.Request("https://api.tikhub.io" + path,
                                          headers={"Authorization": "Bearer " + TIKHUB, "User-Agent": UA, "accept": "application/json"})
+            th_calls += 1
             with urllib.request.urlopen(req, timeout=60) as r:
                 return json.loads(r.read().decode())
         except Exception:  # noqa: BLE001
@@ -331,6 +336,8 @@ def main():
           f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed."
           f"\nInspiration links: {li_ok} new, {li_kept} kept, {li_fail} failed."
           f"\nBlob now holds {total} videos (kept permanently).")
+    import cost_tracker
+    cost_tracker.record("fetch_videos", tikhub_calls=th_calls)
 
 
 if __name__ == "__main__":

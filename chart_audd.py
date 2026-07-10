@@ -38,10 +38,16 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
 CACHE = OUT / "chart_audd.json"
 
 
+th_calls = 0
+audd_calls = 0
+
+
 def th_video_url(reel):
     """Reel permalink → its playable video_url (AudD reads audio from the video)."""
+    global th_calls
     u = f"https://api.tikhub.io/api/v1/instagram/v1/fetch_post_by_url?post_url={urllib.parse.quote(reel)}"
     req = urllib.request.Request(u, headers={"Authorization": "Bearer " + KEY, "User-Agent": UA, "accept": "application/json"})
+    th_calls += 1
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             d = json.loads(r.read().decode())
@@ -51,10 +57,12 @@ def th_video_url(reel):
 
 
 def audd(video_url):
+    global audd_calls
     body = {"url": video_url, "return": "spotify"}
     if AUDD:
         body["api_token"] = AUDD
     req = urllib.request.Request("https://api.audd.io/", data=urllib.parse.urlencode(body).encode(), method="POST")
+    audd_calls += 1
     try:
         resp = json.loads(urllib.request.urlopen(req, timeout=60).read())
     except Exception as e:  # noqa: BLE001
@@ -102,6 +110,8 @@ def main():
     CACHE.write_text(json.dumps(cache, indent=2))
     print(f"\nAudD on chart: {new} new buckets fingerprinted, {hits} identified "
           f"({sum(1 for v in cache.values() if v.get('song'))} total in cache) → output/chart_audd.json")
+    import cost_tracker
+    cost_tracker.record("chart_audd", tikhub_calls=th_calls, audd_calls=audd_calls)
 
 
 if __name__ == "__main__":

@@ -192,6 +192,8 @@ def main():
     (OUT / f"audio_trends_{stamp}.md").write_text("\n".join(lines))
     print(f"\nWrote output/audio_trends_{stamp}.json/.md")
     print(f"TOTAL billable TikHub calls: {calls}")
+    import cost_tracker
+    cost_tracker.record("audio_trends", tikhub_calls=calls)
 
 
 if __name__ == "__main__":
