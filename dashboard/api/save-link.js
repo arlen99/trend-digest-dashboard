@@ -224,24 +224,40 @@ async function fetchTtMusicMeta(url, token) {
   };
 }
 
+// Returns { items, blocked }. `blocked` is true when the store itself is refusing
+// reads (Vercel Blob plan limits — "Your store is blocked" 403, seen 2026-07) rather
+// than the links genuinely not existing: the list call above succeeds (it's a
+// management-API call, billed separately), but every individual content fetch below
+// goes through the public CDN path that gets shut off. Without this distinction the
+// client can't tell "you have zero saved links" apart from "links exist but can't be
+// read right now" — and that ambiguity is exactly what looked like an unrelated sync
+// bug before the real cause (the plan limit) was found.
 async function listLinks(token) {
   const r = await fetch(`${BLOB}?prefix=${encodeURIComponent(PREFIX)}`, {
     headers: { authorization: `Bearer ${token}` },
   });
-  if (!r.ok) return [];
+  if (!r.ok) return { items: [], blocked: false };
   const j = await r.json();
   const blobs = j.blobs || [];
+  let sawBlockedStatus = false;
   const items = await Promise.all(
     blobs.map(async (b) => {
       try {
         const rr = await fetch(`${b.url}?t=${Date.now()}`, { cache: "no-store" });
-        return rr.ok ? await rr.json() : null;
+        if (!rr.ok) {
+          if (rr.status === 403) sawBlockedStatus = true;
+          return null;
+        }
+        return await rr.json();
       } catch (e) {
         return null;
       }
     })
   );
-  return items.filter(Boolean).sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""));
+  const sorted = items.filter(Boolean).sort((a, b) => (b.savedAt || "").localeCompare(a.savedAt || ""));
+  // Only worth flagging if it explains a gap — blobs existed but nothing came back.
+  const blocked = sawBlockedStatus && sorted.length === 0 && blobs.length > 0;
+  return { items: sorted, blocked };
 }
 
 async function readLink(token, url) {
@@ -351,7 +367,8 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === "GET") {
-      res.status(200).json({ links: await listLinks(token) });
+      const { items, blocked } = await listLinks(token);
+      res.status(200).json({ links: items, blocked });
       return;
     }
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});

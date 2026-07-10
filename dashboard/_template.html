@@ -796,6 +796,7 @@ LS.get('td_saved').forEach(u=>{if(!savedData[u]){const p=posts.find(x=>x.url===u
 let saved=new Set(Object.keys(savedData));
 let trendFilter='all', soundFilter='all', bookmarkFilter='all';
 let inspirationLinks=[];
+let inspirationLinksBlocked=false;  // true when Blob's plan limits are stopping links from loading (distinct from "you have none")
 let trMode='list', scMode='list';
 let trIdx=0, trReel=0, scIdx=0, scReel=0;
 let swMode='grid', swIdx=0, swRows=[], swFP='', _reelObs=null;  // Swipe File view mode (grid/spotlight/scroll)
@@ -864,6 +865,7 @@ async function pullLinks(){if(!SECRET)return;
   try{const r=await fetch('/api/save-link',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(!r.ok)return;const j=await r.json();
     if(Array.isArray(j.links))inspirationLinks=j.links;
+    inspirationLinksBlocked=!!j.blocked;
   }catch(e){}}
 /* ---- Saved audio pages (Audio Trends page) — shared via /api/save-link or pasted ----
    Dismiss is a SOFT hide (dismissedAudioLinks, synced like dismissedSounds) — it never
@@ -1529,6 +1531,8 @@ function renderBookmarks(){
       }).join('');
       html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links <span class="bk-cnt">'+inspLinks.length+'</span></h3>'
         +(lcards?'<div class="grid">'+lcards+'</div>':'')+lrows+'</div>';
+    } else if(inspirationLinksBlocked){
+      html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links</h3><div class="empty">Your links are saved, but can\'t be read right now &mdash; the storage plan\'s limit has been reached. They\'ll reappear once it resets (or the plan is upgraded).</div></div>';
     } else {
       html+='<div class="bk-section"><h3 class="bk-h">Inspiration Links</h3><div class="empty">No links saved yet &mdash; share an Instagram or TikTok post to the digest to see it here.</div></div>';
     }
@@ -1963,6 +1967,14 @@ document.getElementById('soundchart').addEventListener('click',e=>{
   const player=new Audio(); let curBtn=null;
   const reset=b=>{if(b){b.classList.remove('playing');b.innerHTML=PLAY;}};
   player.addEventListener('ended',()=>{reset(curBtn);curBtn=null;});
+  // Previously a failed load (e.g. the self-hosted clip's URL is temporarily
+  // unreachable — Blob plan limits, deleted file, etc.) just did nothing: the button
+  // stayed on the play icon with no feedback and every click silently re-failed.
+  // Mark it visibly unavailable instead, same look as "no preview URL at all".
+  player.addEventListener('error',()=>{
+    if(curBtn){curBtn.classList.add('np');curBtn.classList.remove('playing');curBtn.innerHTML=PLAY;curBtn.title='Preview unavailable right now';}
+    curBtn=null;
+  });
   $('#v-audio').addEventListener('click',e=>{
     const b=e.target.closest('.trk-play'); if(!b||b.classList.contains('np'))return;
     if(curBtn===b){ if(player.paused){player.play();b.classList.add('playing');b.innerHTML=PAUSE;} else {player.pause();reset(b);} return; }
