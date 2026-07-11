@@ -278,7 +278,7 @@ async function writeLink(token, url, patch) {
   const { platform, type, label } = parseLink(url);
   const base = existing || { url, platform, type, label, note: "", savedAt: new Date().toISOString() };
   const merged = Object.assign({}, base, patch, { url, updatedAt: new Date().toISOString() });
-  await fetch(`${BLOB}/${keyFor(url)}`, {
+  const put = await fetch(`${BLOB}/${keyFor(url)}`, {
     method: "PUT",
     headers: {
       authorization: `Bearer ${token}`,
@@ -290,7 +290,16 @@ async function writeLink(token, url, patch) {
     },
     body: JSON.stringify(merged),
   });
-  return merged;
+  // Previously unchecked — a failed PUT (e.g. the Blob store's Advanced Operations
+  // quota being exhausted, "store_suspended") was silently reported to the client
+  // as a successful save. The link vanished with no error, indistinguishable from
+  // the save just not having happened. Surface it instead, same pattern as
+  // queueAccountAdd's put.ok check below.
+  if (!put.ok) {
+    const msg = (await put.text().catch(() => "")).slice(0, 140);
+    return { ok: false, reason: `blob PUT ${put.status}: ${msg}` };
+  }
+  return { ok: true, link: merged };
 }
 
 // ---- Profile shares -> Accounts watchlist queue ----
@@ -406,8 +415,12 @@ module.exports = async (req, res) => {
         } catch (e) { metrics = null; }
       }
       if (metrics) Object.assign(patch, metrics);
-      const saved = await writeLink(token, url, patch);
-      res.status(200).json({ ok: true, link: saved, enriched: !!metrics });
+      const result = await writeLink(token, url, patch);
+      if (!result.ok) {
+        res.status(507).json({ ok: false, error: result.reason });
+        return;
+      }
+      res.status(200).json({ ok: true, link: result.link, enriched: !!metrics });
       return;
     }
     if (req.method === "DELETE") {
