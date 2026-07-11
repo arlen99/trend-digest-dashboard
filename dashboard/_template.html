@@ -580,6 +580,10 @@ select:hover{border-color:var(--teal)}
     <section class="view hidden" id="v-bookmarks">
       <div class="vhead"><h1>Saved <em>Items</em></h1>
         <p class="sub">Your bookmarked posts, trends, and sounds — saved across all weeks.</p></div>
+      <div class="paste-audio-bar">
+        <input type="text" id="bk-paste-input" placeholder="Paste an Instagram or TikTok post/audio link to save it">
+        <button id="bk-paste-save" type="button">Save</button>
+      </div>
       <div class="bk-bar" id="bk-bar">
         <button data-bk="all" class="on">All</button>
         <button data-bk="posts">Posts</button>
@@ -890,8 +894,9 @@ function renderSavedAudio(){
     const title=l.title||(l.account?('@'+l.account):'Saved audio');
     const sub=l.artist||shortUrl;
     const headline='<a href="'+escA(l.url)+'" target="_blank" rel="noopener">'+escA(title)+'</a>';
+    const srcBadge=l.source==='pasted'?' <span class="det-badge">&#128279; pasted link</span>':'';
     return '<div class="trk saved-sound" data-audio-url="'+encodeURIComponent(l.url)+'"><div class="r">'+(i+1)+'</div>'
-      +'<div class="ti"><div class="ht">'+headline+' <span class="det-badge">'+(isTt?'TikTok':'IG')+' audio</span></div><div class="ha">'+escA(sub)+'</div></div>'
+      +'<div class="ti"><div class="ht">'+headline+' <span class="det-badge">'+(isTt?'TikTok':'IG')+' audio</span>'+srcBadge+'</div><div class="ha">'+escA(sub)+'</div></div>'
       +'<div class="trk-actions-wrap"><div class="trk-actions">'
       +'<button data-said="save" class="active">&#9733; Saved</button>'
       +'<button data-said="dismiss" class="'+(isDis?'active':'')+'">'+(isDis?'&#8630; Restore':'&#10005; Dismiss')+'</button>'
@@ -964,17 +969,28 @@ document.addEventListener('click',function(e){
   e.preventDefault();e.stopPropagation();
   downloadAudio(b.dataset.getAudio,b);
 });
-$('#paste-audio-save').addEventListener('click',async function(){
-  const inp=$('#paste-audio-input');const url=inp.value.trim();if(!url)return;
+// Shared by both paste boxes (Audio Trends > Saved, and the Saved tab) — always
+// tags source:'pasted' so audio rows can show it was typed in here, not shared
+// from the iOS Shortcut.
+async function pasteSaveLink(inp,btn,afterSave){
+  const url=inp.value.trim();if(!url)return;
   if(!SECRET){alert('Set up ⇄ Sync devices first (sidebar).');return;}
-  const btn=this;const orig=btn.textContent;btn.disabled=true;btn.textContent='Saving…';
+  const orig=btn.textContent;btn.disabled=true;btn.textContent='Saving…';
   try{
-    const r=await fetch('/api/save-link',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url})});
-    if(r.ok){inp.value='';await pullLinks();renderSavedAudio();}
+    const r=await fetch('/api/save-link',{method:'POST',headers:{'Content-Type':'application/json','X-Edit-Secret':SECRET},body:JSON.stringify({url:url,source:'pasted'})});
+    if(r.ok){inp.value='';await pullLinks();afterSave();}
     else{const j=await r.json().catch(function(){return{};});alert('Save failed: '+(j.error||'unknown error'));}
   }catch(e){alert('Save failed: network error');}
   btn.disabled=false;btn.textContent=orig;
+}
+$('#paste-audio-save').addEventListener('click',function(){
+  pasteSaveLink($('#paste-audio-input'),this,renderSavedAudio);
 });
+$('#paste-audio-input').addEventListener('keydown',function(e){if(e.key==='Enter')$('#paste-audio-save').click();});
+$('#bk-paste-save').addEventListener('click',function(){
+  pasteSaveLink($('#bk-paste-input'),this,function(){renderBookmarks();renderSavedAudio();});
+});
+$('#bk-paste-input').addEventListener('keydown',function(e){if(e.key==='Enter')$('#bk-paste-save').click();});
 // background poll every 30s so changes made on another device appear automatically — no manual sync click needed
 setInterval(()=>{if(SECRET&&document.visibilityState==='visible')pullState();},30000);
 // Trend Radar: initial render + filter bar + save/dismiss delegation
@@ -1477,8 +1493,9 @@ function renderBookmarks(){
         if(savedSounds.has(sk)&&!seenSc.has(sk)){seenSc.add(sk);savSc.push(t);}
       });
     });
+    var rows='';
     if(savSc.length){
-      var rows=savSc.map(function(t,i){
+      rows=savSc.map(function(t,i){
         var det=t.detected,headline=det?t.detectedSong:t.title;
         var artist=det?t.detectedArtist||'':t.artist||'';
         var skey=soundKey(t);
@@ -1494,7 +1511,25 @@ function renderBookmarks(){
         var headlineHtml=audioPageUrl?'<a class="ht-lk" href="'+audioPageUrl+'" target="_blank" rel="noopener">'+headline+'</a>':headline;
         return '<div class="trk'+(isSaved?' saved-sound':'')+'" data-skey="'+encodeURIComponent(skey)+'"><div class="r">'+(i+1)+'</div><div class="ti"><div class="ht">'+headlineHtml+' '+detb+'</div><div class="ha">'+(artist||'Original audio')+'</div></div><div class="tu">'+t.uses+' uses &middot; '+t.creators+' creators</div><div class="trk-actions-wrap"><div class="trk-actions"><button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>'+dlBtn+'</div></div>';
       }).join('');
-      html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+savSc.length+'</span></h3><div class="tracks">'+rows+'</div></div>';
+    }
+    // Pasted/shared audio pages (Inspiration Links whose URL is an audio page) live
+    // in the same Sounds subsection here, not just the Audio Trends > Saved section —
+    // tagged "pasted link" when added via a paste box so it's clear it wasn't shared
+    // from the app. Dismissed ones (soft-hidden, same Set as Audio Trends) are excluded.
+    var audioLinks=SECRET?inspirationLinks.filter(isAudioLink).filter(function(l){return !dismissedAudioLinks.has(l.url);}):[];
+    var alRows=audioLinks.map(function(l){
+      var isTt=l.platform==='tt'||l.type==='sound'||/tiktok\.com/.test(l.url);
+      var title=l.title||(l.account?('@'+l.account):'Saved audio');
+      var sub=l.artist||(l.url||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
+      var srcBadge=l.source==='pasted'?' <span class="det-badge">&#128279; pasted link</span>':'';
+      return '<div class="trk saved-sound" data-audio-url="'+encodeURIComponent(l.url)+'"><div class="r">&#9835;</div>'
+        +'<div class="ti"><div class="ht"><a href="'+escA(l.url)+'" target="_blank" rel="noopener">'+escA(title)+'</a> <span class="det-badge">'+(isTt?'TikTok':'IG')+' audio</span>'+srcBadge+'</div><div class="ha">'+escA(sub)+'</div></div>'
+        +'<div class="trk-actions-wrap"><div class="trk-actions"><button data-al-dismiss="'+encodeURIComponent(l.url)+'">&#10005; Dismiss</button></div>'
+        +'<button class="lk dl" type="button" data-get-audio="'+escA(l.url)+'">&#8681; Get audio</button></div></div>';
+    }).join('');
+    var soundsTotal=savSc.length+audioLinks.length;
+    if(soundsTotal){
+      html+='<div class="bk-section"><h3 class="bk-h">Sounds <span class="bk-cnt">'+soundsTotal+'</span></h3><div class="tracks">'+rows+alRows+'</div></div>';
     }
   }
   // Inspiration Links — enriched ones (have a fetched thumbnail) render as full
@@ -1584,6 +1619,16 @@ function renderBookmarks(){
         pushState();renderBookmarks();renderSoundChart();
       };
     });
+  });
+  // Pasted/shared audio link — soft dismiss (same Set the Audio Trends > Saved
+  // section uses), never deletes the underlying link.
+  con.querySelectorAll('[data-al-dismiss]').forEach(function(btn){
+    btn.onclick=function(){
+      var url=decodeURIComponent(btn.dataset.alDismiss);
+      dismissedAudioLinks.add(url);
+      pushState();renderBookmarks();
+      if(typeof renderSavedAudio==='function')renderSavedAudio();
+    };
   });
   // Inspiration link remove
   con.querySelectorAll('[data-rm-link]').forEach(function(btn){

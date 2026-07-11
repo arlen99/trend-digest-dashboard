@@ -394,6 +394,10 @@ module.exports = async (req, res) => {
       // `patch` alongside note — writeLink merges rather than replaces.
       const patch = { note: (body.note || "").trim() };
       if (body.videoText !== undefined) patch.videoText = body.videoText;
+      // Distinguishes a link typed into a paste box (this dashboard) from one that
+      // arrived via the iOS Shortcut share sheet — surfaced as a badge on audio rows
+      // so it's clear the track was manually added rather than shared from the app.
+      if (body.source) patch.source = body.source;
       if (tikhubToken && (platform === "ig" || platform === "tt")) {
         try {
           metrics = isAudioPage
