@@ -1363,19 +1363,32 @@ function openReelPopup(url){
   const embedSrc=plat==='tiktok'&&id?`https://www.tiktok.com/embed/v2/${id}`:(code?`https://www.instagram.com/reel/${code}/embed/`:'');
   const platLabel=plat==='tiktok'?'TikTok':'Instagram';
   const media=blobVid
-    ? `<video controls autoplay playsinline src="${blobVid}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
+    ? `<video id="reelpop-vid" controls autoplay playsinline src="${blobVid}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
     : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
   const sub=blobVid?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
   // Only show the "remove from server" button when a native video EXISTS (otherwise there's nothing to free).
   const removeBtn=blobVid?`<button class="danger" data-remove-blob="${url}" type="button">✕ Remove download</button>`:'';
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
     <h3 class="mm-title">Example reel</h3>
-    <p class="mm-sub">${sub}</p>
-    <div class="modal-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
+    <p class="mm-sub" id="reelpop-sub">${sub}</p>
+    <div class="modal-media" id="reelpop-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
     <div class="pp-actions">${removeBtn}<button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
   mm.classList.remove('hidden');document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
   const rm=$('#mm-body [data-remove-blob]'); if(rm)rm.onclick=()=>removeReelDownload(rm.dataset.removeBlob);
+  // Blob URL known ≠ Blob URL loads — e.g. the storage plan's Advanced Operations
+  // quota being exhausted 403s every content read even though DATA.videos still
+  // points at it. Fall back to the platform embed at runtime instead of leaving a
+  // permanently broken player, same embedFor() pattern play() uses for board cards.
+  const vidEl=$('#reelpop-vid');
+  if(vidEl&&embedSrc){
+    vidEl.addEventListener('error',()=>{
+      vidEl.remove();
+      embedFor($('#reelpop-media'),url,plat);
+      const subEl=$('#reelpop-sub');
+      if(subEl)subEl.textContent="This reel isn't curated on the board — the native download failed to load, so this is the platform embed.";
+    });
+  }
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-popup]');if(b){e.preventDefault();e.stopPropagation();openReelPopup(b.dataset.reelPopup);}});
 
