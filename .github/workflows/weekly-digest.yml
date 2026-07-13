@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write          # allow the workflow to push the refreshed dashboard
+      issues: write            # allow tools/pipeline_notify.py to open/close the failure-notification issue
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +35,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr
 
       - name: Run the full pipeline (scrape, curate, build)
+        id: pipeline
         env:
           TIKHUB_TOKEN: ${{ secrets.TIKHUB_TOKEN }}
           AUDD_TOKEN: ${{ secrets.AUDD_TOKEN }}
@@ -42,32 +44,62 @@ jobs:
           OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
           CLIPS_PER_ACCOUNT: "20"
         run: |
-          set -e
+          set -eo pipefail
           TODAY=$(date +%F)
-          python3 apply_account_edits.py   # apply dashboard add/removes → accounts.json + tiktok_accounts.json BEFORE scraping
-          python3 accumulate.py            # archive prior week's data BEFORE this week's pipeline writes over it
-          python3 scrape.py
-          python3 tiktok_scrape.py
-          python3 scrape_dedupe.py         # strip any post ever curated before (by shortcode/id, not raw URL) → *_fresh.json
-          python3 keyword_posts.py
-          python3 audio_trends.py
-          python3 tiktok_trends.py
-          python3 chart_audd.py
-          python3 hook_text.py output/top_posts_${TODAY}_fresh.json --limit 150
-          python3 fetch_thumbs.py output/top_posts_${TODAY}_fresh.json
-          python3 fetch_carousels.py output/top_posts_${TODAY}_fresh.json
-          python3 trends.py
-          python3 hook_search.py
+          LOG=pipeline_run.log
+          : > "$LOG"
+
+          # Supplementary sections (their own board subsection, not the core IG Swipe
+          # File) — a failure here (e.g. today's TikHub 402) shouldn't sacrifice a
+          # 50-minute run over one secondary feature. Every consumer of these scripts'
+          # output already falls back to last week's committed file if this week's is
+          # missing (verified: audio_chart_to_dashboard.py/provenance.py/etc. all use
+          # a latest-file-or-default pattern) — worst case is stale data in one
+          # section, never a crash. fetch_videos.py/fetch_audio.py are here too since
+          # the dashboard already has a platform-embed fallback for missing native video.
+          run_optional() {
+            echo "▶ $* (non-critical)" | tee -a "$LOG"
+            if ! "$@" 2>&1 | tee -a "$LOG"; then
+              echo "⚠ FAILED (non-critical, continuing): $*" | tee -a "$LOG"
+            fi
+          }
+          # Everything else stays fail-fast: nothing meaningful can be built without it.
+          run_critical() {
+            echo "▶ $*" | tee -a "$LOG"
+            "$@" 2>&1 | tee -a "$LOG"
+          }
+
+          run_critical python3 apply_account_edits.py   # apply dashboard add/removes → accounts.json + tiktok_accounts.json BEFORE scraping
+          run_critical python3 accumulate.py            # archive prior week's data BEFORE this week's pipeline writes over it
+          run_critical python3 scrape.py
+          run_critical python3 tiktok_scrape.py
+          run_critical python3 scrape_dedupe.py         # strip any post ever curated before (by shortcode/id, not raw URL) → *_fresh.json
+          run_optional python3 keyword_posts.py
+          run_optional python3 audio_trends.py
+          run_optional python3 tiktok_trends.py
+          run_optional python3 chart_audd.py
+          run_critical python3 hook_text.py output/top_posts_${TODAY}_fresh.json --limit 150
+          run_critical python3 fetch_thumbs.py output/top_posts_${TODAY}_fresh.json
+          run_critical python3 fetch_carousels.py output/top_posts_${TODAY}_fresh.json
+          run_critical python3 trends.py
+          run_critical python3 hook_search.py
           # dashboard data refresh
-          python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
-          python3 curate_trends.py output/trends_${TODAY}.json output/hook_trends_${TODAY}.json   # Trend Radar cards — Claude writes name/format/trigger/howTo
-          python3 audio_chart_to_dashboard.py
-          python3 tiktok_to_dashboard.py --top 12
-          python3 keyword_posts_to_dashboard.py --top 12
-          python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
-          python3 fetch_audio.py         # self-host each sound-chart track's REAL audio → durable inline previews (replaces Deezer)
-          python3 provenance.py
-          python3 build_dashboard.py
+          run_critical python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
+          run_critical python3 curate_trends.py output/trends_${TODAY}.json output/hook_trends_${TODAY}.json   # Trend Radar cards — Claude writes name/format/trigger/howTo
+          run_critical python3 audio_chart_to_dashboard.py
+          run_critical python3 tiktok_to_dashboard.py --top 12
+          run_critical python3 keyword_posts_to_dashboard.py --top 12
+          run_optional python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
+          run_optional python3 fetch_audio.py         # self-host each sound-chart track's REAL audio → durable inline previews (replaces Deezer)
+          run_critical python3 provenance.py
+          run_critical python3 build_dashboard.py
+
+      - name: Notify on failures / auto-resolve
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PIPELINE_OUTCOME: ${{ steps.pipeline.outcome }}
+        run: python3 tools/pipeline_notify.py pipeline_run.log
 
       - name: Commit & deploy (push from repo root → Vercel)
         run: |
