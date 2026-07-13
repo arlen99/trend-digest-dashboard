@@ -330,12 +330,19 @@ def main():
             time.sleep(0.2)
 
     # NO pruning — videos are kept PERMANENTLY so saved posts always play natively (no embed).
-    total = len(blob_list())
+    # This is a cosmetic count for the summary line below — unlike every write above,
+    # it was never wrapped, so a transient Blob failure here would crash the whole
+    # pipeline after everything else already succeeded. Not worth that risk.
+    try:
+        total = len(blob_list())
+    except Exception as e:  # noqa: BLE001
+        total = -1
+        print(f"  blob_list failed (cosmetic only): {str(e)[:80]}")
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"\nBoard posts: {ok} new, {kept} kept, {fail} failed."
           f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed."
           f"\nInspiration links: {li_ok} new, {li_kept} kept, {li_fail} failed."
-          f"\nBlob now holds {total} videos (kept permanently).")
+          f"\nBlob now holds {total if total >= 0 else 'an unknown number of'} videos (kept permanently).")
     import cost_tracker
     cost_tracker.record("fetch_videos", tikhub_calls=th_calls)
 
