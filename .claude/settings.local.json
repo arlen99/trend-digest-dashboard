@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Read(//Users/arlen/templates/**)",
-      "Bash(printenv)"
+      "Bash(printenv)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
