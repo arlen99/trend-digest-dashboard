@@ -2105,71 +2105,35 @@
   "generatedHooks": [
     {
       "trigger": "Surprise",
-      "text": "I flew 14 hours for this view. It was free."
+      "text": "$28 a night. Better view than the $600 resort next door."
     },
     {
       "trigger": "Surprise",
-      "text": "Nobody believes this is [Albania], not the Maldives."
-    },
-    {
-      "trigger": "Surprise",
-      "text": "This costs less than your coffee. It looks like this."
-    },
-    {
-      "trigger": "Surprise",
-      "text": "Everyone shoots [the famous spot]. Two minutes away is this."
+      "text": "Locals have a name for tourists who leave after one day. I finally understand it."
     },
     {
       "trigger": "Fear/FOMO",
-      "text": "You have one summer left to see this before they cap it."
-    },
-    {
-      "trigger": "Fear/FOMO",
-      "text": "Don't go to [Bali] before you watch this."
-    },
-    {
-      "trigger": "Fear/FOMO",
-      "text": "This place will be ruined by next year. Go now."
+      "text": "The road closes in 3 weeks. This is the last clear crossing of the season."
     },
     {
       "trigger": "Ego",
-      "text": "If you know this country, you're in the 1% of travelers."
+      "text": "Everyone photographs the bridge. Two minutes upstream is this."
     },
     {
       "trigger": "Ego",
-      "text": "You've been shooting golden hour wrong this whole time."
-    },
-    {
-      "trigger": "Ego",
-      "text": "Real ones skip [Santorini] and go here instead."
+      "text": "Real ones skip the queue for the view and take the longer, quieter trail."
     },
     {
       "trigger": "Urgency",
-      "text": "This window of light lasts 6 minutes a day. I caught it."
-    },
-    {
-      "trigger": "Urgency",
-      "text": "3 weeks until this road closes for the year."
-    },
-    {
-      "trigger": "Urgency",
-      "text": "This only looks like this for two weeks a year."
+      "text": "This light lasts six minutes. I set an alarm for it."
     },
     {
       "trigger": "Desire/Wanderlust",
-      "text": "POV: you wake up to this instead of your alarm."
+      "text": "7 days. Zero tourists. I didn't want to come back."
     },
     {
       "trigger": "Desire/Wanderlust",
-      "text": "The water shouldn't be this color. It is."
-    },
-    {
-      "trigger": "Desire/Wanderlust",
-      "text": "This is what 'slow living' actually looks like."
-    },
-    {
-      "trigger": "Desire/Wanderlust",
-      "text": "The kind of morning you'll think about for the rest of your life."
+      "text": "They said pack for summer. Nobody said pack for this."
     }
   ],
   "soundChart": [
