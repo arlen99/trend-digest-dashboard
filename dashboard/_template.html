@@ -1175,6 +1175,18 @@ function injectEmbed(media,src){
 function embedFor(media,url,plat){const id=ttId(url),code=igCode(url);
   if(plat==='tiktok'&&id)injectEmbed(media,`https://www.tiktok.com/embed/v2/${id}`);
   else if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);}
+// Browsers block autoplay WITH SOUND unless it's a direct response to a user gesture
+// (click/tap) — that's why a fresh scroll-triggered reel starts muted. But per Chrome/
+// Safari's documented autoplay policy, once the user has genuinely interacted with the
+// page at all (any click/tap/keydown), that "site engagement" unlocks unmuted autoplay
+// for the REST of that browser tab's session — not just the element that was clicked.
+// So: the first reel a session sees still opens muted (nothing to unlock yet), but
+// after any real interaction, every reel scrolled to after that autoplays with sound,
+// same as tapping each one individually used to require.
+window.tdReelGestureSeen=false;
+document.addEventListener('click',()=>{window.tdReelGestureSeen=true;},{capture:true});
+document.addEventListener('keydown',()=>{window.tdReelGestureSeen=true;},{capture:true});
+document.addEventListener('touchend',()=>{window.tdReelGestureSeen=true;},{capture:true});
 // Play INLINE — never opens a tab. Native <video> off the durable Blob URL for both
 // platforms; the platform embed is only a fallback if a video is missing/fails.
 function play(card){
@@ -1898,11 +1910,21 @@ function renderSwipeSpotlight(rows){
 // --- Reels scroll: full-height vertical snap, centred post auto-plays ---
 function playReel(frame,p,fromClick){
   if(!frame||frame.classList.contains('playing'))return;
+  const wantsSound=fromClick||tdReelGestureSeen;
   const holder=document.createElement('div');holder.className='rmedia';
-  holder.innerHTML=swMediaHTML(p,{autoplay:true,muted:!fromClick});
+  holder.innerHTML=swMediaHTML(p,{autoplay:true,muted:!wantsSound});
   frame.appendChild(holder);frame.classList.add('playing');
   swInitMedia(holder,p);
-  const v=holder.querySelector('video');if(v){v.muted=!fromClick;v.play().catch(()=>{});}
+  const v=holder.querySelector('video');
+  if(v){
+    v.muted=!wantsSound;
+    v.play().catch(()=>{
+      // Browser rejected unmuted autoplay despite the engagement flag (Safari's MEI
+      // heuristic can be stricter than Chrome's) — fall back to muted rather than not
+      // playing at all, same as before this change.
+      if(wantsSound){v.muted=true;v.play().catch(()=>{});}
+    });
+  }
 }
 function stopReel(frame){if(!frame||!frame.classList.contains('playing'))return;stopVideos(frame);const m=frame.querySelector('.rmedia');if(m)m.remove();frame.classList.remove('playing');}
 function renderSwipeScroll(rows){
