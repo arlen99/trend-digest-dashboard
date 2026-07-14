@@ -11,13 +11,16 @@ Pipeline:
      ranked by cross-keyword frequency.
   4. Write tiktok_accounts.json (handle + sec_uid, which the scraper needs).
 
-Niche-portable: edit KEYWORDS or pass --keywords. With --write, merges into
-tiktok_accounts.json.
+Niche-portable: edit KEYWORDS or pass --keywords. NEVER merged into
+tiktok_accounts.json directly — run discovery_posts.py + discovery_to_dashboard.py
+next to surface each candidate's actual posts on the dashboard (⚡ new find), so
+an account only joins the permanent watchlist when a saved post's "add to
+watchlist?" prompt is confirmed. No blind bulk-add.
 
 Usage:
   set -a && . ./.env && set +a
   python3 tiktok_discover.py --pilot          # 3 keywords, preview
-  python3 tiktok_discover.py --write           # full, merge into tiktok_accounts.json
+  python3 tiktok_discover.py
 Env: TIKHUB_TOKEN.
 """
 import argparse
@@ -102,7 +105,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keywords")
     ap.add_argument("--pilot", action="store_true")
-    ap.add_argument("--write", action="store_true")
     args = ap.parse_args()
     kws = [k.strip() for k in args.keywords.split(",")] if args.keywords else KEYWORDS
     if args.pilot:
@@ -156,19 +158,8 @@ def main():
         lines.append(f"| @{r['unique_id']} | {(r['followers'] or 0):,} | {r['signature'][:54].replace(chr(10),' ')} |")
     (OUT / f"tiktok_discover_{stamp}.md").write_text("\n".join(lines))
     print(f"\nWrote output/tiktok_discover_{stamp}.json/.md — {len(seeds)} vetted TikTok creators")
-
-    if args.write:
-        f = ROOT / "tiktok_accounts.json"
-        data = json.loads(f.read_text()) if f.exists() else {"niche": "travel & cinematic", "accounts": [], "sec_uids": {}}
-        have = {a.lower() for a in data["accounts"]}
-        added = 0
-        for r in seeds:
-            if r["unique_id"].lower() not in have:
-                data["accounts"].append(r["unique_id"]); added += 1
-            data.setdefault("sec_uids", {})[r["unique_id"]] = r["sec_uid"]
-        data[f"_discovered_{stamp}"] = f"Added {added} TikTok creators via tiktok_discover.py."
-        f.write_text(json.dumps(data, indent=2))
-        print(f"--write: added {added} creators to tiktok_accounts.json (now {len(data['accounts'])}).")
+    print("Next: python3 discovery_posts.py && python3 discovery_to_dashboard.py — surfaces "
+          "each candidate's actual posts on the dashboard instead of merging blind.")
 
 
 if __name__ == "__main__":

@@ -11,15 +11,17 @@ Pipeline:
      real signal; a one-off is noise).
   3. SNOWBALL: expand the vetted seeds through Instagram's related-profiles graph
      (the high-quality "similar creators" signal), ranked by seed-overlap.
-  4. OUTPUT a ranked seed list. With --write, merge new accounts into accounts.json
-     so the weekly scrape (scrape.py) picks them up and ranks them by outlier score.
+  4. OUTPUT a ranked candidate list. NEVER merged into accounts.json directly —
+     run discovery_posts.py + discovery_to_dashboard.py next to surface each
+     candidate's actual posts on the dashboard (⚡ new find), so an account only
+     joins the permanent watchlist when you save one of its posts and confirm
+     the "add to watchlist?" prompt. No blind bulk-add.
 
 Niche-portable: edit NICHE below, or pass --keywords / --hashtags. Point it at any
 niche and it builds its own account list.
 
-  python3 bootstrap.py                 # dry-run preview -> output/bootstrap_<date>.{json,md}
+  python3 bootstrap.py                 # preview -> output/bootstrap_<date>.{json,md}
   python3 bootstrap.py --no-snowball    # harvest+vet only (cheaper/faster test)
-  python3 bootstrap.py --write          # also merge vetted seeds into accounts.json
 
 Requires APIFY_TOKEN in .env. Honest note: harvest only needs to be *decent* — junk
 that slips through is washed out by the snowball (won't overlap the niche cluster)
@@ -203,7 +205,6 @@ def main():
     ap.add_argument("--keywords", help="comma-separated override")
     ap.add_argument("--hashtags", help="comma-separated override")
     ap.add_argument("--no-snowball", action="store_true")
-    ap.add_argument("--write", action="store_true", help="merge seeds into accounts.json")
     args = ap.parse_args()
     kws = [k.strip() for k in args.keywords.split(",")] if args.keywords else NICHE["keywords"]
     tags = [t.strip() for t in args.hashtags.split(",")] if args.hashtags else NICHE["hashtags"]
@@ -243,19 +244,10 @@ def main():
             lines.append(f"| @{s['account']} | {s['overlap']} | {', '.join('@'+a for a in s['related_to'])} |")
     (OUT / f"bootstrap_{stamp}.md").write_text("\n".join(lines))
     print(f"\nWrote output/bootstrap_{stamp}.json/.md")
-
-    if args.write:
-        new = [s["account"] for s in seeds] + [s["account"] for s in snow]
-        f = ROOT / "accounts.json"
-        data = json.loads(f.read_text()) if f.exists() else {"niche": NICHE["name"], "accounts": []}
-        have = {a.lower() for a in data["accounts"]}
-        added = [a for a in dict.fromkeys(new) if a.lower() not in have]
-        data["accounts"].extend(added)
-        data[f"_bootstrapped_{stamp}"] = f"Added {len(added)} accounts via bootstrap.py (keyword harvest + snowball)."
-        f.write_text(json.dumps(data, indent=2))
-        print(f"--write: added {len(added)} new accounts to accounts.json (now {len(data['accounts'])}).")
-    else:
-        print("Dry run. Review the .md, then re-run with --write to merge into accounts.json.")
+    print("Next: python3 discovery_posts.py && python3 discovery_to_dashboard.py — surfaces "
+          "each candidate's actual posts on the dashboard (tagged ⚡ new find). Nothing is "
+          "added to accounts.json until you save one of those posts and confirm the "
+          "'add to watchlist?' prompt — no bulk/blind merge.")
 
 
 if __name__ == "__main__":

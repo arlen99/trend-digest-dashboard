@@ -118,8 +118,10 @@ def main() -> None:
     (OUT / f"discovered_{stamp}.md").write_text("\n".join(lines))
     print(f"Wrote output/discovered_{stamp}.json/.md — {len(ranked)} candidates "
           f"(related to >= {MIN_SEEDS} seeds).")
-    print("Review the .md, promote the strong ones into accounts.json, then the "
-          "weekly scrape.py picks them up with full engagement data.")
+    print("Next: python3 discovery_posts.py && python3 discovery_to_dashboard.py — surfaces "
+          "each candidate's actual posts on the dashboard (⚡ new find). Nothing is added to "
+          "accounts.json until you save one of those posts and confirm 'add to watchlist?' "
+          "— no bulk/blind merge.")
 
 
 if __name__ == "__main__":
