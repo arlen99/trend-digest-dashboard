@@ -3103,12 +3103,12 @@
     "postsPerIg": 8,
     "postsPerTt": 10,
     "daysBack": 30,
-    "igCurated": 43,
-    "tiktokCurated": 12,
-    "keywordFinds": 12,
+    "igCurated": 38,
+    "tiktokCurated": 10,
+    "keywordFinds": 7,
     "keywordScanned": 49,
-    "boardAccounts": 53,
-    "audioAccounts": 167,
+    "boardAccounts": 43,
+    "audioAccounts": 159,
     "audioReelsPer": 20,
     "audioTracks": 1654,
     "audioMulti": 89,
@@ -3116,7 +3116,7 @@
     "ttSounds": 50,
     "ttXplatform": 7,
     "ttShown": 20,
-    "audioReels": 3340,
+    "audioReels": 3180,
     "hooksOcrd": 305,
     "hooksReadable": 248,
     "hookValidated": 15,
@@ -3134,38 +3134,17 @@
       "travel cinematography"
     ],
     "trendsAudio": 10,
-    "trendsHook": 0,
-    "costTikhubCalls": 713,
-    "costClaudeCalls": 63,
-    "costAuddCalls": 42,
-    "auddAuthDead": true,
-    "costTikhub": 0.713,
-    "costClaude": 0.745,
-    "costTotal": 1.458,
-    "igExcluded": 10,
-    "igEvaluated": 53,
-    "igExcludeReasons": [
-      [
-        "Sports/event content (World Cup match crowd moment), not travel or cinematic filmmaking craft.",
-        1
-      ],
-      [
-        "Monetization/course bait about growing IG with AI/faceless accounts, not genuine travel or cinematic filmmaking content — travel imagery is just a backdrop for a \"DM/comment to get my strategy\" funnel.",
-        1
-      ],
-      [
-        "Monetization/academy sales pitch in caption (DM/enroll bait), not genuine travel content study material.",
-        1
-      ],
-      [
-        "Emotional/relatability airport moment, not travel or cinematic filmmaking content — no scenic/travel visuals or cinematic technique to study.",
-        1
-      ],
-      [
-        "This is a beach cleanup PSA/activism content, not travel or cinematic filmmaking content meant to showcase visual style or hooks for that genre.",
-        1
-      ]
-    ]
+    "trendsHook": 2,
+    "costTikhubCalls": 0,
+    "costClaudeCalls": 0,
+    "costAuddCalls": 0,
+    "auddAuthDead": false,
+    "costTikhub": 0.0,
+    "costClaude": 0.0,
+    "costTotal": 0.0,
+    "igExcluded": 0,
+    "igEvaluated": 38,
+    "igExcludeReasons": []
   },
   "trends": [
     {
