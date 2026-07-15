@@ -17,6 +17,8 @@ import json
 import urllib.request
 from pathlib import Path
 
+from curate_posts import caption_hook
+
 ROOT = Path(__file__).parent
 DASH = ROOT / "dashboard"
 THUMBS = DASH / "thumbs"
@@ -69,13 +71,14 @@ def main():
             "account": t["account"], "url": t["url"], "platform": plat, "lane": "discovered",
             "newFind": True, "source": t.get("discoverySource", ""),
             "trendScore": trend_score,
-            "hook": (t.get("caption") or "")[:200] or "(no caption)", "format": fmt,
+            "hook": caption_hook(t.get("caption", "")), "format": fmt,
             "views": views, "likes": t.get("likes", 0), "comments": t.get("comments", 0),
             "shares": t.get("shares", 0), "engRate": None, "outlier": t.get("outlier_score"),
             "hookTypes": [], "triggers": [], "visualStyles": [],
             "audio": audio, "audioDetected": False, "notes": "",
             "week": week, "date": (t.get("timestamp") or "")[:10], "thumb": thumb,
             "video": t.get("video", ""), "carousel": t.get("carousel_urls", []),
+            "videoText": t.get("videoText", ""),
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))

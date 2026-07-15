@@ -31,6 +31,7 @@ from pathlib import Path
 
 import scrape
 import tiktok_scrape
+import hook_text
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "output"
@@ -153,9 +154,34 @@ def main():
         best.append(posts[0])
     best.sort(key=lambda p: p["outlier_score"], reverse=True)
 
+    # On-screen text for IG reels — same frame-grab + OCR hook_text.py uses for the
+    # main lane, just applied directly here since these candidates never pass
+    # through hook_text.py's own cache (that only covers output/top_posts_*.json).
+    # TikTok candidates get this from tiktok_videotext.py instead (thumbnail-based,
+    # already lane-agnostic — just run it after discovery_to_dashboard.py).
+    tmp_a, tmp_b = "/tmp/disc_hk_a.jpg", "/tmp/disc_hk_b.jpg"
+    ocrd = 0
+    for p in best:
+        if p["platform"] != "instagram" or p.get("format") == "Carousel":
+            continue
+        vurl = hook_text.video_url_for(p)
+        if not vurl:
+            continue
+        texts = []
+        for t, dest in ((2.0, tmp_a), (4.0, tmp_b)):
+            if hook_text.frame(vurl, t, dest):
+                texts.append(hook_text.ocr(dest))
+        hook = max(texts, key=len) if texts else ""
+        if hook:
+            p["videoText"] = hook
+            ocrd += 1
+        time.sleep(0.1)
+    if any(p["platform"] == "instagram" for p in best):
+        print(f"On-screen OCR: {ocrd} IG candidate(s) had readable text")
+
     (OUT / f"discovery_candidates_{stamp}.json").write_text(json.dumps(best, indent=2, ensure_ascii=False))
     print(f"\nWrote output/discovery_candidates_{stamp}.json — {len(best)} candidate accounts' "
-          f"best post each. Next: python3 discovery_to_dashboard.py")
+          f"best post each. Next: python3 discovery_to_dashboard.py && python3 tiktok_videotext.py")
 
     import cost_tracker
     cost_tracker.record("discovery_posts", tikhub_calls=scrape.th_calls + tiktok_scrape.th_calls)
