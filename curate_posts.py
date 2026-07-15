@@ -53,7 +53,6 @@ TOOL_SCHEMA = {
         "properties": {
             "include": {"type": "boolean", "description": "True only if this is genuine travel/cinematic content worth studying. False for monetization bait ('DM me to learn how'), sponsored/branded/ad content, giveaways, or content that isn't actually about travel/cinematic filmmaking."},
             "exclude_reason": {"type": "string", "description": "If include=false, a one-line reason."},
-            "hook": {"type": "string", "description": "A short punchy headline describing the post's hook (not the raw caption) — under 12 words."},
             "hookTypes": {"type": "array", "items": {"type": "string", "enum": HOOK_TYPES}, "description": "0-2 that genuinely apply."},
             "triggers": {"type": "array", "items": {"type": "string", "enum": TRIGGERS}, "description": "0-2 emotional triggers driving engagement."},
             "visualStyles": {"type": "array", "items": {"type": "string", "enum": VISUAL_STYLES}, "description": "0-2 visual style tags, judged from the image(s)."},
@@ -155,6 +154,24 @@ def hook_text_for(url: str) -> str:
     return hook if len(" ".join(words)) >= max(6, len(hook) * 0.4) else ""
 
 
+def caption_hook(caption: str, limit: int = 100) -> str:
+    """The real caption, trimmed to a card-sized hook — no Claude paraphrase (a
+    generated headline drifted inconsistently between "actually the caption" and
+    "a made-up description of the video", which read as arbitrary). Drops a
+    trailing hashtag-only line (common on IG, pure noise for a hook) and hard-caps
+    length at a whole-word boundary so a long caption doesn't blow out the card."""
+    text = (caption or "").strip()
+    lines = [ln for ln in text.split("\n") if ln.strip()]
+    lines = [ln for ln in lines if not re.fullmatch(r"(#\w+\s*)+", ln.strip())]
+    text = " ".join(lines) if lines else text
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return "(no caption)"
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0] + "…"
+
+
 def main() -> None:
     if not ANTHROPIC_KEY:
         sys.exit("ANTHROPIC_API_KEY not set — add it to .env (local) and as a repo secret (CI).")
@@ -235,7 +252,7 @@ def main() -> None:
         post = {
             "account": r["account"],
             "url": r["url"],
-            "hook": result.get("hook", ""),
+            "hook": caption_hook(r.get("caption", "")),
             "format": fmt,
             "views": views,
             "likes": r.get("likes", 0),

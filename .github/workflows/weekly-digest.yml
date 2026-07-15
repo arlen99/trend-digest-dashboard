@@ -89,6 +89,7 @@ jobs:
           run_critical python3 audio_chart_to_dashboard.py
           run_critical python3 tiktok_to_dashboard.py --top 12
           run_critical python3 keyword_posts_to_dashboard.py --top 12
+          run_optional python3 tiktok_videotext.py     # on-screen hook OCR for TikTok cards — was never wired in before, only IG (hook_text.py) got this automatically
           run_optional python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
           run_optional python3 fetch_audio.py         # self-host each sound-chart track's REAL audio → durable inline previews (replaces Deezer)
           run_critical python3 provenance.py
