@@ -37,8 +37,11 @@ async function readState(token) {
   return r.ok ? await r.json() : {};
 }
 
+// Previously unchecked, same bug as state.js's writeState() — a failed PUT was
+// silently swallowed and the handler still reported ok:true, so "removed" never
+// actually got recorded when the store rejects writes.
 async function writeState(token, state) {
-  await fetch(`${BLOB_API}/${STATE_PATH}`, {
+  const r = await fetch(`${BLOB_API}/${STATE_PATH}`, {
     method: "PUT",
     headers: {
       authorization: `Bearer ${token}`,
@@ -50,6 +53,10 @@ async function writeState(token, state) {
     },
     body: JSON.stringify(state),
   });
+  if (!r.ok) {
+    const msg = (await r.text().catch(() => "")).slice(0, 140);
+    throw new Error(`blob PUT ${r.status}: ${msg}`);
+  }
 }
 
 module.exports = async (req, res) => {
