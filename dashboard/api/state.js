@@ -17,11 +17,19 @@ function directUrl(token) {
   return storeId ? `https://${storeId}.public.blob.vercel-storage.com/${PATH}` : null;
 }
 
+// Returns { state, blocked }. `blocked` distinguishes "the store is rejecting
+// reads" (Advanced Operations quota exhausted — a 403, seen 2026-07) from
+// "nothing saved yet" (no blob there yet — the fetch itself still resolves
+// r.ok=false, but that's a 404, not a 403). Previously both collapsed to the
+// same silent {} — a real outage was indistinguishable from a fresh install,
+// and every write built on top of it (persistState's staleness check) had no
+// way to know the state it was comparing against might just be missing.
 async function readState(token) {
   const u = directUrl(token);
-  if (!u) return {};
+  if (!u) return { state: {}, blocked: false };
   const r = await fetch(`${u}?t=${Date.now()}`, { cache: "no-store" });
-  return r.ok ? await r.json() : {};
+  if (r.ok) return { state: await r.json(), blocked: false };
+  return { state: {}, blocked: r.status === 403 };
 }
 
 // Profile URLs shared via /api/save-link are queued as their own atomic blobs at
@@ -52,8 +60,12 @@ async function mergePendingAdds(token, state) {
   return state;
 }
 
+// Previously unchecked — a failed PUT (e.g. the store's Advanced Operations
+// quota exhausted, "store_suspended") was silently reported to the client as
+// a successful save. The dashboard showed "● synced" while nothing was
+// actually being written, which is exactly the bug this was reported as.
 async function writeState(token, state) {
-  await fetch(`${BLOB}/${PATH}`, {
+  const r = await fetch(`${BLOB}/${PATH}`, {
     method: "PUT",
     headers: {
       authorization: `Bearer ${token}`,
@@ -65,6 +77,10 @@ async function writeState(token, state) {
     },
     body: JSON.stringify(state),
   });
+  if (!r.ok) {
+    const msg = (await r.text().catch(() => "")).slice(0, 140);
+    throw new Error(`blob PUT ${r.status}: ${msg}`);
+  }
 }
 
 module.exports = async (req, res) => {
@@ -82,12 +98,19 @@ module.exports = async (req, res) => {
   }
   try {
     if (req.method === "GET") {
-      res.status(200).json(await mergePendingAdds(token, await readState(token)));
+      const { state, blocked } = await readState(token);
+      const merged = await mergePendingAdds(token, state);
+      res.status(200).json({ ...merged, blocked });
       return;
     }
     if (req.method === "POST") {
       const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-      await writeState(token, body);
+      try {
+        await writeState(token, body);
+      } catch (e) {
+        res.status(507).json({ ok: false, error: String(e.message || e).slice(0, 160) });
+        return;
+      }
       res.status(200).json({ ok: true });
       return;
     }

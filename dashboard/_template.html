@@ -830,7 +830,7 @@ let SECRET=localStorage.getItem('td_secret')||'';
 // without this guard it would clobber the change we just made.
 let localTs=+(localStorage.getItem('td_state_ts')||0);
 function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);LS.set('td_removed_videos',removedVideos);}
-function setSync(st){const el=$('#syncstat');if(el)el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',bad:'wrong passphrase',checking:'verifying…'}[st]||st;}
+function setSync(st){const el=$('#syncstat');if(el){el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',blocked:'⚠ storage plan limit reached',bad:'wrong passphrase',checking:'verifying…'}[st]||st;el.title=st==='blocked'?"The storage plan's limit has been reached — nothing is being read or saved right now. It'll resume once the plan resets or is upgraded.":'';}}
 let _pushT, _pendingWrite=false;
 function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],removedVideos:[...removedVideos],updatedAt:localTs});}
 // Debounced backend save WITHOUT re-rendering — used by the Reels scroll mode so a
@@ -850,6 +850,11 @@ async function pullState(){if(!SECRET){setSync('off');return;}
   try{const r=await fetch('/api/state',{headers:{'X-Edit-Secret':SECRET},cache:'no-store'});
     if(r.status===401){setSync('bad');return;}if(!r.ok){setSync('err');return;}
     const s=await r.json();
+    // The store itself can be rejecting reads (Advanced Operations quota exhausted)
+    // while still answering with 200 {blocked:true} — don't treat that as "state is
+    // genuinely empty" and don't let persistState() below race a write against a
+    // store that's actively failing; just say so and stop.
+    if(s&&s.blocked){setSync('blocked');return;}
     const remoteTs=(s&&typeof s.updatedAt==='number')?s.updatedAt:0;
     if(remoteTs<localTs){
       // This read is OLDER than our last local edit — it's stale (CDN lag) or predates
