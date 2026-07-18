@@ -3186,16 +3186,37 @@
     ],
     "trendsAudio": 10,
     "trendsHook": 2,
-    "costTikhubCalls": 8,
-    "costClaudeCalls": 0,
-    "costAuddCalls": 0,
+    "costTikhubCalls": 713,
+    "costClaudeCalls": 63,
+    "costAuddCalls": 42,
     "auddAuthDead": false,
-    "costTikhub": 0.008,
-    "costClaude": 0.0,
-    "costTotal": 0.008,
-    "igExcluded": 0,
-    "igEvaluated": 39,
-    "igExcludeReasons": []
+    "costTikhub": 0.713,
+    "costClaude": 0.745,
+    "costTotal": 1.458,
+    "igExcluded": 10,
+    "igEvaluated": 53,
+    "igExcludeReasons": [
+      [
+        "Sports/event content (World Cup match crowd moment), not travel or cinematic filmmaking craft.",
+        1
+      ],
+      [
+        "Monetization/course bait about growing IG with AI/faceless accounts, not genuine travel or cinematic filmmaking content — travel imagery is just a backdrop for a \"DM/comment to get my strategy\" funnel.",
+        1
+      ],
+      [
+        "Monetization/academy sales pitch in caption (DM/enroll bait), not genuine travel content study material.",
+        1
+      ],
+      [
+        "Emotional/relatability airport moment, not travel or cinematic filmmaking content — no scenic/travel visuals or cinematic technique to study.",
+        1
+      ],
+      [
+        "This is a beach cleanup PSA/activism content, not travel or cinematic filmmaking content meant to showcase visual style or hooks for that genre.",
+        1
+      ]
+    ]
   },
   "trends": [
     {

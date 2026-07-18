@@ -90,11 +90,39 @@ def main():
         kw_list = []
 
     # rough weekly $ cost — see cost_tracker.py for rates/caveats (approximate, not billing-accurate)
+    # output/pipeline_costs.json is LOCAL and gitignored — a real weekly run builds it fresh
+    # from a clean checkout, but running provenance.py locally for an unrelated fix (as
+    # happened 2026-07-15) reads whatever's left on disk from ad-hoc script runs since,
+    # silently overwriting the real run's cost with e.g. one debug script's tally. Only
+    # trust it if it looks like an actual full run — carries entries for the two scripts
+    # every real week unconditionally runs (scrape.py, curate_posts.py) — otherwise keep
+    # whatever's already committed rather than replace real numbers with partial ones.
     import cost_tracker
     cost = cost_tracker.summarize()
+    prior_cost = (data.get("provenance") or {})
+    looks_like_a_real_run = {"scrape", "curate_posts"} <= set(cost.get("perScript", {}))
+    if not looks_like_a_real_run and prior_cost.get("costTotal") is not None:
+        cost = {
+            "totals": {
+                "tikhubCalls": prior_cost.get("costTikhubCalls"), "claudeCalls": prior_cost.get("costClaudeCalls"),
+                "auddCalls": prior_cost.get("costAuddCalls"), "auddAuthDead": prior_cost.get("auddAuthDead", False),
+            },
+            "tikhubCost": prior_cost.get("costTikhub"), "claudeCost": prior_cost.get("costClaude"),
+            "estCost": prior_cost.get("costTotal"),
+        }
 
     # why candidates got excluded from the IG Swipe File this run (curate_posts.py)
+    # Same staleness problem as the cost figures above, and the same guard: this file
+    # only exists fresh right after a real curate_posts.py run, so an ad-hoc local
+    # provenance.py call between real runs would otherwise show "0 excluded" — not
+    # "we don't know", an actively wrong claim that curation looked stricter than it did.
     excludes = jload(latest("curation_excludes_*.json"), []) or []
+    if not looks_like_a_real_run and not excludes and prior_cost.get("igExcluded") is not None:
+        ig_excluded_fallback = prior_cost.get("igExcluded")
+        ig_evaluated_fallback = prior_cost.get("igEvaluated")
+        exclude_reasons_fallback = prior_cost.get("igExcludeReasons") or []
+    else:
+        ig_excluded_fallback = ig_evaluated_fallback = exclude_reasons_fallback = None
     exclude_reasons = Counter(e.get("reason", "") for e in excludes)
 
     prov = {
@@ -120,8 +148,9 @@ def main():
         "costTikhubCalls": cost["totals"]["tikhubCalls"], "costClaudeCalls": cost["totals"]["claudeCalls"],
         "costAuddCalls": cost["totals"]["auddCalls"], "auddAuthDead": cost["totals"]["auddAuthDead"],
         "costTikhub": cost["tikhubCost"], "costClaude": cost["claudeCost"], "costTotal": cost["estCost"],
-        "igExcluded": len(excludes), "igEvaluated": ig_curated + len(excludes),
-        "igExcludeReasons": exclude_reasons.most_common(5),
+        "igExcluded": ig_excluded_fallback if ig_excluded_fallback is not None else len(excludes),
+        "igEvaluated": ig_evaluated_fallback if ig_evaluated_fallback is not None else ig_curated + len(excludes),
+        "igExcludeReasons": exclude_reasons_fallback if exclude_reasons_fallback is not None else exclude_reasons.most_common(5),
     }
     data["provenance"] = prov
     # expose the live reference pools so the dashboard Accounts panel can render + edit them
