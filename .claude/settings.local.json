@@ -5,7 +5,11 @@
       "Bash(printenv)",
       "Bash(git fetch *)",
       "Bash(git pull *)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(gh run *)",
+      "Read(//opt/homebrew/bin/**)",
+      "Bash(security find-generic-password *)",
+      "Bash(python3 -m json.tool)"
     ]
   }
 }
