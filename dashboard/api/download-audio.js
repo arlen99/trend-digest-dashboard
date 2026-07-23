@@ -105,9 +105,22 @@ async function lookupIgReel(url) {
   const j = await tikhub(`/api/v1/instagram/v1/fetch_post_by_url?post_url=${encodeURIComponent(url)}`);
   const d = (j && j.data) || {};
   if (!d.id) return null;
+  // Carousels never have a top-level video_url (this endpoint's carousel shape is
+  // GraphQL-style edge_sidecar_to_children, not the carousel_media field scrape.py
+  // sees from a different endpoint) — verified live against real posts: some
+  // carousels are all-photo (genuinely no audio — a real "nothing to download", not
+  // a bug), others mix in video slides that DO have their own video_url and audio,
+  // which this used to miss entirely by only checking the top-level field. Use the
+  // first video slide found, if any.
+  let video = d.video_url || "";
+  if (!video) {
+    const slides = deep(d, "edge_sidecar_to_children", "edges") || [];
+    const videoSlide = slides.map((e) => e.node).find((n) => n && n.is_video && n.video_url);
+    if (videoSlide) video = videoSlide.video_url;
+  }
   return {
     account: deep(d, "owner", "username") || "",
-    video: d.video_url || "",
+    video,
     idLabel: "reel_" + (igShortcodeFromUrl(url) || d.shortcode || ""),
   };
 }
@@ -223,7 +236,12 @@ module.exports = async (req, res) => {
     found = null;
   }
   if (!found || (!found.video && !found.rawAudio)) {
-    res.status(200).json({ ok: false, reason: "lookup_failed", fallback: kind === "ig-audio" ? "instasaver" : null });
+    // Distinguish "found the post, it's just genuinely a photo-only carousel" (no
+    // video anywhere = no audio to extract, an honest outcome) from "couldn't even
+    // resolve the post" (found === null) — both used to say the same opaque
+    // "lookup_failed", which read as a bug even when it wasn't one.
+    const reason = kind === "ig-reel" && found ? "no_audio_photo_carousel" : "lookup_failed";
+    res.status(200).json({ ok: false, reason, fallback: kind === "ig-audio" ? "instasaver" : null });
     return;
   }
 

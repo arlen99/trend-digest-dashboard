@@ -956,7 +956,8 @@ async function downloadAudio(url,btn){
         // the bare root domain does neither, which is why this used to require a manual paste.
         window.open('https://instasaver.io/en/audio/?url='+encodeURIComponent(url),'_blank','noopener');
       }else{
-        alert('Download failed: '+(j.reason||'unknown error'));
+        const msg=j.reason==='no_audio_photo_carousel'?"This carousel is photo-only — there's no video/audio to extract.":(j.reason||'unknown error');
+        alert('Download failed: '+msg);
       }
     }
   }catch(e){alert('Download failed: network error');}
@@ -1467,6 +1468,12 @@ $('#grid').addEventListener('click',e=>{
     return;}
   if(e.target.closest('.play')){play(cardEl);return;}
   if(e.target.closest('a'))return; // external links handle themselves
+  // "Get audio" is its own <button>, not [data-act] (that's only save/dismiss) —
+  // falls through to the .body check below with nothing to stop it, so it both
+  // downloaded the audio AND opened the post modal. The document-level delegated
+  // handler for it (further up the bubble path) does call stopPropagation(), but
+  // by then this handler — closer to the target — has already run.
+  if(e.target.closest('[data-get-audio]'))return;
   const al=e.target.closest('.acct-link');
   if(al){e.preventDefault();openProfile(al.dataset.plat,al.dataset.acct);return;} // @handle → in-dashboard preview popup
   if(e.target.closest('.body')){openPost(url);}
