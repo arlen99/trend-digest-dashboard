@@ -17,7 +17,8 @@ a real week's usage shows whether/when it renews).
 
 Requires ACRCLOUD_HOST, ACRCLOUD_ACCESS_KEY, ACRCLOUD_ACCESS_SECRET in env — from an
 "Audio & Video Recognition" project's dashboard at console.acrcloud.com. No `requests`
-dependency in this project, so the multipart upload is built by hand.
+dependency in this project, so the multipart upload is built by hand. Uses `ffmpeg`
+(already a pipeline dependency) to strip video before upload — see _extract_audio().
 
 Usage:
   import acrcloud_recognize
@@ -28,6 +29,7 @@ import hashlib
 import hmac
 import json
 import os
+import subprocess
 import tempfile
 import time
 import urllib.request
@@ -54,6 +56,24 @@ def _download(url, dest):
     with open(dest, "wb") as f:
         f.write(data)
     return len(data) > 5000
+
+
+def _extract_audio(video_path, audio_path):
+    """Strips the video stream and caps at 20s — full Reels/TikTok MP4s (video +
+    audio) can exceed ACRCloud's upload size limit (confirmed live: a 6.9MB/20s
+    clip was rejected with status code 3016, "file too large" — silently read as
+    a plain no-match until this fix, since audio-only files ACRCloud's own error
+    message recommends 10-20s of audio, which is also all the identify API needs).
+    Returns True if ffmpeg produced a usable file, False if ffmpeg is unavailable
+    or the clip has no audio track (caller then falls back to the raw video)."""
+    try:
+        r = subprocess.run(
+            ["ffmpeg", "-y", "-i", video_path, "-vn", "-t", "20", "-c:a", "copy", audio_path],
+            capture_output=True, timeout=30,
+        )
+    except Exception:  # noqa: BLE001 - ffmpeg missing/failed shouldn't crash the caller
+        return False
+    return r.returncode == 0 and os.path.exists(audio_path) and os.path.getsize(audio_path) > 1000
 
 
 def _sign(timestamp):
@@ -104,14 +124,16 @@ def recognize(video_url: str) -> dict:
     global calls
     if not (HOST and ACCESS_KEY and ACCESS_SECRET) or not video_url:
         return {}
-    tmp_path = None
+    video_path = audio_path = None
     try:
         with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
-            tmp_path = tmp.name
-        if not _download(video_url, tmp_path):
+            video_path = tmp.name
+        if not _download(video_url, video_path):
             return {}
+        audio_path = video_path + ".m4a"
+        upload_path = audio_path if _extract_audio(video_path, audio_path) else video_path
         calls += 1
-        resp = _identify(tmp_path)
+        resp = _identify(upload_path)
         if (resp.get("status") or {}).get("code") != 0:
             return {}
         music = (resp.get("metadata") or {}).get("music") or []
@@ -130,11 +152,12 @@ def recognize(video_url: str) -> dict:
     except Exception:  # noqa: BLE001 - network/parse errors are a clean miss, not a crash
         return {}
     finally:
-        if tmp_path:
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
+        for p in (video_path, audio_path):
+            if p and os.path.exists(p):
+                try:
+                    os.unlink(p)
+                except OSError:
+                    pass
 
 
 if __name__ == "__main__":
