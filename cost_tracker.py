@@ -32,7 +32,7 @@ CLAUDE_OUTPUT_RATE = 15.00 / 1_000_000  # $/output token
 
 
 def record(script, tikhub_calls=0, claude_calls=0, claude_input_tokens=0, claude_output_tokens=0,
-           audd_calls=0, audd_auth_dead=False):
+           audd_calls=0, audd_auth_dead=False, acrcloud_calls=0):
     data = {}
     if COSTS_FILE.exists():
         try:
@@ -46,6 +46,7 @@ def record(script, tikhub_calls=0, claude_calls=0, claude_input_tokens=0, claude
         "claudeOutputTokens": claude_output_tokens,
         "auddCalls": audd_calls,
         "auddAuthDead": audd_auth_dead,
+        "acrcloudCalls": acrcloud_calls,
     }
     COSTS_FILE.parent.mkdir(exist_ok=True)
     COSTS_FILE.write_text(json.dumps(data, indent=2))
@@ -60,6 +61,7 @@ def summarize():
     claude_out = sum(v.get("claudeOutputTokens", 0) for v in data.values())
     audd = sum(v.get("auddCalls", 0) for v in data.values())
     audd_auth_dead = any(v.get("auddAuthDead") for v in data.values())
+    acrcloud = sum(v.get("acrcloudCalls", 0) for v in data.values())
     tikhub_cost = tikhub * TIKHUB_RATE
     claude_cost = claude_in * CLAUDE_INPUT_RATE + claude_out * CLAUDE_OUTPUT_RATE
     return {
@@ -67,7 +69,7 @@ def summarize():
         "totals": {
             "tikhubCalls": tikhub, "claudeCalls": claude_calls,
             "claudeInputTokens": claude_in, "claudeOutputTokens": claude_out,
-            "auddCalls": audd, "auddAuthDead": audd_auth_dead,
+            "auddCalls": audd, "auddAuthDead": audd_auth_dead, "acrcloudCalls": acrcloud,
         },
         "tikhubCost": round(tikhub_cost, 3),
         "claudeCost": round(claude_cost, 3),

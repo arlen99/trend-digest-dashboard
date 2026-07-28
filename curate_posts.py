@@ -4,7 +4,7 @@ Automated weekly IG curation — the step that used to require a human/Claude
 session looking at thumbnails by hand. Reviews the freshly-scraped, deduped
 candidates (Reels via fetch_thumbs.py, Carousels via fetch_carousels.py),
 asks Claude (vision) to include/exclude each and tag the included ones, runs
-AudD fingerprinting per included Reel for real audio ID (fetch_user_posts no
+audio fingerprinting per included Reel for real audio ID (fetch_user_posts no
 longer returns clips_metadata.music_info/original_sound_info at all — verified
 against a post independently confirmed to use a licensed track, so this is an
 external API loss, not something fixable by re-parsing our own response), and
@@ -16,8 +16,11 @@ filter for monetization bait, sponsored/branded content, and off-niche posts.
 Usage:
   set -a && . ./.env && set +a
   python3 curate_posts.py output/top_posts_<date>_fresh.json
-Env: ANTHROPIC_API_KEY (required), AUDD_TOKEN (optional — free tier used if unset,
-     rate-limited to ~10 calls/day per AudD's own limits).
+Env: ANTHROPIC_API_KEY (required), ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY /
+     ACRCLOUD_ACCESS_SECRET (primary fingerprinter — see acrcloud_recognize.py;
+     free plan capped at 100 recognitions), AUDD_TOKEN (optional — second opinion
+     when ACRCloud finds nothing; free tier used if unset, rate-limited to ~10
+     calls/day per AudD's own limits).
 """
 import base64
 import glob
@@ -30,6 +33,8 @@ import urllib.parse
 import urllib.request
 from datetime import date, timedelta
 from pathlib import Path
+
+import acrcloud_recognize
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "output"
@@ -239,9 +244,13 @@ def main() -> None:
         audio_song = r.get("audio_song") or ""
         audio_artist = r.get("audio_artist") or ""
         audio_is_original = r.get("audio_is_original", True)
+        # ACRCloud (handles sped-up/pitch-shifted trending-audio edits far better
+        # than Chromaprint did — see acrcloud_recognize.py) is tried first. AudD's
+        # free tier is now rate-limited enough (and reliable use needs a paid plan)
+        # that it's kept only as a second opinion when ACRCloud finds nothing.
         audd = {}
         if fmt != "Carousel" and r.get("video") and (audio_is_original or not audio_id):
-            audd = audd_recognize(r["video"])
+            audd = acrcloud_recognize.recognize(r["video"]) or audd_recognize(r["video"])
             time.sleep(0.3)
             if audd:
                 audio_song, audio_artist = audd.get("song", ""), audd.get("artist", "")
@@ -269,7 +278,7 @@ def main() -> None:
             "audioId": audio_id,
             "audioLink": f"https://www.instagram.com/reels/audio/{audio_id}/" if audio_id else "",
             "audioSongLink": audd.get("link", ""),
-            "audioDetected": real_song and bool(audd),  # "detected" = AudD fingerprint match specifically, matches existing dashboard semantics
+            "audioDetected": real_song and bool(audd),  # "detected" = fingerprint match (ACRCloud or AudD), matches existing dashboard semantics
             "audioSong": audio_song or "Original audio",
             "audioArtist": audio_artist or r["account"],
             "date": (r.get("timestamp") or "")[:10],
@@ -301,7 +310,8 @@ def main() -> None:
     (OUT / f"curation_excludes_{week_of}.json").write_text(json.dumps(excluded_log, ensure_ascii=False, indent=2))
     import cost_tracker
     cost_tracker.record("curate_posts", claude_calls=claude_calls, claude_input_tokens=claude_input_tokens,
-                        claude_output_tokens=claude_output_tokens, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead)
+                        claude_output_tokens=claude_output_tokens, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead,
+                        acrcloud_calls=acrcloud_recognize.calls)
 
 
 if __name__ == "__main__":

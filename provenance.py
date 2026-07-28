@@ -106,6 +106,7 @@ def main():
             "totals": {
                 "tikhubCalls": prior_cost.get("costTikhubCalls"), "claudeCalls": prior_cost.get("costClaudeCalls"),
                 "auddCalls": prior_cost.get("costAuddCalls"), "auddAuthDead": prior_cost.get("auddAuthDead", False),
+                "acrcloudCalls": prior_cost.get("costAcrcloudCalls"),
             },
             "tikhubCost": prior_cost.get("costTikhub"), "claudeCost": prior_cost.get("costClaude"),
             "estCost": prior_cost.get("costTotal"),
@@ -147,6 +148,7 @@ def main():
         # rough cost + curation transparency (approximate — see cost_tracker.py)
         "costTikhubCalls": cost["totals"]["tikhubCalls"], "costClaudeCalls": cost["totals"]["claudeCalls"],
         "costAuddCalls": cost["totals"]["auddCalls"], "auddAuthDead": cost["totals"]["auddAuthDead"],
+        "costAcrcloudCalls": cost["totals"].get("acrcloudCalls"),
         "costTikhub": cost["tikhubCost"], "costClaude": cost["claudeCost"], "costTotal": cost["estCost"],
         "igExcluded": ig_excluded_fallback if ig_excluded_fallback is not None else len(excludes),
         "igEvaluated": ig_evaluated_fallback if ig_evaluated_fallback is not None else ig_curated + len(excludes),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AudD-identify the real song behind the niche sound chart's "original audio" buckets.
+Identify the real song behind the niche sound chart's "original audio" buckets.
 
 Each original-audio bucket in audio_trends output is keyed on Instagram's unique
 `audio_asset_id` (verified: one bucket = exactly one real audio, never a title/creator
@@ -8,7 +8,8 @@ merge), so ONE sample reel per bucket is representative — fingerprint it once 
 result applies to the whole bucket.
 
 For each candidate bucket: take a sample reel → TikHub fetch_post_by_url → its
-`video_url` → AudD → {song, artist, link}. Results cached by audio_id in
+`video_url` → ACRCloud (primary — see acrcloud_recognize.py), falling back to
+AudD if ACRCloud finds nothing → {song, artist, link}. Results cached by audio_id in
 output/chart_audd.json so weekly runs never re-pay for an audio already identified.
 
 Scope (cost control): original buckets with niche_creators >= --min-creators
@@ -18,7 +19,8 @@ Usage:
   set -a && . ./.env && set +a
   python3 chart_audd.py                 # multi-creator buckets
   python3 chart_audd.py --min-creators 1 --min-uses 4   # also heavily-reused solo
-Env: TIKHUB_TOKEN, AUDD_TOKEN.
+Env: TIKHUB_TOKEN, ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY / ACRCLOUD_ACCESS_SECRET
+     (free plan capped at 100 recognitions), AUDD_TOKEN (optional second opinion).
 """
 import argparse
 import glob
@@ -28,6 +30,8 @@ import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+import acrcloud_recognize
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "output"
@@ -120,7 +124,12 @@ def main():
             cache[aid] = {"reason": "no sample"}; continue
         vurl = th_video_url(reel)
         time.sleep(0.3)
-        cache[aid] = audd(vurl) if vurl else {"reason": "no video_url"}
+        if not vurl:
+            cache[aid] = {"reason": "no video_url"}
+        else:
+            # ACRCloud tried first; AudD kept as a second opinion when it finds
+            # nothing — see acrcloud_recognize.py for why the switch.
+            cache[aid] = acrcloud_recognize.recognize(vurl) or audd(vurl)
         new += 1
         if cache[aid].get("song"):
             hits += 1
@@ -130,7 +139,8 @@ def main():
     print(f"\nAudD on chart: {new} new buckets fingerprinted, {hits} identified "
           f"({sum(1 for v in cache.values() if v.get('song'))} total in cache) → output/chart_audd.json")
     import cost_tracker
-    cost_tracker.record("chart_audd", tikhub_calls=th_calls, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead)
+    cost_tracker.record("chart_audd", tikhub_calls=th_calls, audd_calls=audd_calls, audd_auth_dead=audd_auth_dead,
+                        acrcloud_calls=acrcloud_recognize.calls)
 
 
 if __name__ == "__main__":

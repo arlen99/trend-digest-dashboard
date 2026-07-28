@@ -38,6 +38,9 @@ jobs:
         id: pipeline
         env:
           TIKHUB_TOKEN: ${{ secrets.TIKHUB_TOKEN }}
+          ACRCLOUD_HOST: ${{ secrets.ACRCLOUD_HOST }}
+          ACRCLOUD_ACCESS_KEY: ${{ secrets.ACRCLOUD_ACCESS_KEY }}
+          ACRCLOUD_ACCESS_SECRET: ${{ secrets.ACRCLOUD_ACCESS_SECRET }}
           AUDD_TOKEN: ${{ secrets.AUDD_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
