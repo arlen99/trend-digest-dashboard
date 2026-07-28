@@ -38,6 +38,11 @@ ACCESS_KEY = os.environ.get("ACRCLOUD_ACCESS_KEY", "")
 ACCESS_SECRET = os.environ.get("ACRCLOUD_ACCESS_SECRET", "")
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
       "(KHTML, like Gecko) Version/16 Safari/605.1.15")
+MIN_SCORE = 50  # ACRCloud's own match-confidence score (0-100) — below this, treat as no match.
+# Set conservatively low: a real test case scored 76 for a match confirmed correct
+# (artist name literally matched the creator's own handle), so 80 was already
+# producing false negatives on genuine hits. No observed false-positive score to
+# calibrate a tighter floor against — this just guards against near-zero noise.
 
 calls = 0  # every real identify() call — free plan is capped at 100 total, track it
 
@@ -110,17 +115,18 @@ def recognize(video_url: str) -> dict:
         if (resp.get("status") or {}).get("code") != 0:
             return {}
         music = (resp.get("metadata") or {}).get("music") or []
-        if not music:
-            return {}
-        m = music[0]
-        title = m.get("title")
-        if not title:
-            return {}
-        artists = m.get("artists") or []
-        artist = artists[0].get("name") if artists else ""
-        spotify_id = (((m.get("external_metadata") or {}).get("spotify") or {}).get("track") or {}).get("id")
-        link = f"https://open.spotify.com/track/{spotify_id}" if spotify_id else ""
-        return {"song": title, "artist": artist, "link": link}
+        for m in music:
+            if (m.get("score") or 0) < MIN_SCORE:
+                continue
+            title = m.get("title")
+            if not title:
+                continue
+            artists = m.get("artists") or []
+            artist = artists[0].get("name") if artists else ""
+            spotify_id = (((m.get("external_metadata") or {}).get("spotify") or {}).get("track") or {}).get("id")
+            link = f"https://open.spotify.com/track/{spotify_id}" if spotify_id else ""
+            return {"song": title, "artist": artist, "link": link}
+        return {}
     except Exception:  # noqa: BLE001 - network/parse errors are a clean miss, not a crash
         return {}
     finally:
