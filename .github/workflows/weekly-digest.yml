@@ -72,7 +72,7 @@ jobs:
           run_critical python3 apply_account_edits.py   # apply dashboard add/removes → accounts.json + tiktok_accounts.json BEFORE scraping
           run_critical python3 accumulate.py            # archive prior week's data BEFORE this week's pipeline writes over it
           run_critical python3 scrape.py
-          run_critical python3 tiktok_scrape.py
+          run_optional python3 tiktok_scrape.py         # TikHub's fetch_user_post has broken 2 weeks running (400 upstream error) — don't let one flaky TikTok endpoint sink the whole IG pipeline; tiktok_to_dashboard.py falls back to the latest committed top_posts_tiktok_*.json via glob when today's is missing
           run_critical python3 scrape_dedupe.py         # strip any post ever curated before (by shortcode/id, not raw URL) → *_fresh.json
           run_optional python3 keyword_posts.py
           run_optional python3 audio_trends.py
