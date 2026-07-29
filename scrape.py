@@ -36,7 +36,7 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
 BASE = "https://api.tikhub.io"
 POSTS_PER_ACCOUNT = int(os.environ.get("POSTS_PER_ACCOUNT", "8"))
 DAYS_BACK = int(os.environ.get("DAYS_BACK", "30"))
-TOP_N = int(os.environ.get("TOP_N", "80"))  # raised from 50 so curate_posts.py's larger MAX_CANDIDATES pool has enough fresh supply after scrape_dedupe.py removes previously-curated URLs
+TOP_N = int(os.environ.get("TOP_N", "150"))  # raised from 80 (2026-07-29) to target 50 kept IG posts/week — with dedup regularly removing 40%+ of a week's raw supply (previously-curated URLs), 80 wasn't leaving curate_posts.py's MAX_CANDIDATES pool enough fresh headroom
 ID_CACHE = OUT / "user_ids.json"
 th_calls = 0  # every real TikHub HTTP call, regardless of caller — feeds cost_tracker
 
