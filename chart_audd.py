@@ -90,7 +90,12 @@ def audd(video_url):
     res = resp.get("result")
     if resp.get("status") == "success" and res:
         return {"song": res.get("title"), "artist": res.get("artist"), "link": res.get("song_link", "")}
-    return {"reason": resp.get("status") or "no match"}
+    # AudD can return status "success" with an empty result (clip decoded fine, just no
+    # match) — that's not distinguishable from a real failure by reusing the status
+    # string as-is, so two old cache entries ended up stored as {"reason": "success"}
+    # and looked like they'd worked. Label it "no match" explicitly instead.
+    status = resp.get("status")
+    return {"reason": "no match" if status == "success" else (status or "no match")}
 
 
 def main():
