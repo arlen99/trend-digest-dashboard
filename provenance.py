@@ -79,6 +79,14 @@ def main():
     tt_curated = sum(1 for p in P if p.get("platform") == "tiktok" and p.get("lane") != "keyword" and not p.get("newFind"))
     kw_finds = sum(1 for p in P if p.get("lane") == "keyword")
     board_accounts = len(set(p["account"] for p in P))
+    # tt_to_dashboard.py / keyword_posts_to_dashboard.py / discovery_to_dashboard.py
+    # all fall back to the latest committed source file when today's scrape is
+    # missing — "carryover" tags posts served from an older run, so the Sources
+    # line can say honestly how much of the board is actually fresh this week.
+    tt_carryover = sum(1 for p in P if p.get("platform") == "tiktok" and p.get("lane") != "keyword" and p.get("carryover"))
+    kw_carryover = sum(1 for p in P if p.get("lane") == "keyword" and p.get("carryover"))
+    disc_carryover = sum(1 for p in P if p.get("lane") == "discovered" and p.get("carryover"))
+    disc_fresh_n = sum(1 for p in P if p.get("lane") == "discovered" and not p.get("carryover"))
 
     audio = jload(latest("audio_trends_*.json"), []) or []
     m = re.search(r"_(\d+) accounts", md_header("audio_trends_*.json"))
@@ -151,6 +159,8 @@ def main():
         "daysBack": int(env.get("DAYS_BACK", 30)),
         "igCurated": ig_curated, "tiktokCurated": tt_curated,
         "keywordFinds": kw_finds, "keywordScanned": kw_scanned, "boardAccounts": board_accounts,
+        "tiktokCarryover": tt_carryover, "keywordCarryover": kw_carryover,
+        "discFresh": disc_fresh_n, "discCarryover": disc_carryover,
         "audioAccounts": audio_accounts, "audioReelsPer": int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
         "audioTracks": len(audio), "audioMulti": audio_multi, "audioShown": len(data.get("soundChart", [])),
         "ttSounds": len(tt_sounds), "ttXplatform": sum(1 for s in tt_sounds if s.get("also_in_ig_niche")),

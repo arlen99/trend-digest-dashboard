@@ -90,7 +90,7 @@ def tt_candidates(max_n):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--max", type=int, default=20, help="cap candidates scraped, per platform")
+    ap.add_argument("--max", type=int, default=10, help="cap candidates scraped, per platform")
     args = ap.parse_args()
     stamp = datetime.now().strftime("%Y-%m-%d")
     rows = []

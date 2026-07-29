@@ -15,6 +15,7 @@ import glob
 import json
 import re
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -61,8 +62,15 @@ def main():
     files = sorted(glob.glob(str(ROOT / "output" / "keyword_posts_*.json")))
     if not files:
         raise SystemExit("No output/keyword_posts_*.json — run keyword_posts.py first.")
-    kw = json.loads(Path(files[-1]).read_text())[:args.top]
+    src_file = files[-1]
+    kw = json.loads(Path(src_file).read_text())[:args.top]
     THUMBS.mkdir(parents=True, exist_ok=True)
+
+    # see tiktok_to_dashboard.py for why this matters — this lane is usually
+    # fresh every run, but falls back the same way if keyword_posts.py ever fails.
+    src_date_m = re.search(r"(\d{4}-\d{2}-\d{2})", src_file)
+    source_date = src_date_m.group(1) if src_date_m else ""
+    carryover = source_date != datetime.now().strftime("%Y-%m-%d")
 
     rows, got, reused = [], 0, 0
     for i, t in enumerate(kw, 1):
@@ -91,11 +99,13 @@ def main():
             "audio": audio, "audioDetected": False, "notes": "",
             "week": week, "date": (t.get("timestamp") or "")[:10], "thumb": thumb,
             "video": prior_videos.get(t["url"], ""), "carousel": [],
+            "carryover": carryover, "sourceDate": source_date,
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     nf = sum(1 for r in rows if r["newFind"])
-    print(f"Merged {len(rows)} keyword-lane posts ({nf} off-seed ⚡, {got} freshly downloaded, {reused} reused). "
+    freshness = f"carried over from {source_date}" if carryover else "fresh this run"
+    print(f"Merged {len(rows)} keyword-lane posts ({freshness}; {nf} off-seed ⚡, {got} freshly downloaded, {reused} reused). "
           f"data.json now {len(data['posts'])} posts.")
 
 

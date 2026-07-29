@@ -79,8 +79,17 @@ def main():
     files = sorted(glob.glob(str(ROOT / "output" / "top_posts_tiktok_*.json")))
     if not files:
         raise SystemExit("No output/top_posts_tiktok_*.json — run tiktok_scrape.py first.")
-    tt = json.loads(Path(files[-1]).read_text())[:args.top]
+    src_file = files[-1]
+    tt = json.loads(Path(src_file).read_text())[:args.top]
     THUMBS.mkdir(parents=True, exist_ok=True)
+
+    # This lane falls back to the latest committed file when today's scrape is
+    # missing (tiktok_scrape.py's account-lane endpoint has been unreliable) — tag
+    # every row so the Sources line can be honest about "12 curated" actually
+    # meaning "12 carried over from a scrape 2 weeks ago", not fresh picks.
+    src_date_m = re.search(r"(\d{4}-\d{2}-\d{2})", src_file)
+    source_date = src_date_m.group(1) if src_date_m else ""
+    carryover = source_date != datetime.now().strftime("%Y-%m-%d")
 
     rows, got, reused = [], 0, 0
     for i, t in enumerate(tt, 1):
@@ -112,11 +121,13 @@ def main():
             "audio": audio, "audioDetected": False, "notes": "",
             "week": week, "date": date, "thumb": thumb,
             "video": prior_videos.get(t["url"], ""), "carousel": [],
+            "carryover": carryover, "sourceDate": source_date,
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     ig = sum(1 for p in data["posts"] if p.get("platform") == "instagram")
-    print(f"Merged {len(rows)} TikTok posts ({got} covers freshly downloaded, {reused} reused) + {ig} Instagram. "
+    freshness = f"carried over from {source_date}" if carryover else "fresh this run"
+    print(f"Merged {len(rows)} TikTok posts ({freshness}; {got} covers freshly downloaded, {reused} reused) + {ig} Instagram. "
           f"data.json now {len(data['posts'])} posts.")
 
 

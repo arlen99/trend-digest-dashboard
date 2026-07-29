@@ -14,7 +14,9 @@ Usage: python3 discovery_to_dashboard.py
 """
 import glob
 import json
+import re
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 
 from curate_posts import caption_hook
@@ -50,8 +52,16 @@ def main():
     if not files:
         print("No output/discovery_candidates_*.json — run discovery_posts.py first.")
         return
-    cands = json.loads(Path(files[-1]).read_text())
+    src_file = files[-1]
+    cands = json.loads(Path(src_file).read_text())
     THUMBS.mkdir(parents=True, exist_ok=True)
+
+    # see tiktok_to_dashboard.py for why this matters — this lane is normally
+    # fresh every run (discovery_posts.py is run explicitly, not on a fallback),
+    # but tag it the same way for consistency if that ever changes.
+    src_date_m = re.search(r"(\d{4}-\d{2}-\d{2})", src_file)
+    source_date = src_date_m.group(1) if src_date_m else ""
+    carryover = source_date != datetime.now().strftime("%Y-%m-%d")
 
     rows, got = [], 0
     for i, t in enumerate(cands, 1):
@@ -79,10 +89,12 @@ def main():
             "week": week, "date": (t.get("timestamp") or "")[:10], "thumb": thumb,
             "video": t.get("video", ""), "carousel": t.get("carousel_urls", []),
             "videoText": t.get("videoText", ""),
+            "carryover": carryover, "sourceDate": source_date,
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
-    print(f"Merged {len(rows)} discovery-candidate posts ({got} covers downloaded). "
+    freshness = f"carried over from {source_date}" if carryover else "fresh this run"
+    print(f"Merged {len(rows)} discovery-candidate posts ({freshness}; {got} covers downloaded). "
           f"data.json now {len(data['posts'])} posts. Save one on the dashboard to "
           f"approve its account onto the watchlist.")
 
