@@ -58,6 +58,7 @@ a{color:inherit;text-decoration:none}
 .pf-toggle .pf:hover{color:var(--ink)}
 .pf-toggle .pf.on{background:var(--teal);color:#0b0f10;font-weight:600}
 .chip.nf{color:#e8c45a;border-color:#e8c45a88;background:#e8c45a14;font-weight:600}
+.chip.carry{color:#e0a33e;border-color:#e0a33e88;background:#e0a33e14;font-weight:600}
 .xref{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#e8c45a;border:1px solid #e8c45a66;border-radius:5px;padding:1px 6px;margin-left:6px;white-space:nowrap}
 .det-badge.unv{color:#c79a6a;border-color:#c79a6a66;background:#c79a6a14;opacity:.92}
 .trk .static-ic{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:15px}
@@ -1138,7 +1139,7 @@ function card(p){
       <div class="hook">${p.hook}</div>
       ${p.videoText?`<div class="vtext"><span class="lab">On-screen</span><span class="tx">${p.videoText}</span></div>`:''}
       <div class="metrics"><div class="m"><b>${fmtN(p.views)}</b>views</div><div class="m"><b>${fmtN(p.likes)}</b>likes</div><div class="m"><b>${fmtN(p.comments)}</b>comments</div>${er}</div>
-      <div class="chips">${p.newFind?`<span class="chip nf" title="${p.source} — creator not in your seed list">⚡ New find</span>`:''}${chips}</div>
+      <div class="chips">${p.newFind?`<span class="chip nf" title="${p.source} — creator not in your seed list">⚡ New find</span>`:''}${p.carryover?`<span class="chip carry" title="This lane's scraper didn't run fresh the week this was added — carried over from a scrape on ${p.sourceDate}">↻ carried over · ${p.sourceDate}</span>`:''}${chips}</div>
       ${audioLine(p)}
       <div class="notes">${p.notes}</div>
       ${actionsRow(p,false)}
@@ -1239,7 +1240,7 @@ function openPost(url){
       <div class="hook">${p.hook}</div>
       ${p.videoText?`<div class="vtext"><span class="lab">On-screen</span><span class="tx">${p.videoText}</span></div>`:''}
       <div class="metrics"><div class="m"><b>${fmtN(p.views)}</b>views</div><div class="m"><b>${fmtN(p.likes)}</b>likes</div><div class="m"><b>${fmtN(p.comments)}</b>comments</div>${er}</div>
-      <div class="chips">${chips}</div>
+      <div class="chips">${p.carryover?`<span class="chip carry" title="This lane's scraper didn't run fresh the week this was added — carried over from a scrape on ${p.sourceDate}">↻ carried over · ${p.sourceDate}</span>`:''}${chips}</div>
       ${audioLine(p)}
       <div class="notes">${p.notes}</div>
       <a class="btn-ig" href="${p.url}" target="_blank" rel="noopener">${ICON.ig} View on ${p.platform==='tiktok'?'TikTok':'Instagram'}</a>
