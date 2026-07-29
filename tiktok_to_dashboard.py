@@ -17,6 +17,7 @@ Usage: python3 tiktok_to_dashboard.py [--top 12]
 import argparse
 import glob
 import json
+import re
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -49,6 +50,27 @@ def main():
     data = json.loads((DASH / "data.json").read_text())
     for p in data["posts"]:
         p.setdefault("platform", "instagram")
+    # Remember each account-lane post's last-known-good LOCAL thumb (by url) before
+    # dropping the old rows, so a fresh-download failure this run falls back to that
+    # instead of the raw source URL — which is a signed TikTok CDN link that expires
+    # in ~2 weeks. Without this, a broken account-lane scraper (as it's been for
+    # weeks) means the same stale top_posts_tiktok_*.json — and its by-now-expired
+    # URLs — keeps getting reused, and every re-run's failed re-download silently
+    # clobbers a perfectly good, already-downloaded local thumb with a dead one.
+    prior_thumbs = {p["url"]: p["thumb"] for p in data["posts"]
+                    if p.get("platform") == "tiktok" and p.get("lane") != "keyword"
+                    and (p.get("thumb") or "").startswith("thumbs/")}
+    # Same idea for video: a post that's already been self-hosted on Blob (by
+    # fetch_videos.py, which runs later in the pipeline) should STAY self-hosted
+    # across this merge — Blob URLs never expire, so there's no reason to reset to
+    # "" and force fetch_videos.py to re-fetch+re-upload it from scratch every
+    # week. Without this, TikTok videos never actually benefited from
+    # fetch_videos.py's own "already on Blob, skip" optimization, and any week
+    # Blob or TikTok's source hiccups, a previously-working native video silently
+    # regresses to the iframe embed even though a good hosted copy still exists.
+    prior_videos = {p["url"]: p["video"] for p in data["posts"]
+                    if p.get("platform") == "tiktok" and p.get("lane") != "keyword"
+                    and "blob.vercel-storage" in (p.get("video") or "")}
     # drop prior account-lane tiktok rows only (preserve keyword-lane rows)
     data["posts"] = [p for p in data["posts"]
                      if not (p.get("platform") == "tiktok" and p.get("lane") != "keyword")]
@@ -60,12 +82,21 @@ def main():
     tt = json.loads(Path(files[-1]).read_text())[:args.top]
     THUMBS.mkdir(parents=True, exist_ok=True)
 
-    rows, got = [], 0
+    rows, got, reused = [], 0, 0
     for i, t in enumerate(tt, 1):
-        rel = f"thumbs/tt_{i:02d}_{t['account']}.jpg"
+        # Keyed by video id (stable across weeks), not rank index i (which shifts
+        # as outlier ranking changes) — so a re-run doesn't re-download a cover
+        # it already has.
+        vid = (re.search(r"/video/(\d+)", t.get("url", "")) or [None, None])[1]
+        rel = f"thumbs/tt_{t['account']}_{vid}.jpg" if vid else f"thumbs/tt_{i:02d}_{t['account']}.jpg"
+        dest = DASH / rel
         thumb = t.get("thumbnail") or ""
-        if t.get("thumbnail") and download(t["thumbnail"], DASH / rel):
+        if dest.exists():
+            thumb = rel; reused += 1
+        elif t.get("thumbnail") and download(t["thumbnail"], dest):
             thumb = rel; got += 1
+        elif prior_thumbs.get(t.get("url")):
+            thumb = prior_thumbs[t["url"]]; reused += 1
         eng = (t.get("likes", 0) + t.get("comments", 0) + t.get("shares", 0))
         er = round(eng / t["views"] * 100, 1) if t.get("views") else None
         audio = t.get("audio_song") or "original sound"
@@ -79,12 +110,13 @@ def main():
             "shares": t.get("shares", 0), "engRate": er, "outlier": t.get("outlier_score", 0),
             "hookTypes": [], "triggers": [], "visualStyles": [],
             "audio": audio, "audioDetected": False, "notes": "",
-            "week": week, "date": date, "thumb": thumb, "video": "", "carousel": [],
+            "week": week, "date": date, "thumb": thumb,
+            "video": prior_videos.get(t["url"], ""), "carousel": [],
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     ig = sum(1 for p in data["posts"] if p.get("platform") == "instagram")
-    print(f"Merged {len(rows)} TikTok posts ({got} covers downloaded locally) + {ig} Instagram. "
+    print(f"Merged {len(rows)} TikTok posts ({got} covers freshly downloaded, {reused} reused) + {ig} Instagram. "
           f"data.json now {len(data['posts'])} posts.")
 
 

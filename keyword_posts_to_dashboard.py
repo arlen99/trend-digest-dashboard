@@ -13,6 +13,7 @@ Usage: python3 keyword_posts_to_dashboard.py [--top 12]
 import argparse
 import glob
 import json
+import re
 import urllib.request
 from pathlib import Path
 
@@ -44,6 +45,15 @@ def main():
     data = json.loads((DASH / "data.json").read_text())
     for p in data["posts"]:
         p.setdefault("platform", "instagram")
+    # remember each post's last-known-good LOCAL thumb (by url) — see
+    # tiktok_to_dashboard.py for why this matters (signed CDN URLs expire in
+    # ~2 weeks; without this fallback a failed re-download clobbers a good local
+    # thumb with a dead remote one).
+    prior_thumbs = {p["url"]: p["thumb"] for p in data["posts"]
+                    if p.get("lane") == "keyword" and (p.get("thumb") or "").startswith("thumbs/")}
+    # same for a previously Blob-hosted video — see tiktok_to_dashboard.py for why.
+    prior_videos = {p["url"]: p["video"] for p in data["posts"]
+                    if p.get("lane") == "keyword" and "blob.vercel-storage" in (p.get("video") or "")}
     # idempotent: drop prior keyword-lane rows only
     data["posts"] = [p for p in data["posts"] if p.get("lane") != "keyword"]
     week = max((p.get("week", "") for p in data["posts"]), default="")
@@ -54,12 +64,19 @@ def main():
     kw = json.loads(Path(files[-1]).read_text())[:args.top]
     THUMBS.mkdir(parents=True, exist_ok=True)
 
-    rows, got = [], 0
+    rows, got, reused = [], 0, 0
     for i, t in enumerate(kw, 1):
-        rel = f"thumbs/kw_{i:02d}_{t['account']}.jpg"
+        # keyed by video id (stable across weeks), not rank index i
+        vid = (re.search(r"/video/(\d+)", t.get("url", "")) or [None, None])[1]
+        rel = f"thumbs/kw_{t['account']}_{vid}.jpg" if vid else f"thumbs/kw_{i:02d}_{t['account']}.jpg"
+        dest = DASH / rel
         thumb = t.get("thumbnail") or ""
-        if t.get("thumbnail") and download(t["thumbnail"], DASH / rel):
+        if dest.exists():
+            thumb = rel; reused += 1
+        elif t.get("thumbnail") and download(t["thumbnail"], dest):
             thumb = rel; got += 1
+        elif prior_thumbs.get(t.get("url")):
+            thumb = prior_thumbs[t["url"]]; reused += 1
         audio = t.get("audio_song") or "original sound"
         if t.get("audio_artist") and t["audio_artist"].lower() not in audio.lower():
             audio = f"{audio} · {t['audio_artist']}"
@@ -72,12 +89,13 @@ def main():
             "shares": t.get("shares", 0), "engRate": t.get("trendScore"), "outlier": None,
             "hookTypes": [], "triggers": [], "visualStyles": [],
             "audio": audio, "audioDetected": False, "notes": "",
-            "week": week, "date": (t.get("timestamp") or "")[:10], "thumb": thumb, "video": "", "carousel": [],
+            "week": week, "date": (t.get("timestamp") or "")[:10], "thumb": thumb,
+            "video": prior_videos.get(t["url"], ""), "carousel": [],
         })
     data["posts"].extend(rows)
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     nf = sum(1 for r in rows if r["newFind"])
-    print(f"Merged {len(rows)} keyword-lane posts ({nf} off-seed ⚡, {got} covers downloaded). "
+    print(f"Merged {len(rows)} keyword-lane posts ({nf} off-seed ⚡, {got} freshly downloaded, {reused} reused). "
           f"data.json now {len(data['posts'])} posts.")
 
 

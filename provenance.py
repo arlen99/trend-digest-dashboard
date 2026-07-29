@@ -48,6 +48,20 @@ def main():
             boot = (int(m.group(1)) - int(m.group(2))) if m else boot
     ig_seed = ig_total - disc - boot
 
+    # latest related-profiles discovery run's own summary line (candidates found +
+    # the MIN_SEEDS threshold used) — parsed back from discover.py's .md output
+    # since MIN_SEEDS is a per-run env var, not persisted anywhere else.
+    disc_md = latest("discovered_*.md")
+    disc_candidates = disc_min_seeds = disc_seed_coverage = None
+    if disc_md:
+        header = Path(disc_md).read_text().split("\n")[1]
+        m1 = re.search(r"(\d+)/(\d+) seeds returned", header)
+        if m1:
+            disc_seed_coverage = [int(m1.group(1)), int(m1.group(2))]
+        m2 = re.search(r"(\d+) candidates related to >= (\d+) seeds", header)
+        if m2:
+            disc_candidates, disc_min_seeds = int(m2.group(1)), int(m2.group(2))
+
     # how many of the tracked handles actually resolve to an IG id (= scrapable set)
     ids = jload(ROOT / "output" / "user_ids.json", {}) or {}
     ig_resolved = sum(1 for h in acc.get("accounts", []) if h in ids or h.lstrip("@") in ids)
@@ -131,6 +145,7 @@ def main():
     prov = {
         "igAccounts": ig_total, "igResolved": ig_resolved,
         "igSeed": ig_seed, "igDiscovered": disc, "igBootstrap": boot,
+        "igDiscMinSeeds": disc_min_seeds, "igDiscCandidates": disc_candidates, "igDiscSeedCoverage": disc_seed_coverage,
         "tiktokCreators": tt_creators,
         "postsPerIg": int(env.get("POSTS_PER_ACCOUNT", 8)), "postsPerTt": int(env.get("TT_POSTS_PER", 10)),
         "daysBack": int(env.get("DAYS_BACK", 30)),
