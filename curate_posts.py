@@ -184,6 +184,13 @@ def main() -> None:
         glob.glob(str(OUT / "top_posts_*_fresh.json")), default="")
     if not path:
         sys.exit("No top_posts_*_fresh.json found. Run scrape.py + scrape_dedupe.py first.")
+    # If scrape.py failed to produce today's file, this falls back to the latest
+    # one committed — same silent-staleness risk as the TikTok/keyword/discovery
+    # lanes (see tiktok_to_dashboard.py). Tag it so the Sources line stays honest
+    # even if the IG scrape (which has been reliable so far) ever breaks too.
+    src_date_m = re.search(r"(\d{4}-\d{2}-\d{2})", path)
+    source_date = src_date_m.group(1) if src_date_m else ""
+    carryover = source_date != date.today().isoformat()
     rows = json.loads(Path(path).read_text())
     rows.sort(key=lambda r: r.get("outlier_score", 0), reverse=True)
     rows = rows[:MAX_CANDIDATES]
@@ -291,6 +298,7 @@ def main() -> None:
             # thumbnail it already reviewed for tagging; fetch_videos.py applies
             # the correction when self-hosting.
             "rotate": (result.get("rotate") or 0) if fmt != "Carousel" else 0,
+            "carryover": carryover, "sourceDate": source_date,
         }
         if fmt == "Carousel":
             post["thumb"] = (r.get("carousel_paths") or [""])[0]
@@ -300,7 +308,8 @@ def main() -> None:
         curated.append(post)
         print(f"  {i:02d} @{acct} -> included: {result.get('hook','')[:60]}")
 
-    print(f"\n{len(curated)}/{len(rows)} candidates included.")
+    freshness = f"carried over from {source_date}" if carryover else "fresh this run"
+    print(f"\n{len(curated)}/{len(rows)} candidates included ({freshness}).")
     data = json.loads((DASH / "data.json").read_text())
     kept = [p for p in data["posts"] if p.get("platform") == "tiktok" or p.get("lane") == "keyword"]
     curated.sort(key=lambda p: p["outlier"] or 0, reverse=True)

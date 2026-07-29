@@ -83,6 +83,7 @@ def main():
     # all fall back to the latest committed source file when today's scrape is
     # missing — "carryover" tags posts served from an older run, so the Sources
     # line can say honestly how much of the board is actually fresh this week.
+    ig_carryover = sum(1 for p in P if p.get("platform", "instagram") == "instagram" and p.get("lane") != "keyword" and not p.get("newFind") and p.get("carryover"))
     tt_carryover = sum(1 for p in P if p.get("platform") == "tiktok" and p.get("lane") != "keyword" and p.get("carryover"))
     kw_carryover = sum(1 for p in P if p.get("lane") == "keyword" and p.get("carryover"))
     disc_carryover = sum(1 for p in P if p.get("lane") == "discovered" and p.get("carryover"))
@@ -159,7 +160,7 @@ def main():
         "daysBack": int(env.get("DAYS_BACK", 30)),
         "igCurated": ig_curated, "tiktokCurated": tt_curated,
         "keywordFinds": kw_finds, "keywordScanned": kw_scanned, "boardAccounts": board_accounts,
-        "tiktokCarryover": tt_carryover, "keywordCarryover": kw_carryover,
+        "igCarryover": ig_carryover, "tiktokCarryover": tt_carryover, "keywordCarryover": kw_carryover,
         "discFresh": disc_fresh_n, "discCarryover": disc_carryover,
         "audioAccounts": audio_accounts, "audioReelsPer": int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
         "audioTracks": len(audio), "audioMulti": audio_multi, "audioShown": len(data.get("soundChart", [])),
