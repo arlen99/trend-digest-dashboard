@@ -237,6 +237,8 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .acct-list{display:flex;flex-wrap:wrap;gap:6px;max-height:55vh;overflow:auto;padding-right:4px}
 .acct-row{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);padding:5px 9px;border:1px solid var(--line2);border-radius:6px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.18)}
 .acct-row.pending-rem{opacity:.45;text-decoration:line-through}
+.acct-row.unresolved{border-color:#e0a33e66;background:#e0a33e12;color:#e0a33e}
+.acct-warn{font-size:11px;line-height:1;cursor:help}
 .acct-x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:13px;line-height:1}
 .acct-x:hover{color:#e0564b}
 .acct-link{color:inherit;text-decoration:none;border-bottom:1px dashed transparent;transition:.15s;background:none;border-top:0;border-left:0;border-right:0;padding:0;font:inherit;cursor:pointer}
@@ -716,12 +718,17 @@ function renderAccounts(){ensureEdits();
     const pool=((DATA.pools&&DATA.pools[key])||[]).slice();
     const addKey=plat==='ig'?'igAdd':'ttAdd', remKey=plat==='ig'?'igRemove':'ttRemove';
     const adds=accountEdits[addKey]||[], rems=accountEdits[remKey]||[];
-    $('#acct-'+plat+'-n').textContent=(pool.length+adds.length-rems.length)+' tracked  ·  +'+adds.length+' / −'+rems.length+' pending';
+    const unresN=((DATA.unresolvedAccounts&&DATA.unresolvedAccounts[plat==='ig'?'ig':'tiktok'])||[]).length;
+    $('#acct-'+plat+'-n').textContent=(pool.length+adds.length-rems.length)+' tracked  ·  +'+adds.length+' / −'+rems.length+' pending'+(unresN?'  ·  ⚠ '+unresN+' unresolved':'');
     const eds=adds.map(h=>`<span class="acct-chip add">+ ${accountLink(plat,h)}<button data-undo-add="${plat}" data-h="${h}" type="button">✕</button></span>`).join('')
       +rems.map(h=>`<span class="acct-chip rem">${accountLink(plat,h)}<button data-undo-rem="${plat}" data-h="${h}" type="button">↺</button></span>`).join('');
     $('#acct-'+plat+'-edits').innerHTML=eds;
     const remSet=new Set(rems.map(x=>normHandle(x)));
-    $('#acct-'+plat+'-list').innerHTML=pool.map(h=>{const pending=remSet.has(normHandle(h));return `<span class="acct-row${pending?' pending-rem':''}">${accountLink(plat,h)}<button class="acct-x" data-rm="${plat}" data-h="${h}" type="button" title="${pending?'queued for removal':'remove'}">${pending?'↺':'✕'}</button></span>`;}).join('');});}
+    const unresKey=plat==='ig'?'ig':'tiktok';
+    const unresSet=new Set(((DATA.unresolvedAccounts&&DATA.unresolvedAccounts[unresKey])||[]).map(x=>normHandle(x)));
+    $('#acct-'+plat+'-list').innerHTML=pool.map(h=>{const pending=remSet.has(normHandle(h));const unresolved=unresSet.has(normHandle(h));
+      const warn=unresolved?`<span class="acct-warn" title="Not resolving to a scrapable account — likely renamed or deleted. Getting zero posts each run until fixed (search for a new handle, or remove).">⚠</span>`:'';
+      return `<span class="acct-row${pending?' pending-rem':''}${unresolved?' unresolved':''}">${warn}${accountLink(plat,h)}<button class="acct-x" data-rm="${plat}" data-h="${h}" type="button" title="${pending?'queued for removal':'remove'}">${pending?'↺':'✕'}</button></span>`;}).join('');});}
 ['ig','tt'].forEach(plat=>{
   $('#acct-'+plat+'-form').addEventListener('submit',async e=>{e.preventDefault();
     const inp=$('#acct-'+plat+'-input'),btn=e.target.querySelector('button[type="submit"]');

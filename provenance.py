@@ -59,8 +59,10 @@ def main():
 
     data = jload(DASH / "data.json", {})
     P = data.get("posts", [])
-    ig_curated = sum(1 for p in P if p.get("platform", "instagram") == "instagram" and p.get("lane") != "keyword")
-    tt_curated = sum(1 for p in P if p.get("platform") == "tiktok" and p.get("lane") != "keyword")
+    # newFind rows are pending discovery candidates awaiting a save-to-approve, not
+    # actually curated picks — excluded here so "curated" stays an honest count.
+    ig_curated = sum(1 for p in P if p.get("platform", "instagram") == "instagram" and p.get("lane") != "keyword" and not p.get("newFind"))
+    tt_curated = sum(1 for p in P if p.get("platform") == "tiktok" and p.get("lane") != "keyword" and not p.get("newFind"))
     kw_finds = sum(1 for p in P if p.get("lane") == "keyword")
     board_accounts = len(set(p["account"] for p in P))
 
@@ -159,6 +161,14 @@ def main():
     data["pools"] = {
         "ig": sorted(acc.get("accounts", []), key=str.lower),
         "tiktok": sorted(tt_acc.get("accounts", []), key=str.lower),
+    }
+    # handles that don't resolve to a scrapable id — surfaced on the Accounts panel so
+    # a renamed/deleted account doesn't just silently vanish from scrapes unnoticed;
+    # TikTok side has no equivalent gap today (sec_uids always covers tiktok_accounts.json).
+    tt_secs = tt_acc.get("sec_uids", {})
+    data["unresolvedAccounts"] = {
+        "ig": sorted(h for h in acc.get("accounts", []) if h not in ids and h.lstrip("@") not in ids),
+        "tiktok": sorted(h for h in tt_acc.get("accounts", []) if not tt_secs.get(h)),
     }
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print("Injected provenance:", json.dumps(prov))

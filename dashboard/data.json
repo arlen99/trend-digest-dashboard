@@ -2884,7 +2884,7 @@
   ],
   "provenance": {
     "igAccounts": 115,
-    "igResolved": 106,
+    "igResolved": 107,
     "igSeed": 115,
     "igDiscovered": 0,
     "igBootstrap": 0,
@@ -2896,7 +2896,7 @@
     "tiktokCurated": 12,
     "keywordFinds": 10,
     "keywordScanned": 10,
-    "boardAccounts": 26,
+    "boardAccounts": 47,
     "audioAccounts": 106,
     "audioReelsPer": 20,
     "audioTracks": 1032,
@@ -2924,13 +2924,14 @@
     ],
     "trendsAudio": 6,
     "trendsHook": 4,
-    "costTikhubCalls": 557,
+    "costTikhubCalls": 1015,
     "costClaudeCalls": 0,
     "costAuddCalls": 20,
     "auddAuthDead": true,
-    "costTikhub": 0.557,
+    "costAcrcloudCalls": 0,
+    "costTikhub": 1.015,
     "costClaude": 0.0,
-    "costTotal": 0.557,
+    "costTotal": 1.015,
     "igExcluded": 10,
     "igEvaluated": 25,
     "igExcludeReasons": [
@@ -15061,5 +15062,18 @@
       ]
     }
   },
-  "curatedAt": "2026-07-28"
+  "curatedAt": "2026-07-28",
+  "unresolvedAccounts": {
+    "ig": [
+      "_mikehenderson",
+      "alexbjorstop",
+      "fabio_kraniotis",
+      "jeffreyjkiefer",
+      "michaelzdrake",
+      "michelleyphoto",
+      "ryannifysa",
+      "twistfip"
+    ],
+    "tiktok": []
+  }
 }
