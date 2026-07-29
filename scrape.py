@@ -114,7 +114,14 @@ def extract_audio(cm):
     is_original = bool(osi) and not mi
     audio_song = ai.get("title") or (osi.get("original_audio_title") if osi else "") or ""
     audio_artist = ai.get("display_artist") or deep(osi, "ig_artist", "username", default="") or ""
-    audio_id = ai.get("audio_cluster_id") or cm.get("music_canonical_id") or (osi.get("audio_asset_id") if osi else "")
+    # original_sound_info.audio_asset_id is the ID the actual /reels/audio/<id>/ page
+    # scheme uses for original (non-licensed) audio — confirmed live: for one real post,
+    # music_canonical_id ("18598469194039077") pointed at the WRONG audio page while
+    # audio_asset_id ("27388458107507583") was correct; a third field entirely,
+    # audio_ranking_info.best_audio_cluster_id, was a third distinct value. music_info's
+    # audio_cluster_id (real licensed tracks) still wins first; music_canonical_id is
+    # only a last-resort fallback when neither of the real IDs is present.
+    audio_id = ai.get("audio_cluster_id") or (osi.get("audio_asset_id") if osi else "") or cm.get("music_canonical_id")
     return audio_song, audio_artist, str(audio_id or ""), is_original
 
 
