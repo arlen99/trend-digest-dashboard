@@ -26,8 +26,12 @@ ROOT = Path(__file__).parent
 OUT = ROOT / "output"
 OUT.mkdir(exist_ok=True)
 KEY = os.environ.get("TIKHUB_TOKEN")
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
-      "(KHTML, like Gecko) Version/16 Safari/605.1.15")
+UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+      "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+# The Safari UA every other script here uses is Cloudflare-banned specifically on
+# TikHub's fetch_user_post route (error 1010 "browser_signature_banned", not a
+# retryable rate-limit) — verified 2026-07-29. Chrome UA clears that block; the
+# underlying TikHub upstream 400 on this route is a separate, still-open issue.
 POSTS_PER = int(os.environ.get("TT_POSTS_PER", "10"))
 DAYS_BACK = int(os.environ.get("DAYS_BACK", "30"))
 TOP_N = int(os.environ.get("TT_TOP_N", "40"))

@@ -92,7 +92,10 @@ def resolve_ids(accounts):
         d = th(f"/api/v1/instagram/v1/fetch_user_info_by_username?username={urllib.parse.quote(u)}")
         pk = None
         if isinstance(d, dict):
-            for v in [deep(d, "data", "user", "pk"), deep(d, "data", "pk"), deep(d, "data", "id")]:
+            # TikHub sometimes wraps this response in an extra status/attempts retry
+            # envelope (data.data.user.* instead of data.user.*) — check both depths.
+            for v in [deep(d, "data", "data", "user", "id"), deep(d, "data", "data", "user", "pk"),
+                      deep(d, "data", "user", "pk"), deep(d, "data", "pk"), deep(d, "data", "id")]:
                 if v and str(v).isdigit():
                     pk = str(v); break
         if pk:
