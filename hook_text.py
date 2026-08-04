@@ -56,8 +56,11 @@ def video_url_for(row):
 
 
 def frame(video_url, t, dest):
-    subprocess.run(["ffmpeg", "-y", "-ss", str(t), "-i", video_url, "-frames:v", "1", "-q:v", "3", dest],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
+    try:
+        subprocess.run(["ffmpeg", "-y", "-ss", str(t), "-i", video_url, "-frames:v", "1", "-q:v", "3", dest],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
+    except (subprocess.TimeoutExpired, OSError):
+        return False
     return os.path.exists(dest) and os.path.getsize(dest) > 800
 
 
