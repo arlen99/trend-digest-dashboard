@@ -152,8 +152,16 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .reelscroll .empty{color:#fff;height:100%;display:flex;align-items:center;justify-content:center}
 @media(max-width:680px){.reelframe{height:calc(100% - 12px);border-radius:10px}}
 /* Spotlight carousel */
-.spl-stage{overflow:hidden;width:100%;padding:20px 0}
+.spl-stage{overflow:hidden;width:100%;padding:20px 0;position:relative}
 .spl-track{display:flex;gap:20px;position:relative;will-change:transform}
+.spl-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;
+  background:rgba(10,12,14,.7);border:1px solid var(--line2);color:var(--ink);font-size:20px;line-height:1;
+  cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:.15s}
+.spl-arrow:hover{background:rgba(10,12,14,.92);border-color:var(--teal);color:var(--teal)}
+.spl-arrow.spl-arrow-l{left:8px}
+.spl-arrow.spl-arrow-r{right:8px}
+.spl-arrow:disabled{opacity:.2;cursor:default;pointer-events:none}
+.mm-card.mm-wide{max-width:1040px}
 .spl-slide{flex:none;width:clamp(280px,72vw,360px);background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:opacity .35s,transform .35s;cursor:pointer;position:relative}
 .spl-slide.active{cursor:default;opacity:1;transform:scale(1)}
 .spl-slide:not(.active){opacity:.3;transform:scale(0.96)}
@@ -1061,6 +1069,7 @@ function actionsRow(p,inModal){
 /* ---- In-app Yes/No confirm — replaces browser confirm(), reuses #methodmodal ---- */
 function appConfirm({title,body,yes='Yes',no='No'}){
   return new Promise(resolve=>{
+    $('#mm-body').classList.remove('mm-wide');
     $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
       <h3 class="mm-title">${title}</h3><p class="mm-sub">${body}</p>
       <div class="pp-actions" style="justify-content:flex-end">
@@ -1334,6 +1343,7 @@ function openMethod(kind){
     +`<div class="msec"><h4>Why search TikTok &amp; not Instagram?</h4><p>TikTok indexes the <b>on-screen text</b> of every video server-side, so searching a phrase returns everyone using it. Instagram has no equivalent — its search only matches captions and hashtags, not the text overlaid in the video. So the hook side runs through TikTok, even though our OCR currently reads <b>${platStr}</b> reels. (Adding TikTok to the OCR side is on the list — TikHub's web endpoint strips the video URL, so it'd need an extra fetch per post.)</p></div>`
     +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
   }
+  $('#mm-body').classList.remove('mm-wide');
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close">✕</button><h3 class="mm-title">${title}</h3><p class="mm-sub">${sub}</p>${body}`;
   mm.classList.remove('hidden'); document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
@@ -1462,15 +1472,21 @@ function renderReelCarousel(){
   const prev=idx>0?buildSlide(urls[idx-1],false,idx-1):'<div class="spl-slide spl-ghost"></div>';
   const curr=buildSlide(urls[idx],true,idx);
   const next=idx<urls.length-1?buildSlide(urls[idx+1],false,idx+1):'<div class="spl-slide spl-ghost"></div>';
-  const hint=urls.length>1?`<p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>`:'';
+  const hint=urls.length>1?`<p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards, use arrow keys, or the buttons below</p>`:'';
+  const arrows=urls.length>1?`<button class="spl-arrow spl-arrow-l" type="button" aria-label="Previous reel"${idx===0?' disabled':''}>&#8249;</button><button class="spl-arrow spl-arrow-r" type="button" aria-label="Next reel"${idx===urls.length-1?' disabled':''}>&#8250;</button>`:'';
   stopVideos(mm);
-  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
+  const mmBody=$('#mm-body');
+  mmBody.classList.add('mm-wide');
+  mmBody.innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
     <h3 class="mm-title">Example reel</h3>
-    <div class="spl-stage" style="margin-top:14px"><div class="spl-track">${prev}${curr}${next}</div></div>${hint}`;
+    <div class="spl-stage" style="margin-top:14px">${arrows}<div class="spl-track">${prev}${curr}${next}</div></div>${hint}`;
   $('#mm-close').onclick=closeMethod;
-  centerTrack($('#mm-body'));
-  $('#mm-body').querySelectorAll('[data-relgo]').forEach(b=>{b.onclick=()=>{carReelIdx=+b.dataset.relgo;renderReelCarousel();};});
-  const activePlayer=$('#mm-body').querySelector('.spl-slide.active .spl-player');
+  centerTrack(mmBody);
+  mmBody.querySelectorAll('[data-relgo]').forEach(b=>{b.onclick=()=>{carReelIdx=+b.dataset.relgo;renderReelCarousel();};});
+  const arrL=mmBody.querySelector('.spl-arrow-l'),arrR=mmBody.querySelector('.spl-arrow-r');
+  if(arrL)arrL.onclick=()=>{if(carReelIdx>0){carReelIdx--;renderReelCarousel();}};
+  if(arrR)arrR.onclick=()=>{if(carReelIdx<urls.length-1){carReelIdx++;renderReelCarousel();}};
+  const activePlayer=mmBody.querySelector('.spl-slide.active .spl-player');
   if(activePlayer)resolveReelSlide(activePlayer,urls[idx]);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-list]');if(b){e.preventDefault();e.stopPropagation();openReelCarousel(JSON.parse(decodeURIComponent(b.dataset.reelList)),+b.dataset.reelIdx);}});
