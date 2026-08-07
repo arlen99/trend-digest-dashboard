@@ -1194,6 +1194,21 @@ function injectEmbed(media,src){
 function embedFor(media,url,plat){const id=ttId(url),code=igCode(url);
   if(plat==='tiktok'&&id)injectEmbed(media,`https://www.tiktok.com/embed/v2/${id}`);
   else if(code)injectEmbed(media,`https://www.instagram.com/reel/${code}/embed/`);}
+// A <video>'s stored src is a signed IG/TikTok CDN URL captured at scrape time —
+// it dies roughly a day or two later (Instagram/TikTok's own CDN signing, not
+// something we control). Before giving up and falling back to the platform embed,
+// try ONE live re-fetch for a fresh signed URL and retry. `postUrl` is the original
+// post URL (not the video URL) — /api/refresh-video looks the post back up by it.
+function videoErrorFallback(videoEl,postUrl,onGiveUp){
+  if(videoEl.dataset.refreshTried){onGiveUp();return;}
+  videoEl.dataset.refreshTried='1';
+  const plat=postUrl.includes('tiktok.com')?'tiktok':'instagram';
+  fetch('/api/refresh-video?url='+encodeURIComponent(postUrl)+'&platform='+plat)
+    .then(r=>r.json()).then(j=>{
+      if(j&&j.ok&&j.video){videoEl.src=j.video;videoEl.load();videoEl.play().catch(()=>{});}
+      else onGiveUp();
+    }).catch(onGiveUp);
+}
 // Browsers block autoplay WITH SOUND unless it's a direct response to a user gesture
 // (click/tap) — that's why a fresh scroll-triggered reel starts muted. But per Chrome/
 // Safari's documented autoplay policy, once the user has genuinely interacted with the
@@ -1216,7 +1231,7 @@ function play(card){
   if(v){
     const vid=document.createElement('video');vid.className='vid';vid.controls=true;vid.playsInline=true;
     vid.preload='metadata';vid.poster=card.dataset.thumb||'';vid.src=v;
-    vid.addEventListener('error',()=>{vid.remove();media.classList.remove('playing');embedFor(media,url,plat);});
+    vid.addEventListener('error',()=>videoErrorFallback(vid,url,()=>{vid.remove();media.classList.remove('playing');embedFor(media,url,plat);}));
     media.appendChild(vid);media.classList.add('playing');vid.play().catch(()=>{});
     return;
   }
@@ -1229,7 +1244,7 @@ function openPost(url){
   const er=p.engRate==null?'':`<div class="m er"><b>${p.engRate}%</b>ER</div>`;
   const ttv=p.platform==='tiktok'?ttId(p.url):'', igc=p.platform!=='tiktok'?igCode(p.url):'';
   const m=(p.carousel&&p.carousel.length)?`<div class="gallery" id="m-gal"></div>`
-    :p.video?`<video controls autoplay playsinline poster="${p.thumb}" src="${p.video}"></video>`
+    :p.video?`<video id="modal-vid" controls autoplay playsinline poster="${p.thumb}" src="${p.video}"></video>`
     :ttv?`<iframe class="embed-frame" src="https://www.tiktok.com/embed/v2/${ttv}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
     :igc?`<iframe class="embed-frame" src="https://www.instagram.com/reel/${igc}/embed/" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`
     :`<img src="${p.thumb}" alt="@${p.account}">`;
@@ -1248,6 +1263,8 @@ function openPost(url){
     </div></div>`;
   modal.classList.remove('hidden');document.body.style.overflow='hidden';
   if(p.carousel&&p.carousel.length)initGallery($('#m-gal'),p.carousel);
+  const mv=$('#modal-vid');
+  if(mv)mv.addEventListener('error',()=>videoErrorFallback(mv,p.url,()=>{const mc=mv.closest('.modal-media');mv.remove();embedFor(mc,p.url,p.platform);}));
   $('#m-close').onclick=closeModal;
   modal.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',async()=>{
     const pp=posts.find(x=>x.url===url)||savedData[url];if(!pp)return;
@@ -1416,12 +1433,12 @@ function openReelPopup(url){
   // permanently broken player, same embedFor() pattern play() uses for board cards.
   const vidEl=$('#reelpop-vid');
   if(vidEl&&embedSrc){
-    vidEl.addEventListener('error',()=>{
+    vidEl.addEventListener('error',()=>videoErrorFallback(vidEl,url,()=>{
       vidEl.remove();
       embedFor($('#reelpop-media'),url,plat);
       const subEl=$('#reelpop-sub');
       if(subEl)subEl.textContent="This reel isn't curated on the board — the native download failed to load, so this is the platform embed.";
-    });
+    }));
   }
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-popup]');if(b){e.preventDefault();e.stopPropagation();openReelPopup(b.dataset.reelPopup);}});
@@ -1895,9 +1912,11 @@ function swMediaHTML(p,opt){opt=opt||{};
 function swInitMedia(root,p){
   root.querySelectorAll('.gallery[data-gal]').forEach(g=>initGallery(g,JSON.parse(decodeURIComponent(g.dataset.gal))));
   root.querySelectorAll('video.rv').forEach(v=>v.addEventListener('error',function(){
-    const m=v.parentNode;v.remove();const istt=(p.platform==='tiktok'),tid=istt?ttId(p.url):'',code=igCode(p.url);
-    const src=istt&&tid?('https://www.tiktok.com/embed/v2/'+tid):code?('https://www.instagram.com/reel/'+code+'/embed/'):'';
-    if(src){const f=document.createElement('iframe');f.src=src;f.setAttribute('allow','autoplay;encrypted-media;fullscreen');f.setAttribute('allowfullscreen','');f.setAttribute('scrolling','no');m.appendChild(f);}
+    videoErrorFallback(v,p.url,()=>{
+      const m=v.parentNode;v.remove();const istt=(p.platform==='tiktok'),tid=istt?ttId(p.url):'',code=igCode(p.url);
+      const src=istt&&tid?('https://www.tiktok.com/embed/v2/'+tid):code?('https://www.instagram.com/reel/'+code+'/embed/'):'';
+      if(src){const f=document.createElement('iframe');f.src=src;f.setAttribute('allow','autoplay;encrypted-media;fullscreen');f.setAttribute('allowfullscreen','');f.setAttribute('scrolling','no');m.appendChild(f);}
+    });
   }));
 }
 // --- Spotlight: active post centred, neighbours greyed at the sides (reuses .spl-*) ---
