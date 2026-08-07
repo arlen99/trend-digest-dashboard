@@ -502,13 +502,8 @@ select:hover{border-color:var(--teal)}
           <button data-tf="saved">★ Saved</button>
           <button data-tf="dismissed">✕ Dismissed</button>
         </div>
-        <div class="view-toggle" id="tr-view-toggle">
-          <button data-trv="list" class="on">≡ List</button>
-          <button data-trv="spotlight">◉ Spotlight</button>
-        </div>
       </div>
       <div class="trendgrid" id="trendgrid"></div>
-      <div id="spl-trends" style="display:none"></div>
     </section>
     <!-- SUMMARY -->
     <section class="view hidden" id="v-summary">
@@ -544,13 +539,8 @@ select:hover{border-color:var(--teal)}
             <button data-sf="saved">★ Saved</button>
             <button data-sf="dismissed">✕ Dismissed</button>
           </div>
-          <div class="view-toggle" id="sc-view-toggle">
-            <button data-scv="list" class="on">≡ List</button>
-            <button data-scv="spotlight">◉ Spotlight</button>
-          </div>
         </div>
-        <div class="tracks" id="soundchart"></div>
-        <div id="spl-sounds" style="display:none"></div></div>
+        <div class="tracks" id="soundchart"></div></div>
       <div class="sec" id="sec-tt"><h2>Trending on TikTok</h2>
         <p class="lead">TikTok's trending sounds, with the ones already surfacing in your Instagram niche flagged — a cross-platform early signal.</p>
         <div class="tracks" id="ttsounds"></div></div>
@@ -754,25 +744,21 @@ renderAccounts();
 /* ========== TREND RADAR ========== */
 function renderTrendRadar(){
   const trends=activeData().trends||[], tg=$('#trendgrid');
-  const spl=$('#spl-trends');
   const ICN={audio:'♪',hook:'✎'};
-  // update filter bar + view toggle active state
+  // update filter bar active state
   document.querySelectorAll('#trends-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.tf===trendFilter);});
-  document.querySelectorAll('#tr-view-toggle button').forEach(b=>{b.classList.toggle('on',b.dataset.trv===trMode);});
   const visible=trends.filter(t=>{
     const k=`${t.name}|${t.type}`;
     if(trendFilter==='saved')return savedTrends.has(k);
     if(trendFilter==='dismissed')return dismissedTrends.has(k);
     return !dismissedTrends.has(k);
   });
-  // dispatch to spotlight or list
-  if(trMode==='spotlight'){tg.style.display='none';if(spl)spl.style.display='';renderTrendSpotlight(visible);return;}
-  tg.style.display='';if(spl)spl.style.display='none';
   if(!visible.length){tg.innerHTML=`<div class="empty">${trendFilter==='saved'?'No saved trends yet.':trendFilter==='dismissed'?'No dismissed trends.':'No trend cards for this week.'}</div>`;return;}
   tg.innerHTML=visible.map(t=>{
     const k=`${t.name}|${t.type}`;
     const isSaved=savedTrends.has(k), isDis=dismissedTrends.has(k);
-    const ex=(t.examples||[]).map((u,i)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ example ${i+1}</button>`).join('');
+    const exList=encodeURIComponent(JSON.stringify(t.examples||[]));
+    const ex=(t.examples||[]).map((u,i)=>`<button class="lk reel" type="button" data-reel-list="${exList}" data-reel-idx="${i}">▶ example ${i+1}</button>`).join('');
     const trig=t.trigger?`<span class="ttrig" style="color:${col(t.trigger)}">${t.trigger}</span>`:'<span></span>';
     const mom=(t.momentum||'new').toLowerCase();
     return `<article class="tcard${isSaved?' saved-trend':''}" data-tkey="${encodeURIComponent(k)}">
@@ -815,9 +801,8 @@ let saved=new Set(Object.keys(savedData));
 let trendFilter='all', soundFilter='all', bookmarkFilter='all';
 let inspirationLinks=[];
 let inspirationLinksBlocked=false;  // true when Blob's plan limits are stopping links from loading (distinct from "you have none")
-let trMode='list', scMode='list';
-let trIdx=0, trReel=0, scIdx=0, scReel=0;
 let swMode='grid', swIdx=0, swRows=[], swFP='', _reelObs=null;  // Swipe File view mode (grid/spotlight/scroll)
+let carReelUrls=[], carReelIdx=0;  // Example-reel carousel (Trend Radar / Audio Trends) — always the reel-popup's own arrow-navigable view now, not a separate "Spotlight" mode
 let savedTrends=LS.get('td_saved_trends');
 let dismissedTrends=LS.get('td_dis_trends');
 let savedSounds=LS.get('td_saved_sounds');
@@ -1399,35 +1384,39 @@ async function removeReelDownload(url){
     if(!j.ok){alert(`Couldn't remove: ${j.reason||r.status}`);return;}
     if(DATA.videos)delete DATA.videos[url];
     removedVideos.add(url);saveLocal();persistState();  // see dismissWithConfirm — must round-trip or a later write wipes it
-    openReelPopup(url); // re-render — now without the native video
-    setTimeout(()=>{const note=$('#mm-body .pp-spin')||$('#mm-body .mm-sub');if(note)note.insertAdjacentHTML('beforebegin',`<div class="pp-spin" style="color:var(--teal);padding:8px 0">✓ Removed (${j.freedKB?j.freedKB+' KB':'no blob found'} freed)</div>`);},80);
+    renderReelCarousel(); // re-render current slide — now without the persisted Blob video
+    setTimeout(()=>{const note=$('#mm-body .pp-spin')||$('#mm-body .spl-sub');if(note)note.insertAdjacentHTML('beforebegin',`<div class="pp-spin" style="color:var(--teal);padding:8px 0">✓ Removed (${j.freedKB?j.freedKB+' KB':'no blob found'} freed)</div>`);},80);
   }catch(e){alert('Remove failed: '+e.message);}
 }
-async function openReelPopup(url){
-  if(!url)return;
-  const onBoard=posts.find(p=>p.url===url)||savedData[url];
-  if(onBoard){openPost(url);return;}
+// Example-reel viewer — always the arrow-navigable carousel now (formerly a
+// separate "Spotlight" mode toggle for Trend Radar/Audio Trends cards; this
+// replaces that entirely, scoped to the ONE card's own examples/samples list
+// rather than every card site-wide). `urls` is that card's full reel list,
+// `startIdx` the one that was clicked.
+function openReelCarousel(urls,startIdx){
+  urls=(urls||[]).filter(Boolean);
+  if(!urls.length)return;
+  // A lone reel can still be an on-board post (e.g. a saved link) — keep
+  // routing that straight to the full post modal, same as before.
+  if(urls.length===1){
+    const onBoard=posts.find(p=>p.url===urls[0])||savedData[urls[0]];
+    if(onBoard){openPost(urls[0]);return;}
+  }
+  carReelUrls=urls;carReelIdx=Math.max(0,Math.min(urls.length-1,startIdx||0));
+  // Unhide BEFORE rendering — centerTrack() measures offsetWidth, which reads 0
+  // on a display:none ancestor, so centering silently no-ops if done the other way round.
+  mm.classList.remove('hidden');document.body.style.overflow='hidden';
+  renderReelCarousel();
+}
+async function resolveReelSlide(playerEl,url){
   const plat=url.includes('tiktok.com')?'tiktok':'instagram';
   const code=igCode(url),id=ttId(url);
   const embedSrc=plat==='tiktok'&&id?`https://www.tiktok.com/embed/v2/${id}`:(code?`https://www.instagram.com/reel/${code}/embed/`:'');
-  const platLabel=plat==='tiktok'?'TikTok':'Instagram';
-  // Show a brief loading state while resolving — this modal previously jumped
-  // STRAIGHT to the platform iframe whenever there was no pre-existing Blob
-  // entry (i.e. almost always, since Blob hosting's been broken for weeks),
-  // even though a live video URL was one cheap call away. That iframe can
-  // itself show IG's own "Watch on Instagram" click-through card instead of
-  // real inline playback for reasons IG controls, not us — so a native video
-  // is worth trying first, same live refresh play(card)/openPost() already use.
-  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
-    <h3 class="mm-title">Example reel</h3>
-    <p class="mm-sub" id="reelpop-sub">Loading…</p>
-    <div class="modal-media" id="reelpop-media" style="margin-top:14px;border-radius:12px;overflow:hidden"><div class="pp-spin">Loading…</div></div>
-    <div class="pp-actions" id="reelpop-actions"><button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
-  mm.classList.remove('hidden');document.body.style.overflow='hidden';
-  $('#mm-close').onclick=closeMethod;
-
   // Prefer the self-hosted Blob video (durable, no live call) if we have one;
-  // otherwise ask for a fresh live URL before falling back to the iframe.
+  // otherwise ask for a fresh live URL before falling back to the iframe. That
+  // iframe can itself show IG's own "Watch on Instagram" click-through card
+  // instead of real inline playback for reasons IG controls, not us — so a
+  // native video is always worth trying first, same as play(card)/openPost().
   const persistentBlobVid=(DATA.videos||{})[url];
   let vidSrc=persistentBlobVid;
   if(!vidSrc){
@@ -1437,37 +1426,54 @@ async function openReelPopup(url){
       if(j&&j.ok&&j.video)vidSrc=j.video;
     }catch(e){}
   }
-  if(mm.classList.contains('hidden'))return; // popup was closed while this was in flight
-
-  const media=vidSrc
-    ? `<video id="reelpop-vid" controls autoplay playsinline src="${vidSrc}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
-    : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
-  const sub=vidSrc?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
-  $('#reelpop-sub').textContent=sub;
-  $('#reelpop-media').innerHTML=media;
-  // Only show "remove from server" when there's an actual persisted Blob file
-  // to delete — a freshly live-fetched URL isn't stored anywhere to remove.
-  if(persistentBlobVid){
+  if(!playerEl.isConnected)return; // navigated away / popup closed while this was in flight
+  if(vidSrc){
+    playerEl.innerHTML=`<video class="rv" controls autoplay playsinline src="${vidSrc}"></video>`;
+    const v=playerEl.querySelector('video');
+    // Blob URL known ≠ Blob URL loads — e.g. the storage plan's Advanced
+    // Operations quota being exhausted 403s every content read even though
+    // DATA.videos still points at it. One live retry before the iframe.
+    v.addEventListener('error',()=>videoErrorFallback(v,url,()=>{v.remove();embedFor(playerEl,url,plat);}));
+  }else if(embedSrc){
+    playerEl.innerHTML=`<iframe src="${embedSrc}" allow="autoplay;encrypted-media;fullscreen" allowfullscreen scrolling="no"></iframe>`;
+  }else{
+    playerEl.innerHTML='<div class="spl-no-reel">No embed available</div>';
+  }
+  const slide=playerEl.closest('.spl-slide');
+  const subEl=slide&&slide.querySelector('.spl-sub');
+  if(subEl)subEl.textContent=vidSrc?'Playing the original video natively.':'Playing the platform embed directly.';
+  const actionsEl=slide&&slide.querySelector('.pp-actions');
+  if(actionsEl&&persistentBlobVid&&!actionsEl.querySelector('.danger')){
     const rmBtn=document.createElement('button');
     rmBtn.className='danger';rmBtn.type='button';rmBtn.textContent='✕ Remove download';
     rmBtn.onclick=()=>removeReelDownload(url);
-    $('#reelpop-actions').prepend(rmBtn);
-  }
-  // Blob URL known ≠ Blob URL loads — e.g. the storage plan's Advanced Operations
-  // quota being exhausted 403s every content read even though DATA.videos still
-  // points at it. Fall back to the platform embed at runtime instead of leaving a
-  // permanently broken player, same embedFor() pattern play() uses for board cards.
-  const vidEl=$('#reelpop-vid');
-  if(vidEl&&embedSrc){
-    vidEl.addEventListener('error',()=>videoErrorFallback(vidEl,url,()=>{
-      vidEl.remove();
-      embedFor($('#reelpop-media'),url,plat);
-      const subEl=$('#reelpop-sub');
-      if(subEl)subEl.textContent="This reel isn't curated on the board — the native download failed to load, so this is the platform embed.";
-    }));
+    actionsEl.prepend(rmBtn);
   }
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-popup]');if(b){e.preventDefault();e.stopPropagation();openReelPopup(b.dataset.reelPopup);}});
+function renderReelCarousel(){
+  const urls=carReelUrls,idx=carReelIdx;
+  function buildSlide(url,isActive,rawIdx){
+    const plat=url.includes('tiktok.com')?'tiktok':'instagram',platLabel=plat==='tiktok'?'TikTok':'Instagram';
+    const ghost=rawIdx<0?' spl-ghost':'';
+    const nav=(!isActive&&rawIdx>=0)?(' data-relgo="'+rawIdx+'"'):'';
+    const body=isActive?`<div class="spl-body"><div class="spl-count">${idx+1} / ${urls.length}</div><p class="spl-sub">Loading…</p><div class="pp-actions"><button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div></div>`:'';
+    return `<div class="spl-slide${isActive?' active':''}${ghost}"${nav}><div class="spl-player">${isActive?'<div class="pp-spin">Loading…</div>':''}</div>${body}</div>`;
+  }
+  const prev=idx>0?buildSlide(urls[idx-1],false,idx-1):'<div class="spl-slide spl-ghost"></div>';
+  const curr=buildSlide(urls[idx],true,idx);
+  const next=idx<urls.length-1?buildSlide(urls[idx+1],false,idx+1):'<div class="spl-slide spl-ghost"></div>';
+  const hint=urls.length>1?`<p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>`:'';
+  stopVideos(mm);
+  $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
+    <h3 class="mm-title">Example reel</h3>
+    <div class="spl-stage" style="margin-top:14px"><div class="spl-track">${prev}${curr}${next}</div></div>${hint}`;
+  $('#mm-close').onclick=closeMethod;
+  centerTrack($('#mm-body'));
+  $('#mm-body').querySelectorAll('[data-relgo]').forEach(b=>{b.onclick=()=>{carReelIdx=+b.dataset.relgo;renderReelCarousel();};});
+  const activePlayer=$('#mm-body').querySelector('.spl-slide.active .spl-player');
+  if(activePlayer)resolveReelSlide(activePlayer,urls[idx]);
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-reel-list]');if(b){e.preventDefault();e.stopPropagation();openReelCarousel(JSON.parse(decodeURIComponent(b.dataset.reelList)),+b.dataset.reelIdx);}});
 
 function apply(){
   const fw=$('#f-week').value,ff=$('#f-format').value,fh=$('#f-hook').value,ft=$('#f-trigger').value,fs=$('#f-style').value,
@@ -1572,7 +1578,8 @@ function renderBookmarks(){
       var tcards=savTr.map(function(t){
         var k=t.name+'|'+t.type;
         var isSaved=savedTrends.has(k),isDis=dismissedTrends.has(k);
-        var ex=(t.examples||[]).map(function(u,i){return '<button class="lk reel" type="button" data-reel-popup="'+u+'">&#9654; example '+(i+1)+'</button>';}).join('');
+        var exList=encodeURIComponent(JSON.stringify(t.examples||[]));
+        var ex=(t.examples||[]).map(function(u,i){return '<button class="lk reel" type="button" data-reel-list="'+exList+'" data-reel-idx="'+i+'">&#9654; example '+(i+1)+'</button>';}).join('');
         var trig=t.trigger?'<span class="ttrig" style="color:'+col(t.trigger)+'">'+t.trigger+'</span>':'<span></span>';
         var mom=(t.momentum||'new').toLowerCase();
         return '<article class="tcard'+(isSaved?' saved-trend':'')+'" data-tkey="'+encodeURIComponent(k)+'"><div class="tcard-top"><span class="tmom '+mom+'">'+mom+'</span><span class="ttype">'+(ICN2[t.type]||'')+' '+t.type+'</span></div><h3 class="tname">'+t.name+'</h3><div class="tanchor"><span>'+(ICN2[t.type]||'&#9836;')+'</span><span>'+t.anchor+'</span></div><p class="tformat">'+(t.format||'')+'</p>'+(t.note?'<div class="tnote">'+t.note+'</div>':'')+'<div class="tmeta">'+trig+'<span class="tcount"><b>'+t.creators+'</b> creators &middot; '+t.uses+' uses</span></div>'+(t.howTo?'<div class="thow"><span class="thow-l">Ride it</span>'+t.howTo+'</div>':'')+(ex?'<div class="texamples">'+ex+'</div>':'')+'<div class="tcard-actions"><button data-tact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-tact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div></article>';
@@ -1773,9 +1780,8 @@ function renderSoundChart(){
   const ic='<span class="static-ic">♪</span>';
   const PLAY=_PLAY_ICON;
   const sc=$('#sec-chart');if(sc)sc.style.display=chart.length?'':'none';
-  // update sounds filter bar + view toggle
+  // update sounds filter bar
   document.querySelectorAll('#sounds-bar button').forEach(b=>{b.classList.toggle('on',b.dataset.sf===soundFilter);});
-  document.querySelectorAll('#sc-view-toggle button').forEach(b=>{b.classList.toggle('on',b.dataset.scv===scMode);});
   const visChart=chart.filter(t=>{
     const headline=t.detected?t.detectedSong:t.title;
     const sub=t.detected?`${t.detectedArtist||''}|${t.artist}`:(t.artist||'');
@@ -1784,10 +1790,6 @@ function renderSoundChart(){
     if(soundFilter==='dismissed')return dismissedSounds.has(k);
     return !dismissedSounds.has(k);
   });
-  // dispatch to spotlight or list
-  const splSounds=$('#spl-sounds'), scTracks=$('#soundchart');
-  if(scMode==='spotlight'){if(scTracks)scTracks.style.display='none';if(splSounds)splSounds.style.display='';renderSoundSpotlight(visChart);return;}
-  if(scTracks)scTracks.style.display='';if(splSounds)splSounds.style.display='none';
   if(chart.length) $('#soundchart').innerHTML=(visChart.length?visChart:[]).map((t,i)=>{
     const det=t.detected;
     const detb=det?`<span class="det-badge" title="Fingerprinting's (ACRCloud, or AudD as a fallback) best guess at the song behind IG's 'original audio' — a label only; the preview plays the real audio-page track regardless">♫ detected · may be approximate</span>`:'';
@@ -1799,7 +1801,8 @@ function renderSoundChart(){
     const isSaved=savedSounds.has(skey), isDis=dismissedSounds.has(skey);
     const play=t.preview?`<button class="trk-play" type="button" data-preview="${t.preview}" aria-label="Play preview">${PLAY}</button>`
       :`<span class="trk-play np" title="Preview unavailable">${PLAY}</span>`;
-    const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-popup="${u}">▶ reel ${k+1}</button>`).join('');
+    const smList=encodeURIComponent(JSON.stringify(t.samples||[]));
+    const reels=(t.samples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-list="${smList}" data-reel-idx="${k}">▶ reel ${k+1}</button>`).join('');
     // Prefer the audio-page URL (raw original track, no creator foley/SFX mixed in)
     // over a reel URL — download-audio.js only gets the clean track from that path.
     const audioPageUrl=t.audioId?`https://www.instagram.com/reels/audio/${t.audioId}/`:'';
@@ -1823,15 +1826,6 @@ function renderSoundChart(){
       <div class="sg">${titleHtml} ${xr}</div><div class="ar">${t.artist||''}${uc}</div></div>
       <div class="links">${lk}${dl}</div></div>`;}).join('');
 }
-/* ===== TREND SPOTLIGHT ===== */
-function splPlayer(reelUrl){
-  if(!reelUrl)return '<div class="spl-no-reel">No example reels</div>';
-  const blobVid=(DATA.videos||{})[reelUrl];
-  if(blobVid)return `<video controls autoplay playsinline src="${blobVid}"></video>`;
-  const code=igCode(reelUrl),istt=reelUrl.includes('tiktok.com'),tid=istt?ttId(reelUrl):'';
-  const src=istt&&tid?`https://www.tiktok.com/embed/v2/${tid}`:code?`https://www.instagram.com/reel/${code}/embed/`:'';
-  return src?`<iframe src="${src}" allow="autoplay;encrypted-media;fullscreen" allowfullscreen scrolling="no"></iframe>`:'<div class="spl-no-reel">No embed available</div>';
-}
 function centerTrack(el){
   const stage=el.querySelector('.spl-stage');
   const track=el.querySelector('.spl-track');
@@ -1840,90 +1834,12 @@ function centerTrack(el){
   const x=stage.offsetWidth/2-active.offsetLeft-active.offsetWidth/2;
   track.style.transform='translateX('+x+'px)';
 }
-function renderTrendSpotlight(items){
-  const el=$('#spl-trends');if(!el)return;
-  if(!items||!items.length){el.innerHTML='<div class="empty">No trends to show.</div>';return;}
-  if(trIdx>=items.length)trIdx=0;
-  const ICN={audio:'&#9836;',hook:'&#9998;'};
-  function buildTrCard(t,isActive,rawIdx){
-    const reels=t.examples||[];
-    const mom=(t.momentum||'new').toLowerCase();
-    const trig=t.trigger?'<span class="ttrig" style="color:'+col(t.trigger)+'">'+t.trigger+'</span>':'';
-    const k=t.name+'|'+t.type;
-    const isSaved=savedTrends.has(k),isDis=dismissedTrends.has(k);
-    const playerHtml=isActive?splPlayer(reels[trReel]):'';
-    const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===trReel?' on':'')+'" data-trreel="'+i+'">&#9654; Example '+(i+1)+'</button>';}).join(''):'';
-    const actBtns=isActive?'<div class="tcard-actions"><button data-tact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-tact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
-    const count='<div class="spl-count">'+(trIdx+1)+' / '+items.length+' &nbsp;&middot;&nbsp; <span class="tmom '+mom+'" style="display:inline-block">'+mom+'</span></div>';
-    const body='<div class="spl-body">'+count+'<div class="spl-title">'+t.name+'</div><div class="spl-sub">'+t.anchor+'</div>'+(isActive&&t.format?'<div class="spl-stat">'+t.format+'</div>':'')+(isActive?'<div class="spl-stat">'+(trig?trig+'&ensp;':'')+'<b>'+t.creators+'</b> creators &nbsp;&middot;&nbsp; <b>'+t.uses+'</b> uses</div>':'')+(isActive&&t.howTo?'<div class="spl-howto">'+t.howTo+'</div>':'')+(reelBtns?'<div class="spl-reels">'+reelBtns+'</div>':'')+actBtns+'</div>';
-    const ghost=rawIdx<0?' spl-ghost':'';
-    const nav=(!isActive&&rawIdx>=0)?(' data-trgo="'+rawIdx+'"'):'';
-    return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+playerHtml+'</div>'+body+'</div>';
-  }
-  const prev=trIdx>0?buildTrCard(items[trIdx-1],false,trIdx-1):'<div class="spl-slide spl-ghost"></div>';
-  const curr=buildTrCard(items[trIdx],true,trIdx);
-  const next=trIdx<items.length-1?buildTrCard(items[trIdx+1],false,trIdx+1):'<div class="spl-slide spl-ghost"></div>';
-  stopVideos(el);el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
-  centerTrack(el);
-  el.querySelectorAll('[data-trreel]').forEach(function(b){b.onclick=function(){trReel=+b.dataset.trreel;renderTrendSpotlight(items);};});
-  el.querySelectorAll('[data-trgo]').forEach(function(b){b.onclick=function(){trIdx=+b.dataset.trgo;trReel=0;renderTrendRadar();};});
-  el.querySelectorAll('[data-tact]').forEach(function(btn){
-    btn.onclick=function(){
-      var t2=items[trIdx],k=t2.name+'|'+t2.type,act=btn.dataset.tact;
-      if(act==='save'){savedTrends.has(k)?savedTrends.delete(k):savedTrends.add(k);}
-      else{dismissedTrends.has(k)?dismissedTrends.delete(k):dismissedTrends.add(k);}
-      pushState();renderTrendRadar();
-    };
-  });
-}
-/* ===== SOUND SPOTLIGHT ===== */
 function soundKey(t){var det=t.detected,h=det?t.detectedSong:t.title;return h+'|'+(det?(t.detectedArtist||'')+'|'+t.artist:(t.artist||''));}
-function renderSoundSpotlight(items){
-  const el=$('#spl-sounds');if(!el)return;
-  if(!items||!items.length){el.innerHTML='<div class="empty">No sounds to show.</div>';return;}
-  if(scIdx>=items.length)scIdx=0;
-  function buildScCard(t,isActive,rawIdx){
-    const det=t.detected,headline=det?t.detectedSong:t.title;
-    const artist=det?t.detectedArtist||'':t.artist||'';
-    const sub=det?artist+' · tagged "original audio" by @'+t.artist:artist;
-    const reels=t.samples||[];
-    const detb=det?(t.detectedVerified?'<span class="det-badge">&#9835; detected</span>':'<span class="det-badge unv">&#9835; detected &middot; unverified</span>'):'';
-    const accts=t.accounts&&t.accounts.length?'<br>'+t.accounts.map(function(a){return '@'+a;}).join(', '):'';
-    const skey=soundKey(t);
-    const isSaved=savedSounds.has(skey),isDis=dismissedSounds.has(skey);
-    const playerHtml=isActive?splPlayer(reels[scReel]):'';
-    const reelBtns=isActive?reels.map(function(u,i){return '<button class="spl-reel'+(i===scReel?' on':'')+'" data-screel="'+i+'">&#9654; Reel '+(i+1)+'</button>';}).join(''):'';
-    const audioPageUrl=t.audioId?('https://www.instagram.com/reels/audio/'+t.audioId+'/'):(t.link||'');
-    const dlUrl=audioPageUrl||(reels.length?reels[0]:'');
-    const actBtns=isActive?'<div class="tcard-actions">'+(dlUrl?'<button data-get-audio="'+dlUrl+'">&#8681; Get audio</button>':'')+'<button data-sact="save" class="'+(isSaved?'active':'')+'">&#9733; '+(isSaved?'Saved':'Save')+'</button><button data-sact="dismiss" class="'+(isDis?'active':'')+'">&#10005; '+(isDis?'Dismissed':'Dismiss')+'</button></div>':'';
-    const titleHtml=audioPageUrl?'<a class="spl-title-lk" href="'+audioPageUrl+'" target="_blank" rel="noopener">'+headline+'</a>':headline;
-    const body='<div class="spl-body"><div class="spl-count">'+(scIdx+1)+' / '+items.length+'</div><div class="spl-title">'+titleHtml+' '+detb+'</div><div class="spl-sub">'+sub+'</div><div class="spl-stat">used in <b>'+t.uses+'</b> reel'+(t.uses!==1?'s':'')+' &nbsp;&middot;&nbsp; <b>'+t.creators+'</b> creator'+(t.creators!==1?'s':'')+accts+'</div>'+(reels.length?'<div class="spl-reels">'+reelBtns+'</div>':'<div class="spl-no-reel" style="margin-top:4px">No sample reels available</div>')+actBtns+'</div>';
-    const ghost=rawIdx<0?' spl-ghost':'';
-    const nav=(!isActive&&rawIdx>=0)?(' data-scgo="'+rawIdx+'"'):'';
-    return '<div class="spl-slide'+(isActive?' active':'')+ghost+'"'+nav+'><div class="spl-player">'+playerHtml+'</div>'+body+'</div>';
-  }
-  const prev=scIdx>0?buildScCard(items[scIdx-1],false,scIdx-1):'<div class="spl-slide spl-ghost"></div>';
-  const curr=buildScCard(items[scIdx],true,scIdx);
-  const next=scIdx<items.length-1?buildScCard(items[scIdx+1],false,scIdx+1):'<div class="spl-slide spl-ghost"></div>';
-  el.innerHTML='<div class="spl-stage"><div class="spl-track">'+prev+curr+next+'</div></div><p class="spl-hint">&#8249; &#8250; navigate &nbsp;&middot;&nbsp; tap side cards or use arrow keys</p>';
-  centerTrack(el);
-  el.querySelectorAll('[data-screel]').forEach(function(b){b.onclick=function(){scReel=+b.dataset.screel;renderSoundSpotlight(items);};});
-  el.querySelectorAll('[data-scgo]').forEach(function(b){b.onclick=function(){scIdx=+b.dataset.scgo;scReel=0;renderSoundChart();};});
-  el.querySelectorAll('[data-sact]').forEach(function(btn){
-    btn.onclick=function(){
-      var t2=items[scIdx],sk=soundKey(t2),act=btn.dataset.sact;
-      if(act==='save'){savedSounds.has(sk)?savedSounds.delete(sk):savedSounds.add(sk);}
-      else{dismissedSounds.has(sk)?dismissedSounds.delete(sk):dismissedSounds.add(sk);}
-      pushState();renderSoundChart();
-    };
-  });
-}
 /* ===== RESIZE: re-centre spotlight ===== */
 window.addEventListener('resize',function(){
-  var elTr=$('#spl-trends'),elSc=$('#spl-sounds'),elSw=$('#spl-swipe');
-  if(trMode==='spotlight'&&elTr&&elTr.style.display!=='none')centerTrack(elTr);
-  if(scMode==='spotlight'&&elSc&&elSc.style.display!=='none')centerTrack(elSc);
+  var elSw=$('#spl-swipe'), elMm=$('#mm-body');
   if(swMode==='spotlight'&&elSw&&elSw.style.display!=='none')centerTrack(elSw);
+  if(carReelUrls.length&&mm&&!mm.classList.contains('hidden')&&elMm)centerTrack(elMm);
 });
 /* ===== SWIPE FILE — Spotlight + Reels-scroll modes ===== */
 // Media HTML for a post: native Blob <video>, carousel gallery, or platform embed.
@@ -2049,29 +1965,17 @@ document.getElementById('sw-view-toggle').addEventListener('click',e=>{
   const b=e.target.closest('[data-swv]');if(!b)return;
   swMode=b.dataset.swv;swFP='';renderSwipe();
 });
-document.getElementById('tr-view-toggle').addEventListener('click',e=>{
-  const b=e.target.closest('[data-trv]');if(!b)return;
-  trMode=b.dataset.trv;trIdx=0;trReel=0;renderTrendRadar();
-});
-document.getElementById('sc-view-toggle').addEventListener('click',e=>{
-  const b=e.target.closest('[data-scv]');if(!b)return;
-  scMode=b.dataset.scv;scIdx=0;scReel=0;renderSoundChart();
-});
-/* ===== KEYBOARD NAVIGATION for spotlight ===== */
+/* ===== KEYBOARD NAVIGATION for spotlight / example-reel carousel ===== */
 document.addEventListener('keydown',e=>{
   if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
   const dir=e.key==='ArrowLeft'?-1:1;
-  const vTr=$('#v-trends'),vAu=$('#v-audio'),vSw=$('#v-swipe');
+  const vSw=$('#v-swipe');
   if(swMode==='spotlight'&&vSw&&!vSw.classList.contains('hidden')){
     swIdx=Math.max(0,Math.min(swRows.length-1,swIdx+dir));renderSwipe();return;
   }
-  if(trMode==='spotlight'&&vTr&&!vTr.classList.contains('hidden')){
-    const items=(activeData().trends||[]).filter(t=>{const k=`${t.name}|${t.type}`;return trendFilter==='saved'?savedTrends.has(k):trendFilter==='dismissed'?dismissedTrends.has(k):!dismissedTrends.has(k);});
-    trIdx=Math.max(0,Math.min(items.length-1,trIdx+dir));trReel=0;renderTrendRadar();
-  }else if(scMode==='spotlight'&&vAu&&!vAu.classList.contains('hidden')){
-    const items=(activeData().soundChart||[]).filter(t=>{const h=t.detected?t.detectedSong:t.title,s=t.detected?`${t.detectedArtist||''}|${t.artist}`:(t.artist||''),k=`${h}|${s}`;return soundFilter==='saved'?savedSounds.has(k):soundFilter==='dismissed'?dismissedSounds.has(k):!dismissedSounds.has(k);});
-    scIdx=Math.max(0,Math.min(items.length-1,scIdx+dir));scReel=0;renderSoundChart();
+  if(carReelUrls.length>1&&mm&&!mm.classList.contains('hidden')){
+    carReelIdx=Math.max(0,Math.min(carReelUrls.length-1,carReelIdx+dir));renderReelCarousel();
   }
 });
 renderSoundChart();
