@@ -1403,30 +1403,56 @@ async function removeReelDownload(url){
     setTimeout(()=>{const note=$('#mm-body .pp-spin')||$('#mm-body .mm-sub');if(note)note.insertAdjacentHTML('beforebegin',`<div class="pp-spin" style="color:var(--teal);padding:8px 0">✓ Removed (${j.freedKB?j.freedKB+' KB':'no blob found'} freed)</div>`);},80);
   }catch(e){alert('Remove failed: '+e.message);}
 }
-function openReelPopup(url){
+async function openReelPopup(url){
   if(!url)return;
   const onBoard=posts.find(p=>p.url===url)||savedData[url];
   if(onBoard){openPost(url);return;}
   const plat=url.includes('tiktok.com')?'tiktok':'instagram';
   const code=igCode(url),id=ttId(url);
-  // Prefer the self-hosted Blob video (native, durable, no embed chrome) if we have one for this URL.
-  const blobVid=(DATA.videos||{})[url];
   const embedSrc=plat==='tiktok'&&id?`https://www.tiktok.com/embed/v2/${id}`:(code?`https://www.instagram.com/reel/${code}/embed/`:'');
   const platLabel=plat==='tiktok'?'TikTok':'Instagram';
-  const media=blobVid
-    ? `<video id="reelpop-vid" controls autoplay playsinline src="${blobVid}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
-    : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
-  const sub=blobVid?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
-  // Only show the "remove from server" button when a native video EXISTS (otherwise there's nothing to free).
-  const removeBtn=blobVid?`<button class="danger" data-remove-blob="${url}" type="button">✕ Remove download</button>`:'';
+  // Show a brief loading state while resolving — this modal previously jumped
+  // STRAIGHT to the platform iframe whenever there was no pre-existing Blob
+  // entry (i.e. almost always, since Blob hosting's been broken for weeks),
+  // even though a live video URL was one cheap call away. That iframe can
+  // itself show IG's own "Watch on Instagram" click-through card instead of
+  // real inline playback for reasons IG controls, not us — so a native video
+  // is worth trying first, same live refresh play(card)/openPost() already use.
   $('#mm-body').innerHTML=`<button class="mm-close" id="mm-close" type="button">✕</button>
     <h3 class="mm-title">Example reel</h3>
-    <p class="mm-sub" id="reelpop-sub">${sub}</p>
-    <div class="modal-media" id="reelpop-media" style="margin-top:14px;border-radius:12px;overflow:hidden">${media}</div>
-    <div class="pp-actions">${removeBtn}<button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
+    <p class="mm-sub" id="reelpop-sub">Loading…</p>
+    <div class="modal-media" id="reelpop-media" style="margin-top:14px;border-radius:12px;overflow:hidden"><div class="pp-spin">Loading…</div></div>
+    <div class="pp-actions" id="reelpop-actions"><button type="button" data-get-audio="${url}" title="Download this reel's own audio">⬇ Get audio</button><a href="${url}" target="_blank" rel="noopener">↗ Open on ${platLabel}</a></div>`;
   mm.classList.remove('hidden');document.body.style.overflow='hidden';
   $('#mm-close').onclick=closeMethod;
-  const rm=$('#mm-body [data-remove-blob]'); if(rm)rm.onclick=()=>removeReelDownload(rm.dataset.removeBlob);
+
+  // Prefer the self-hosted Blob video (durable, no live call) if we have one;
+  // otherwise ask for a fresh live URL before falling back to the iframe.
+  const persistentBlobVid=(DATA.videos||{})[url];
+  let vidSrc=persistentBlobVid;
+  if(!vidSrc){
+    try{
+      const r=await fetch('/api/refresh-video?url='+encodeURIComponent(url)+'&platform='+plat);
+      const j=await r.json();
+      if(j&&j.ok&&j.video)vidSrc=j.video;
+    }catch(e){}
+  }
+  if(mm.classList.contains('hidden'))return; // popup was closed while this was in flight
+
+  const media=vidSrc
+    ? `<video id="reelpop-vid" controls autoplay playsinline src="${vidSrc}" style="width:100%;height:auto;max-height:86vh;background:#000;display:block"></video>`
+    : (embedSrc?`<iframe class="embed-frame" src="${embedSrc}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen scrolling="no"></iframe>`:`<div class="pp-spin">No embed available.</div>`);
+  const sub=vidSrc?`This reel isn't curated on the board — playing the original video natively.`:`This reel isn't curated on the board — playing the platform embed directly.`;
+  $('#reelpop-sub').textContent=sub;
+  $('#reelpop-media').innerHTML=media;
+  // Only show "remove from server" when there's an actual persisted Blob file
+  // to delete — a freshly live-fetched URL isn't stored anywhere to remove.
+  if(persistentBlobVid){
+    const rmBtn=document.createElement('button');
+    rmBtn.className='danger';rmBtn.type='button';rmBtn.textContent='✕ Remove download';
+    rmBtn.onclick=()=>removeReelDownload(url);
+    $('#reelpop-actions').prepend(rmBtn);
+  }
   // Blob URL known ≠ Blob URL loads — e.g. the storage plan's Advanced Operations
   // quota being exhausted 403s every content read even though DATA.videos still
   // points at it. Fall back to the platform embed at runtime instead of leaving a
