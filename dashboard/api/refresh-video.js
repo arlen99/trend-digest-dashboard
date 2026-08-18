@@ -1,4 +1,5 @@
-// Live TikHub re-fetch of a fresh, currently-valid signed video URL for one post.
+// Live TikHub re-fetch of a fresh, currently-valid signed video/thumbnail URL for
+// one post.
 //
 // Board cards store the `video` URL captured at scrape/curation time — but IG/TikTok
 // sign every CDN media URL with a built-in expiry (confirmed live: ~24-36h after
@@ -9,6 +10,12 @@
 // is the stopgap: when a <video>'s `error` event fires client-side, it calls here for
 // a fresh URL and retries before giving up and falling back to the platform embed.
 //
+// Also returns a fresh `thumbnail` — Inspiration Links save the raw thumbnail_src/
+// display_url TikHub hands back at share time (save-link.js), never re-hosted, so it
+// dies the exact same way; board posts don't need this (their thumb is a committed
+// static file in dashboard/thumbs/, not a signed URL). Same TikHub call either way,
+// so returning both costs nothing extra.
+//
 // Unauthenticated on purpose — unlike verify.js/state.js (which can add accounts or
 // spend a week's scrape budget), this only re-reads data that's already public on the
 // board, so it needs to work for a casual visit with no passphrase entered. Cheap
@@ -16,7 +23,7 @@
 // the same post don't multiply calls.
 //
 //   GET /api/refresh-video?url=<post_url>&platform=ig|tiktok
-//   → { ok: true, video: <fresh_url> }
+//   → { ok: true, video: <fresh_url>, thumbnail: <fresh_url> }
 //   → { ok: false, reason: ... }
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16 Safari/605.1.15";
@@ -42,6 +49,23 @@ function deepPlayUrl(o) {
   return "";
 }
 
+// Same pattern as save-link.js's deepCoverUrl() — TikTok's cover art also nests
+// at varying depths depending on the response shape.
+function deepCoverUrl(o) {
+  if (Array.isArray(o)) {
+    for (const v of o) { const r = deepCoverUrl(v); if (r) return r; }
+    return "";
+  }
+  if (o && typeof o === "object") {
+    for (const key of ["cover", "origin_cover", "dynamic_cover"]) {
+      const c = o[key];
+      if (c && Array.isArray(c.url_list) && c.url_list.length) return c.url_list[0];
+    }
+    for (const v of Object.values(o)) { const r = deepCoverUrl(v); if (r) return r; }
+  }
+  return "";
+}
+
 async function tikhub(path, token) {
   const r = await fetch(TH + path, { headers: { authorization: `Bearer ${token}`, "user-agent": UA, accept: "application/json" } });
   let json = null; try { json = await r.json(); } catch (e) {}
@@ -58,20 +82,24 @@ module.exports = async (req, res) => {
     res.status(400).json({ ok: false, reason: "bad_url" }); return;
   }
   try {
-    let fresh = "";
+    let fresh = "", thumb = "";
     if (platform === "tiktok") {
       const id = ttId(url);
       if (!id) { res.status(400).json({ ok: false, reason: "bad_url" }); return; }
       const { status, json } = await tikhub(`/api/v1/tiktok/app/v3/fetch_one_video?aweme_id=${id}`, token);
       if (status !== 200 || !json) { res.status(502).json({ ok: false, reason: `upstream_${status}` }); return; }
-      fresh = deepPlayUrl(json);
+      const a = (json.data && json.data.aweme_detail) || json.data || {};
+      fresh = deepPlayUrl(a.video || {});
+      thumb = deepCoverUrl(a.video || {});
     } else {
       const { status, json } = await tikhub(`/api/v1/instagram/v1/fetch_post_by_url?post_url=${encodeURIComponent(url)}`, token);
       if (status !== 200 || !json) { res.status(502).json({ ok: false, reason: `upstream_${status}` }); return; }
-      fresh = (json.data || json || {}).video_url || "";
+      const d = json.data || json || {};
+      fresh = d.video_url || "";
+      thumb = d.thumbnail_src || d.display_url || "";
     }
-    if (!fresh) { res.status(404).json({ ok: false, reason: "no_video" }); return; }
-    res.status(200).json({ ok: true, video: fresh });
+    if (!fresh && !thumb) { res.status(404).json({ ok: false, reason: "no_media" }); return; }
+    res.status(200).json({ ok: true, video: fresh || undefined, thumbnail: thumb || undefined });
   } catch (e) {
     res.status(500).json({ ok: false, reason: String(e).slice(0, 100) });
   }

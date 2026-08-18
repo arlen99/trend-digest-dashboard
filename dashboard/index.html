@@ -1144,7 +1144,7 @@ function linkCard(l){
       <div class="fmt">${l.label||''}</div>
       <div class="scrim"></div>
       <button class="play" type="button" title="Play in page">${playIcon()}</button>
-      <img class="poster" src="${l.thumbnail||''}" alt="@${l.account||''}" onerror="this.style.display='none'">
+      <img class="poster" src="${l.thumbnail||''}" alt="@${l.account||''}" onerror="posterErrorFallback(this,'${l.url}')">
     </div>
     <div class="body">
       <div class="acct"><span class="h">${l.account?accountLink(plat==='tiktok'?'tt':'ig',l.account):''}</span><span class="wk">${dateStr?fmtDate(dateStr):''}</span></div>
@@ -1184,6 +1184,23 @@ function videoErrorFallback(videoEl,postUrl,onGiveUp){
       if(j&&j.ok&&j.video){videoEl.src=j.video;videoEl.load();videoEl.play().catch(()=>{});}
       else onGiveUp();
     }).catch(onGiveUp);
+}
+// Same idea as videoErrorFallback but for a saved link's poster thumbnail — Inspiration
+// Links store the raw thumbnail_src/display_url TikHub hands back at share time
+// (save-link.js), never re-hosted, so it dies the same way a video src does. Board
+// posts don't need this (their thumb is a committed static file, not a signed URL) —
+// only linkCard() wires this up. Same /api/refresh-video endpoint, just reads the
+// `thumbnail` field instead of `video`; no onGiveUp needed since the onerror handler
+// this replaces already just hides the <img> on failure — that stays the fallback.
+function posterErrorFallback(imgEl,postUrl){
+  if(imgEl.dataset.refreshTried){imgEl.style.display='none';return;}
+  imgEl.dataset.refreshTried='1';
+  const plat=postUrl.includes('tiktok.com')?'tiktok':'instagram';
+  fetch('/api/refresh-video?url='+encodeURIComponent(postUrl)+'&platform='+plat)
+    .then(r=>r.json()).then(j=>{
+      if(j&&j.ok&&j.thumbnail)imgEl.src=j.thumbnail;
+      else imgEl.style.display='none';
+    }).catch(()=>{imgEl.style.display='none';});
 }
 // Browsers block autoplay WITH SOUND unless it's a direct response to a user gesture
 // (click/tap) — that's why a fresh scroll-triggered reel starts muted. But per Chrome/
