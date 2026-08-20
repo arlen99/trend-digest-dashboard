@@ -207,10 +207,22 @@ def norm(s):
 def hook_momentum(cur_hooks):
     """Compare against the previous hook_trends_*.json (by normalized hook text) —
     hook_search.py doesn't track this itself, unlike trends.py's audio detector."""
-    files = sorted(glob.glob(str(OUT / "hook_trends_*.json")))
-    if len(files) < 2:
+    # Compare against the most recent NON-EMPTY prior file, not simply files[-2]:
+    # hook_search.py legitimately writes an empty list when its TikTok searches can't
+    # run (confirmed 2026-08-17, exhausted TikHub balance). Taking that at face value
+    # made every hook look "new" again the following week — a fake surge, and exactly
+    # the kind of number the board is supposed to be trustworthy about.
+    files = sorted(glob.glob(str(OUT / "hook_trends_*.json")))[:-1]
+    prev = []
+    for f in reversed(files):
+        try:
+            prev = json.loads(Path(f).read_text()) or []
+        except Exception:  # noqa: BLE001
+            prev = []
+        if prev:
+            break
+    if not prev:
         return {norm(h["hook"]): "new" for h in cur_hooks}
-    prev = json.loads(Path(files[-2]).read_text())
     prevmap = {norm(p["hook"]): p.get("niche_hits", 0) for p in prev}
     out = {}
     for h in cur_hooks:
