@@ -201,9 +201,6 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .hk-niche.mid{color:var(--gold)}
 .hk-niche.lo{color:var(--muted)}
 .hk-ex{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
-.hk-ex a{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
-  border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted);transition:.15s}
-.hk-ex a:hover{color:var(--teal);border-color:var(--teal)}
 .hooknote{color:var(--faint);font-size:12px;line-height:1.6;margin-top:14px}
 .spl-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);text-align:center;margin-top:8px;letter-spacing:.04em}
 .spl-howto{background:rgba(76,199,182,.06);border-left:2px solid var(--teal);padding:8px 11px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink);line-height:1.4}
@@ -1043,7 +1040,8 @@ function renderHooks(){
   const cls=(n,d)=>{const r=d?n/d:0;return r>=.6?'hi':r>=.3?'mid':'lo';};
   const head='<thead><tr><th></th><th>Hook</th><th>Niche match</th><th>Creators</th><th>Max likes</th><th>Median</th></tr></thead>';
   const body=rows.map((r,i)=>{
-    const ex=(r.examples||[]).map((u,k)=>`<a href="${u}" target="_blank" rel="noopener">ex ${k+1}</a>`).join('');
+    const exList=encodeURIComponent(JSON.stringify(r.examples||[]));
+    const ex=(r.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-list="${exList}" data-reel-idx="${k}">ex ${k+1}</button>`).join('');
     return `<tr>
       <td class="hk-rank">${i+1}</td>
       <td><div class="hk-text">${escA(r.hook)}</div>${ex?`<div class="hk-ex">${ex}</div>`:''}</td>
