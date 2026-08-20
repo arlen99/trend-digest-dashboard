@@ -31,6 +31,7 @@ import glob
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.request
 from datetime import date
@@ -67,9 +68,52 @@ TOOL_SCHEMA = {
 }
 
 
+# Anthropic's vision API accepts jpeg/png/gif/webp ONLY. TikTok's CDN serves its
+# cover images as HEIC (confirmed live 2026-08: magic bytes `ftypheic`, and the URL's
+# `.heic` path is inside the x-signature so it can't be rewritten to another format),
+# which this used to hand over hardcoded as "image/jpeg" — the API rejected every one
+# with a bare 400, so EVERY hook card silently failed while audio cards (Instagram
+# og:image, genuine JPEGs) worked fine. That's why the board has shown audio-only
+# trends since 2026-08-10 despite hook_search.py validating 14 real hooks that week.
+# Sniff the true format and transcode anything unsupported to JPEG via ffmpeg (already
+# a pipeline dependency, and confirmed to decode HEIC).
+_MAGIC = [(b"\xff\xd8\xff", "image/jpeg"), (b"\x89PNG\r\n\x1a\n", "image/png"),
+          (b"GIF87a", "image/gif"), (b"GIF89a", "image/gif")]
+
+
+def sniff_media_type(data: bytes) -> str:
+    """Real media type from magic bytes, or "" if it's not one the API accepts."""
+    for magic, mt in _MAGIC:
+        if data.startswith(magic):
+            return mt
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return ""
+
+
+def to_jpeg(path: Path) -> bool:
+    """Transcode an unsupported image (HEIC/AVIF/…) in place to JPEG. Best-effort:
+    False means the caller should skip this sample rather than send something the
+    API will reject."""
+    out = path.with_suffix(".conv.jpg")
+    try:
+        r = subprocess.run(["ffmpeg", "-y", "-i", str(path), "-frames:v", "1", "-update", "1", str(out)],
+                           capture_output=True, timeout=30)
+    except Exception:  # noqa: BLE001 - ffmpeg missing/failed shouldn't crash the run
+        return False
+    ok = r.returncode == 0 and out.exists() and out.stat().st_size > 1000
+    if ok:
+        path.write_bytes(out.read_bytes())
+    if out.exists():
+        out.unlink()
+    return ok
+
+
 def img_block(path: Path) -> dict:
-    data = base64.standard_b64encode(path.read_bytes()).decode()
-    return {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": data}}
+    raw = path.read_bytes()
+    return {"type": "image", "source": {"type": "base64",
+                                        "media_type": sniff_media_type(raw) or "image/jpeg",
+                                        "data": base64.standard_b64encode(raw).decode()}}
 
 
 claude_calls = 0
@@ -148,6 +192,9 @@ def fetch_thumb(url: str, dest: Path) -> bool:
         with urllib.request.urlopen(req2, timeout=20) as r:
             data = r.read()
         dest.write_bytes(data)
+        # TikTok covers come back HEIC — unusable as-is (see img_block above).
+        if not sniff_media_type(data) and not to_jpeg(dest):
+            return False
         return dest.stat().st_size > 1000
     except Exception:  # noqa: BLE001
         return False

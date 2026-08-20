@@ -89,6 +89,7 @@ jobs:
           # dashboard data refresh
           run_critical python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
           run_critical python3 curate_trends.py output/trends_${TODAY}.json output/hook_trends_${TODAY}.json   # Trend Radar cards — Claude writes name/format/trigger/howTo
+          run_critical python3 hooks_to_dashboard.py   # Hooks page — hook_search.py's raw validated evidence, independent of curate_trends.py's card-writing
           run_critical python3 audio_chart_to_dashboard.py
           run_critical python3 tiktok_to_dashboard.py --top 10
           run_critical python3 keyword_posts_to_dashboard.py --top 10

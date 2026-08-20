@@ -29,7 +29,10 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 DASH = ROOT / "dashboard"
 MAX_WEEKS = int(os.environ.get("MAX_WEEKS_KEPT", "12"))
-SLICES = ("posts", "soundChart", "trends", "tiktokSounds", "generatedHooks")
+# "generatedHooks" = Claude-written hook VARIATIONS (Summary page suggestions).
+# "hookTrends" = hook_search.py's TikTok-search-validated REAL trending hooks
+# (Hooks page) — different thing, archived per week the same way.
+SLICES = ("posts", "soundChart", "trends", "tiktokSounds", "generatedHooks", "hookTrends")
 
 
 def main():

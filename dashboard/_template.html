@@ -181,6 +181,30 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .spl-reel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line2);border-radius:7px;padding:5px 9px;color:var(--muted);background:none;cursor:pointer;transition:.15s}
 .spl-reel.on{border-color:var(--teal);color:var(--teal);background:rgba(76,199,182,.1)}
 .spl-reel:hover{color:var(--teal);border-color:var(--teal)}
+/* ───────── Hooks table ───────── */
+.hooktable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.hooktable{width:100%;border-collapse:collapse;min-width:640px}
+.hooktable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);text-align:left;padding:13px 16px;border-bottom:1px solid var(--line2);white-space:nowrap;font-weight:500}
+.hooktable td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.hooktable tr:last-child td{border-bottom:0}
+.hooktable tbody tr{transition:background .15s}
+.hooktable tbody tr:hover{background:rgba(255,255,255,.025)}
+.hk-rank{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);width:1%}
+.hk-text{font-family:'Fraunces',serif;font-size:16px;line-height:1.3;min-width:240px}
+.hk-num{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink);white-space:nowrap}
+.hk-num .u{font-size:10px;color:var(--faint)}
+/* niche-match strength — the signal that separates a real niche template from a
+   generic viral phrase that merely happens to appear in our scan */
+.hk-niche{font-family:'JetBrains Mono',monospace;font-size:12.5px;white-space:nowrap}
+.hk-niche.hi{color:var(--teal)}
+.hk-niche.mid{color:var(--gold)}
+.hk-niche.lo{color:var(--muted)}
+.hk-ex{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.hk-ex a{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+  border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--muted);transition:.15s}
+.hk-ex a:hover{color:var(--teal);border-color:var(--teal)}
+.hooknote{color:var(--faint);font-size:12px;line-height:1.6;margin-top:14px}
 .spl-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);text-align:center;margin-top:8px;letter-spacing:.04em}
 .spl-howto{background:rgba(76,199,182,.06);border-left:2px solid var(--teal);padding:8px 11px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink);line-height:1.4}
 .bk-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
@@ -436,6 +460,7 @@ select:hover{border-color:var(--teal)}
       <button class="navbtn on" data-view="swipe"><span class="ic">▦</span> Swipe File</button>
       <button class="navbtn" data-view="trends"><span class="ic">◎</span> Trend Radar</button>
       <button class="navbtn" data-view="summary"><span class="ic">▤</span> Summary</button>
+      <button class="navbtn" data-view="hooks"><span class="ic">✎</span> Hooks</button>
       <button class="navbtn" data-view="audio"><span class="ic">♪</span> Audio Trends</button>
       <button class="navbtn" data-view="accounts"><span class="ic">@</span> Accounts</button>
       <button class="navbtn" data-view="bookmarks"><span class="ic">★</span> Saved</button>
@@ -504,6 +529,16 @@ select:hover{border-color:var(--teal)}
       <div class="sec"><h2>New hook variations</h2>
         <p class="lead">Drop-in first-frame text engineered to stop the scroll — grouped by the trigger they pull. Swap the bracketed location.</p>
         <div class="hooks" id="hooks"></div></div>
+    </section>
+    <!-- HOOKS (validated trending on-screen text) -->
+    <section class="view hidden" id="v-hooks">
+      <div class="vhead"><h1>Trending <em>Hooks</em></h1>
+        <p class="sub">The on-screen text lines actually spreading in the niche — OCR'd from our scan, then <b>validated by searching the exact phrase on TikTok</b> to measure who else is really using it.</p>
+        <p class="prov" id="prov-hooks"></p></div>
+      <div class="sec">
+        <div class="hooktable-wrap"><table class="hooktable" id="hooktable"></table></div>
+        <p class="hooknote" id="hooknote"></p>
+      </div>
     </section>
     <!-- AUDIO -->
     <section class="view hidden" id="v-audio">
@@ -597,7 +632,7 @@ const $=s=>document.querySelector(s);
 // Build the "current" week record from top-level fields; merge in any historical weeks (DATA.weeks).
 // Current-week key: weekOf (the ISO-Monday set deterministically by accumulate.py). Falls back to generated for older data.
 const CURRENT_WEEK=DATA.weekOf||DATA.generated||null;
-const WEEKS={[CURRENT_WEEK||'current']:{posts:DATA.posts||[],soundChart:DATA.soundChart||[],trends:DATA.trends||[],tiktokSounds:DATA.tiktokSounds||[],generatedHooks:DATA.generatedHooks||[]}};
+const WEEKS={[CURRENT_WEEK||'current']:{posts:DATA.posts||[],soundChart:DATA.soundChart||[],trends:DATA.trends||[],tiktokSounds:DATA.tiktokSounds||[],generatedHooks:DATA.generatedHooks||[],hookTrends:DATA.hookTrends||[]}};
 Object.entries(DATA.weeks||{}).forEach(([w,s])=>{WEEKS[w]=Object.assign({posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]},s);});
 const WEEK_IDS=Object.keys(WEEKS).sort().reverse(); // newest first
 function weekLabel(w){if(!w||w==='current')return 'All weeks';const d=new Date(w+'T00:00:00');if(isNaN(d))return w;const end=new Date(d);end.setDate(d.getDate()+6);const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return `${M[d.getMonth()]} ${d.getDate()} → ${M[end.getMonth()]} ${end.getDate()}`;}
@@ -612,7 +647,7 @@ const posts=[];
 [CURRENT_WEEK,...Object.keys(DATA.weeks||{}).sort().reverse()].forEach(w=>{const slice=(WEEKS[w||'current']||{}).posts||[];slice.forEach(p=>{if(!p.url||_seen[p.url])return;_seen[p.url]=1;posts.push(Object.assign({},p,{week:w}));});});
 // Active week getter for sound chart / trends / audio (these don't flatten — they're per-week snapshots)
 function activeWeekId(){const v=$('#f-week')&&$('#f-week').value;return WEEKS[v]?v:CURRENT_WEEK;}
-function activeData(){return WEEKS[activeWeekId()]||WEEKS[CURRENT_WEEK]||{posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[]};}
+function activeData(){return WEEKS[activeWeekId()]||WEEKS[CURRENT_WEEK]||{posts:[],soundChart:[],trends:[],tiktokSounds:[],generatedHooks:[],hookTrends:[]};}
 
 /* ---- stat tiles ---- */
 (function(){
@@ -770,7 +805,8 @@ function renderTrendRadar(){
   const n=x=>(x==null?'—':Number(x).toLocaleString());
   const pa=$('#prov-accounts');
   if(pa&&v) pa.innerHTML=`<b>${n(v.igSeed)}</b> Instagram seed accounts (manually curated niche references) &nbsp;&plus;&nbsp; <b>${n(v.igDiscovered)}</b> discovered (snowballed via each seed's Instagram “related profiles” list — a candidate must appear under ${v.igDiscMinSeeds?`&ge;${n(v.igDiscMinSeeds)}`:'multiple'} different seeds to qualify, filtering out one-off noise; report-only, nothing auto-added — see Swipe File &rarr; Sources for detail) &nbsp;&plus;&nbsp; <b>${n(v.igBootstrap)}</b> bootstrapped (from keyword &amp; hashtag searches on Instagram — e.g. “cinematic travel”, “travel filmmaker”) &nbsp;&equals;&nbsp; <b>${n(v.igAccounts)}</b> total IG. TikTok: <b>${n(v.tiktokCreators)}</b> creators — discovered from scratch via keyword search (no seed accounts, no related-graph on TikTok). For each niche keyword (e.g. \"cinematic travel\", \"travel filmmaker\"), we run two TikTok searches: (1) <b>creator search</b> — returns user profiles whose handle/bio match the keyword; (2) <b>video search</b> — returns matching videos, from which we extract the video authors. All candidates are then vetted: bio/nickname must pass a niche-signal check (cinematic, travel film, drone, b-roll, etc.), spam signals are excluded, and a minimum of 5,000 followers is required. Survivors are ranked by follower count and the top 80 are added to the watchlist.`;
-  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;})();
+  if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;
+  if(v&&$('#prov-hooks')) $('#prov-hooks').innerHTML=`<b>${n(v.hooksOcrd)}</b> reels OCR'd (free, on-device) &rarr; <b>${n(v.hooksReadable)}</b> had readable on-screen text &rarr; each distinct phrase searched on TikTok (which indexes on-screen text, unlike Instagram) &rarr; kept only if &ge;${v.hookMinNiche||2} of its ~20 results read as this niche and the top result cleared ${n(v.hookMinLikes)} likes. Currently OCR'd from <b>${(v.hookPlats||['Instagram']).join(' + ')}</b>.`;})();
 
 /* ========== SWIPE FILE ========== */
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -987,6 +1023,39 @@ $('#bk-paste-save').addEventListener('click',function(){
 $('#bk-paste-input').addEventListener('keydown',function(e){if(e.key==='Enter')$('#bk-paste-save').click();});
 // background poll every 30s so changes made on another device appear automatically — no manual sync click needed
 setInterval(()=>{if(SECRET&&document.visibilityState==='visible')pullState();},30000);
+/* ===== HOOKS — hook_search.py's validated trending on-screen text ===== */
+// Deliberately renders the RAW measurement (hooks_to_dashboard.py), not Claude's
+// interpretation of it. Trend Radar's hook cards are a separate layer that can fail
+// on its own — and did, silently, for weeks (see curate_trends.py's HEIC note) —
+// so this page stays truthful about what the research actually found either way.
+function renderHooks(){
+  const rows=(activeData().hookTrends)||[];
+  const t=$('#hooktable'), note=$('#hooknote');
+  if(!t)return;
+  if(!rows.length){
+    t.innerHTML='';
+    if(note)note.innerHTML='<span class="empty" style="display:block;margin:28px auto">No validated hooks for this week — either the run found none clearing the niche/engagement bar, or the TikTok validation step couldn\'t reach its API that week.</span>';
+    return;
+  }
+  // niche_hits is out of `results` (how many of the phrase's TikTok search results
+  // actually look like this niche) — the single best "is this OUR trend or just a
+  // viral phrase" signal, so it leads the sort and gets the colour treatment.
+  const cls=(n,d)=>{const r=d?n/d:0;return r>=.6?'hi':r>=.3?'mid':'lo';};
+  const head='<thead><tr><th></th><th>Hook</th><th>Niche match</th><th>Creators</th><th>Max likes</th><th>Median</th></tr></thead>';
+  const body=rows.map((r,i)=>{
+    const ex=(r.examples||[]).map((u,k)=>`<a href="${u}" target="_blank" rel="noopener">ex ${k+1}</a>`).join('');
+    return `<tr>
+      <td class="hk-rank">${i+1}</td>
+      <td><div class="hk-text">${escA(r.hook)}</div>${ex?`<div class="hk-ex">${ex}</div>`:''}</td>
+      <td class="hk-niche ${cls(r.nicheHits,r.results)}">${r.nicheHits}<span class="u">/${r.results}</span></td>
+      <td class="hk-num">${r.creators}</td>
+      <td class="hk-num">${fmtN(r.maxLikes)}</td>
+      <td class="hk-num">${fmtN(r.medianLikes)}</td>
+    </tr>`;}).join('');
+  t.innerHTML=head+'<tbody>'+body+'</tbody>';
+  if(note)note.innerHTML=`<b>${rows.length}</b> hooks cleared validation this week. <b>Niche match</b> = how many of the phrase's top TikTok search results actually read as travel/cinematic — a high count means the phrase is a template <i>this niche</i> is copying, not just a generic viral line. <b>Max likes</b> is the single best-performing result, so a high ceiling with a low median means the format has breakout potential but isn't a guaranteed hit.`;
+}
+renderHooks();
 // Trend Radar: initial render + filter bar + save/dismiss delegation
 renderTrendRadar();
 document.getElementById('trends-bar').addEventListener('click',e=>{
@@ -1559,7 +1628,7 @@ $('#grid').addEventListener('click',e=>{
 });
 ['#f-show','#f-week','#f-format','#f-hook','#f-trigger','#f-style','#f-sort','#f-from','#f-to'].forEach(s=>$(s).addEventListener('change',apply));
 // The week dropdown also drives sound chart + trend radar (per-week snapshots, not flattened like posts)
-$('#f-week').addEventListener('change',()=>{renderSoundChart();renderTrendRadar();});
+$('#f-week').addEventListener('change',()=>{renderSoundChart();renderTrendRadar();renderHooks();});
 $('#f-search').addEventListener('input',apply);
 $('#reset').addEventListener('click',()=>{['#f-week','#f-format','#f-hook','#f-trigger','#f-style'].forEach(s=>$(s).value='');$('#f-show').value='active';$('#f-sort').value='outlier';$('#f-from').value='';$('#f-to').value='';$('#f-search').value='';apply();});
 apply();
