@@ -1044,7 +1044,13 @@ function renderHooks(){
   // separately since a hook can be well-evidenced by either signal alone.
   const cls=(n,d)=>{const r=d?n/d:0;return r>=.5?'hi':r>=.25?'mid':'lo';};
   const badge={keyword_scan:'found independently',targeted_search:'search-verified',internal_only:'internal only',unconfirmed:'unconfirmed'};
-  const head='<thead><tr><th></th><th>Hook</th><th>Same template</th><th>In our niche</th><th>Our creators</th><th>Creators</th><th>Max likes</th><th>Median</th></tr></thead>';
+  const head='<thead><tr><th></th><th>Hook</th>'
+    +'<th title="Of the outside TikTok posts we checked, how many actually reused this hook\'s structure — a different city or price still counts, but sharing only the topic doesn\'t">Same template</th>'
+    +'<th title="Of the same-template matches, how many were also travel/cinematic content — not just someone unrelated using the same wording">In our niche</th>'
+    +'<th title="How many accounts you already track use this hook">Our creators</th>'
+    +'<th title="Total distinct creators using this hook, tracked + outside matches combined">Creators</th>'
+    +'<th title="The single best-performing match we found">Max likes</th>'
+    +'<th title="Median likes across the outside posts we checked, matched or not">Median</th></tr></thead>';
   const body=rows.map((r,i)=>{
     const exList=encodeURIComponent(JSON.stringify(r.examples||[]));
     const ex=(r.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-list="${exList}" data-reel-idx="${k}">ex ${k+1}</button>`).join('');
