@@ -8788,37 +8788,19 @@
         },
         {
           "type": "hook",
-          "name": "The Skeptical Send-Off Quote",
-          "anchor": "Nice have fun in Bali …Bali??",
-          "format": "Casual handheld phone footage mid-transit — plane cabin, airport — with a line of real quoted dialogue centred over the frame, then the destination echoed back as an incredulous question. Deliberately unpolished; the text carries the hook, not the cinematography.",
-          "trigger": "Surprise",
-          "momentum": "new",
-          "creators": 20,
-          "uses": 20,
-          "examples": [
-            "https://www.tiktok.com/@travelwithholl/video/7643854643025415446",
-            "https://www.tiktok.com/@bali_vibes1/video/7639386388399525138",
-            "https://www.tiktok.com/@agus.balitour/video/7592454019096775956"
-          ],
-          "howTo": "Film yourself mid-transit on your phone, overlay an actual line someone said about your trip in quotes, then echo the destination back with a question mark to tee up the reveal.",
-          "note": "Validated via TikTok search: 20 creators, ♥104,969 top, 20 niche-relevant results."
-        },
-        {
-          "type": "hook",
           "name": "Price-Anchored Room Reveal",
           "anchor": "$35 hotel room in China",
           "format": "Creator stands centre-frame in the room, arms spread presenting it, with the exact price and city stamped as bold top-anchored text. The room consistently looks more expensive than the number claims — that gap is the hook.",
           "trigger": "Surprise",
           "momentum": "new",
-          "creators": 17,
-          "uses": 20,
+          "creators": 3,
+          "uses": 7,
           "examples": [
             "https://www.tiktok.com/@traveltomtom/video/7650102150843927830",
-            "https://www.tiktok.com/@rougiimooo/video/7561739887125286166",
-            "https://www.tiktok.com/@christian.grossi/video/7660167665524264223"
+            "https://www.tiktok.com/@explorewithmia__/video/7621402699581476118"
           ],
           "howTo": "Lead with the exact nightly price and city in bold top text, then open on a wide arms-spread presenting shot so the value gap lands inside the first second.",
-          "note": "Validated via TikTok search: 17 creators, ♥767,166 top, 14 niche-relevant results."
+          "note": "Validated: 2 of 7 checked results reused this template in-niche, across 2 creators; top ♥40,727."
         },
         {
           "type": "hook",
@@ -8827,66 +8809,16 @@
           "format": "One wide, heavily graded landscape — mountain range with a lone hiker placed small for scale — carrying an oversized elegant serif title across the middle of the frame like a film title card rather than a caption.",
           "trigger": "Awe",
           "momentum": "new",
-          "creators": 19,
-          "uses": 20,
+          "creators": 10,
+          "uses": 8,
           "examples": [
             "https://www.tiktok.com/@zackroams/video/7652379793459121438",
-            "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-            "https://www.tiktok.com/@bennnji.fm/video/7500274031996800286"
+            "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
+            "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358",
+            "https://www.tiktok.com/@shotbykenii/video/7613219134964354334"
           ],
           "howTo": "Take your widest graded landscape, place one small figure in it for scale, then set an oversized serif title across the middle third and let the grade sell the shot.",
-          "note": "Validated via TikTok search: 19 creators, ♥318,528 top, 13 niche-relevant results."
-        },
-        {
-          "type": "hook",
-          "name": "Miles-Travelled Door Tease",
-          "anchor": "I travelled 8,000 miles for this room view in China",
-          "format": "Opens on the closed hotel-room door with the keycard held in frame and a distance-travelled claim overlaid — the payoff stays withheld behind the door before cutting to the view.",
-          "trigger": "Desire/Wanderlust",
-          "momentum": "new",
-          "creators": 14,
-          "uses": 20,
-          "examples": [
-            "https://www.tiktok.com/@jessmelu/video/7649642257888316694",
-            "https://www.tiktok.com/@helainezhao/video/7667447453200747790",
-            "https://www.tiktok.com/@thelosttwo/video/7671278886268718357"
-          ],
-          "howTo": "Shoot the unopened door with your keycard in frame, overlay how far you travelled, then cut to one unbroken pan of the view so the delayed payoff holds watch-time.",
-          "note": "Validated via TikTok search: 14 creators, ♥175,852 top, 12 niche-relevant results."
-        },
-        {
-          "type": "hook",
-          "name": "Oversized Destination Title Card",
-          "anchor": "THIS IS VAKKARU MALDIVES",
-          "format": "A drone aerial of the destination with the property or place name stacked across the frame in oversized all-caps sans — a declarative name card, with no question or narrative setup.",
-          "trigger": "Desire/Wanderlust",
-          "momentum": "new",
-          "creators": 18,
-          "uses": 20,
-          "examples": [
-            "https://www.tiktok.com/@theresortscollection/video/7624586020721347862",
-            "https://www.tiktok.com/@victory_vission/video/7671882642857528607",
-            "https://www.tiktok.com/@earthscope360/video/7671744382445309198"
-          ],
-          "howTo": "Open on your highest aerial and stamp the place name across two stacked all-caps lines — treat it as a destination title card, not a caption.",
-          "note": "Validated via TikTok search: 18 creators, ♥61,139 top, 9 niche-relevant results."
-        },
-        {
-          "type": "hook",
-          "name": "First-Look Room Reveal Walk",
-          "anchor": "pov: you see your room in Saudi for the first time",
-          "format": "Creator walks a boardwalk or corridor toward the room with luggage still in hand, the POV: first-time line overlaid, and the overwater villa revealed at the end of the walk rather than in the opening frame.",
-          "trigger": "Desire/Wanderlust",
-          "momentum": "new",
-          "creators": 18,
-          "uses": 20,
-          "examples": [
-            "https://www.tiktok.com/@aureliestoryy/video/7612292697763745046",
-            "https://www.tiktok.com/@lookvisually/video/7623445465316592918",
-            "https://www.tiktok.com/@aureliestoryy/video/7620397334563753238"
-          ],
-          "howTo": "Walk toward your room with your bag still in hand and the \"first time\" line overlaid, holding the reveal until the end of the walk instead of opening on the view.",
-          "note": "Validated via TikTok search: 18 creators, ♥72,393 top, 4 niche-relevant results."
+          "note": "Validated: 8 of 8 checked results reused this template in-niche, across 10 creators; top ♥564,563."
         }
       ],
       "tiktokSounds": [
@@ -9083,185 +9015,163 @@
       ],
       "hookTrends": [
         {
-          "hook": "Nice have fun in Bali …Bali??",
-          "nicheHits": 20,
-          "results": 20,
-          "creators": 20,
-          "maxLikes": 104969,
-          "medianLikes": 4572,
+          "hook": "The Art of Colourgrading",
+          "nicheHits": 8,
+          "templateMatches": 8,
+          "results": 8,
+          "creators": 10,
+          "internalCreators": 2,
+          "verifiedBy": "targeted_search",
+          "confirmed": true,
+          "maxLikes": 564563,
+          "medianLikes": 17889,
           "examples": [
-            "https://www.tiktok.com/@travelwithholl/video/7643854643025415446",
-            "https://www.tiktok.com/@bali_vibes1/video/7639386388399525138",
-            "https://www.tiktok.com/@agus.balitour/video/7592454019096775956"
+            "https://www.tiktok.com/@zackroams/video/7652379793459121438",
+            "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
+            "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358",
+            "https://www.tiktok.com/@shotbykenii/video/7613219134964354334"
           ]
         },
         {
           "hook": "$35 hotel room in China",
-          "nicheHits": 14,
-          "results": 20,
-          "creators": 17,
-          "maxLikes": 767166,
-          "medianLikes": 26479,
+          "nicheHits": 2,
+          "templateMatches": 2,
+          "results": 7,
+          "creators": 3,
+          "internalCreators": 1,
+          "verifiedBy": "targeted_search",
+          "confirmed": true,
+          "maxLikes": 76876,
+          "medianLikes": 2080,
           "examples": [
             "https://www.tiktok.com/@traveltomtom/video/7650102150843927830",
-            "https://www.tiktok.com/@rougiimooo/video/7561739887125286166",
-            "https://www.tiktok.com/@christian.grossi/video/7660167665524264223"
-          ]
-        },
-        {
-          "hook": "The Art of Colourgrading",
-          "nicheHits": 13,
-          "results": 20,
-          "creators": 19,
-          "maxLikes": 318528,
-          "medianLikes": 17676,
-          "examples": [
-            "https://www.tiktok.com/@zackroams/video/7652379793459121438",
-            "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-            "https://www.tiktok.com/@bennnji.fm/video/7500274031996800286"
-          ]
-        },
-        {
-          "hook": "I travelled 8,000 miles for this room view in China",
-          "nicheHits": 12,
-          "results": 20,
-          "creators": 14,
-          "maxLikes": 175852,
-          "medianLikes": 175,
-          "examples": [
-            "https://www.tiktok.com/@jessmelu/video/7649642257888316694",
-            "https://www.tiktok.com/@helainezhao/video/7667447453200747790",
-            "https://www.tiktok.com/@thelosttwo/video/7671278886268718357"
-          ]
-        },
-        {
-          "hook": "THIS IS VAKKARU MALDIVES",
-          "nicheHits": 9,
-          "results": 20,
-          "creators": 18,
-          "maxLikes": 61139,
-          "medianLikes": 64,
-          "examples": [
-            "https://www.tiktok.com/@theresortscollection/video/7624586020721347862",
-            "https://www.tiktok.com/@victory_vission/video/7671882642857528607",
-            "https://www.tiktok.com/@earthscope360/video/7671744382445309198"
-          ]
-        },
-        {
-          "hook": "Philippines OPERATED BY: COASORATION Travelling with freediving fins is a nightmare",
-          "nicheHits": 8,
-          "results": 20,
-          "creators": 19,
-          "maxLikes": 361321,
-          "medianLikes": 700,
-          "examples": [
-            "https://www.tiktok.com/@kisig.ph/video/7671603811701542165",
-            "https://www.tiktok.com/@csdymrnd/video/7672004655781530888",
-            "https://www.tiktok.com/@froyows/video/7670894390646164743"
-          ]
-        },
-        {
-          "hook": "What do you dream about?",
-          "nicheHits": 7,
-          "results": 20,
-          "creators": 19,
-          "maxLikes": 638878,
-          "medianLikes": 13554,
-          "examples": [
-            "https://www.tiktok.com/@caidenjacksontravel/video/7621024607562239245",
-            "https://www.tiktok.com/@anonymus__vms/video/7217525843130649861",
-            "https://www.tiktok.com/@hausediits/video/7663365043207097613"
-          ]
-        },
-        {
-          "hook": "pov: you see your room in Saudi for the first time",
-          "nicheHits": 4,
-          "results": 20,
-          "creators": 18,
-          "maxLikes": 72393,
-          "medianLikes": 224,
-          "examples": [
-            "https://www.tiktok.com/@aureliestoryy/video/7612292697763745046",
-            "https://www.tiktok.com/@lookvisually/video/7623445465316592918",
-            "https://www.tiktok.com/@aureliestoryy/video/7620397334563753238"
-          ]
-        },
-        {
-          "hook": "How to make APPLE STYLE ADS on your phone",
-          "nicheHits": 3,
-          "results": 20,
-          "creators": 20,
-          "maxLikes": 737719,
-          "medianLikes": 673,
-          "examples": [
-            "https://www.tiktok.com/@buildwithfreddy/video/7650587942200577293",
-            "https://www.tiktok.com/@onyxlumorastudios/video/7277000338941496582",
-            "https://www.tiktok.com/@92angelz/video/7573087136249826573"
-          ]
-        },
-        {
-          "hook": "YOU MADE IT TO",
-          "nicheHits": 2,
-          "results": 20,
-          "creators": 17,
-          "maxLikes": 6225016,
-          "medianLikes": 100888,
-          "examples": [
-            "https://www.tiktok.com/@disney/video/7642483868758543629",
-            "https://www.tiktok.com/@halfyornateoriginals/video/7618315774826171656",
-            "https://www.tiktok.com/@tabios_karl/video/7666820479629397256"
-          ]
-        },
-        {
-          "hook": "a random Tuesday in Wexford",
-          "nicheHits": 2,
-          "results": 20,
-          "creators": 19,
-          "maxLikes": 636616,
-          "medianLikes": 595,
-          "examples": [
-            "https://www.tiktok.com/@katiebeevlogs/video/7655706559074340118",
-            "https://www.tiktok.com/@eadaoinfitzmaurice/video/7624125752073538838",
-            "https://www.tiktok.com/@philfilmss/video/7646691693776981268"
-          ]
-        },
-        {
-          "hook": "imagine that you are in movie",
-          "nicheHits": 2,
-          "results": 20,
-          "creators": 20,
-          "maxLikes": 529562,
-          "medianLikes": 216,
-          "examples": [
-            "https://www.tiktok.com/@candydollcore/video/7672216540791524639",
-            "https://www.tiktok.com/@zayyxclusive/video/7661006424511761694",
-            "https://www.tiktok.com/@adelimey/video/7633395378749984007"
-          ]
-        },
-        {
-          "hook": "you can now change your background in any video",
-          "nicheHits": 2,
-          "results": 20,
-          "creators": 20,
-          "maxLikes": 132315,
-          "medianLikes": 3550,
-          "examples": [
-            "https://www.tiktok.com/@learnwithkayo/video/7646465747773869319",
-            "https://www.tiktok.com/@toluoflele/video/7634809989109927190",
-            "https://www.tiktok.com/@inshotapp.official/video/7664822771049843988"
+            "https://www.tiktok.com/@explorewithmia__/video/7621402699581476118",
+            "https://www.instagram.com/reel/DZcbBCNyUhR/"
           ]
         },
         {
           "hook": "anaras i through my lens",
           "nicheHits": 2,
-          "results": 20,
-          "creators": 20,
-          "maxLikes": 20285,
-          "medianLikes": 172,
+          "templateMatches": 2,
+          "results": 6,
+          "creators": 3,
+          "internalCreators": 1,
+          "verifiedBy": "targeted_search",
+          "confirmed": true,
+          "maxLikes": 5240,
+          "medianLikes": 500,
           "examples": [
-            "https://www.tiktok.com/@gbnf.corp/video/7585760490572352782",
-            "https://www.tiktok.com/@jessicahnsn/video/7084323105220431147",
-            "https://www.tiktok.com/@richforever92/video/7568183560109100319"
+            "https://www.tiktok.com/@eyeofshe/video/7575711820082629919",
+            "https://www.tiktok.com/@frhqu/video/7571134470112218390",
+            "https://www.instagram.com/reel/DZNeYddI5N-/"
+          ]
+        },
+        {
+          "hook": "What do you dream about?",
+          "nicheHits": 1,
+          "templateMatches": 4,
+          "results": 5,
+          "creators": 2,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 639605,
+          "medianLikes": 220886,
+          "examples": [
+            "https://www.tiktok.com/@asilcinematicfilmes/video/7675859261276065056",
+            "https://www.instagram.com/reel/DZiWoOAsnAw/",
+            "https://www.instagram.com/reel/DZHjYuXs_Aw/"
+          ]
+        },
+        {
+          "hook": "I travelled 8,000 miles for this room view in China",
+          "nicheHits": 1,
+          "templateMatches": 2,
+          "results": 7,
+          "creators": 2,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 86779,
+          "medianLikes": 2865,
+          "examples": [
+            "https://www.tiktok.com/@thelosttwo/video/7671278886268718357",
+            "https://www.instagram.com/reel/DZSsBBCS-uS/"
+          ]
+        },
+        {
+          "hook": "YOU MADE IT TO",
+          "nicheHits": 0,
+          "templateMatches": 5,
+          "results": 8,
+          "creators": 1,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 34115,
+          "medianLikes": 384,
+          "examples": [
+            "https://www.instagram.com/reel/DZNSfJHApMr/"
+          ]
+        },
+        {
+          "hook": "imagine that you are in movie",
+          "nicheHits": 0,
+          "templateMatches": 4,
+          "results": 8,
+          "creators": 1,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 911042,
+          "medianLikes": 81,
+          "examples": [
+            "https://www.instagram.com/reel/DYxLaOzR9-2/"
+          ]
+        },
+        {
+          "hook": "pov: you see your room in Saudi for the first time",
+          "nicheHits": 0,
+          "templateMatches": 2,
+          "results": 7,
+          "creators": 1,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 72391,
+          "medianLikes": 4942,
+          "examples": [
+            "https://www.instagram.com/reel/DZYCKTftO42/"
+          ]
+        },
+        {
+          "hook": "How to make APPLE STYLE ADS on your phone",
+          "nicheHits": 0,
+          "templateMatches": 1,
+          "results": 8,
+          "creators": 1,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 738841,
+          "medianLikes": 338,
+          "examples": [
+            "https://www.instagram.com/reel/DZTDoPMAEbc/"
+          ]
+        },
+        {
+          "hook": "you can now change your background in any video",
+          "nicheHits": 0,
+          "templateMatches": 1,
+          "results": 7,
+          "creators": 1,
+          "internalCreators": 1,
+          "verifiedBy": "unconfirmed",
+          "confirmed": false,
+          "maxLikes": 56317,
+          "medianLikes": 7589,
+          "examples": [
+            "https://www.instagram.com/reel/DZDLEnGsXBz/"
           ]
         }
       ]

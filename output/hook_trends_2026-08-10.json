@@ -1,184 +1,172 @@
 [
   {
-    "hook": "Nice have fun in Bali …Bali??",
-    "results": 20,
-    "distinct_creators": 20,
-    "max_likes": 104969,
-    "median_likes": 4572,
-    "niche_hits": 20,
+    "hook": "The Art of Colourgrading",
+    "internal_creators": 2,
+    "distinct_creators": 10,
+    "external_matches": 8,
+    "template_matches": 8,
+    "results": 8,
+    "niche_hits": 8,
+    "max_likes": 564563,
+    "median_likes": 17889,
+    "verified_by": "targeted_search",
+    "confirmed": true,
     "examples": [
-      "https://www.tiktok.com/@travelwithholl/video/7643854643025415446",
-      "https://www.tiktok.com/@bali_vibes1/video/7639386388399525138",
-      "https://www.tiktok.com/@agus.balitour/video/7592454019096775956"
+      "https://www.tiktok.com/@zackroams/video/7652379793459121438",
+      "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
+      "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358",
+      "https://www.tiktok.com/@shotbykenii/video/7613219134964354334"
     ]
   },
   {
     "hook": "$35 hotel room in China",
-    "results": 20,
-    "distinct_creators": 17,
-    "max_likes": 767166,
-    "median_likes": 26479,
-    "niche_hits": 14,
+    "internal_creators": 1,
+    "distinct_creators": 3,
+    "external_matches": 2,
+    "template_matches": 2,
+    "results": 7,
+    "niche_hits": 2,
+    "max_likes": 76876,
+    "median_likes": 2080,
+    "verified_by": "targeted_search",
+    "confirmed": true,
     "examples": [
       "https://www.tiktok.com/@traveltomtom/video/7650102150843927830",
-      "https://www.tiktok.com/@rougiimooo/video/7561739887125286166",
-      "https://www.tiktok.com/@christian.grossi/video/7660167665524264223"
-    ]
-  },
-  {
-    "hook": "The Art of Colourgrading",
-    "results": 20,
-    "distinct_creators": 19,
-    "max_likes": 318528,
-    "median_likes": 17676,
-    "niche_hits": 13,
-    "examples": [
-      "https://www.tiktok.com/@zackroams/video/7652379793459121438",
-      "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-      "https://www.tiktok.com/@bennnji.fm/video/7500274031996800286"
-    ]
-  },
-  {
-    "hook": "I travelled 8,000 miles for this room view in China",
-    "results": 20,
-    "distinct_creators": 14,
-    "max_likes": 175852,
-    "median_likes": 175,
-    "niche_hits": 12,
-    "examples": [
-      "https://www.tiktok.com/@jessmelu/video/7649642257888316694",
-      "https://www.tiktok.com/@helainezhao/video/7667447453200747790",
-      "https://www.tiktok.com/@thelosttwo/video/7671278886268718357"
-    ]
-  },
-  {
-    "hook": "THIS IS VAKKARU MALDIVES",
-    "results": 20,
-    "distinct_creators": 18,
-    "max_likes": 61139,
-    "median_likes": 64,
-    "niche_hits": 9,
-    "examples": [
-      "https://www.tiktok.com/@theresortscollection/video/7624586020721347862",
-      "https://www.tiktok.com/@victory_vission/video/7671882642857528607",
-      "https://www.tiktok.com/@earthscope360/video/7671744382445309198"
-    ]
-  },
-  {
-    "hook": "Philippines OPERATED BY: COASORATION Travelling with freediving fins is a nightmare",
-    "results": 20,
-    "distinct_creators": 19,
-    "max_likes": 361321,
-    "median_likes": 700,
-    "niche_hits": 8,
-    "examples": [
-      "https://www.tiktok.com/@kisig.ph/video/7671603811701542165",
-      "https://www.tiktok.com/@csdymrnd/video/7672004655781530888",
-      "https://www.tiktok.com/@froyows/video/7670894390646164743"
-    ]
-  },
-  {
-    "hook": "What do you dream about?",
-    "results": 20,
-    "distinct_creators": 19,
-    "max_likes": 638878,
-    "median_likes": 13554,
-    "niche_hits": 7,
-    "examples": [
-      "https://www.tiktok.com/@caidenjacksontravel/video/7621024607562239245",
-      "https://www.tiktok.com/@anonymus__vms/video/7217525843130649861",
-      "https://www.tiktok.com/@hausediits/video/7663365043207097613"
-    ]
-  },
-  {
-    "hook": "pov: you see your room in Saudi for the first time",
-    "results": 20,
-    "distinct_creators": 18,
-    "max_likes": 72393,
-    "median_likes": 224,
-    "niche_hits": 4,
-    "examples": [
-      "https://www.tiktok.com/@aureliestoryy/video/7612292697763745046",
-      "https://www.tiktok.com/@lookvisually/video/7623445465316592918",
-      "https://www.tiktok.com/@aureliestoryy/video/7620397334563753238"
-    ]
-  },
-  {
-    "hook": "How to make APPLE STYLE ADS on your phone",
-    "results": 20,
-    "distinct_creators": 20,
-    "max_likes": 737719,
-    "median_likes": 673,
-    "niche_hits": 3,
-    "examples": [
-      "https://www.tiktok.com/@buildwithfreddy/video/7650587942200577293",
-      "https://www.tiktok.com/@onyxlumorastudios/video/7277000338941496582",
-      "https://www.tiktok.com/@92angelz/video/7573087136249826573"
-    ]
-  },
-  {
-    "hook": "YOU MADE IT TO",
-    "results": 20,
-    "distinct_creators": 17,
-    "max_likes": 6225016,
-    "median_likes": 100888,
-    "niche_hits": 2,
-    "examples": [
-      "https://www.tiktok.com/@disney/video/7642483868758543629",
-      "https://www.tiktok.com/@halfyornateoriginals/video/7618315774826171656",
-      "https://www.tiktok.com/@tabios_karl/video/7666820479629397256"
-    ]
-  },
-  {
-    "hook": "a random Tuesday in Wexford",
-    "results": 20,
-    "distinct_creators": 19,
-    "max_likes": 636616,
-    "median_likes": 595,
-    "niche_hits": 2,
-    "examples": [
-      "https://www.tiktok.com/@katiebeevlogs/video/7655706559074340118",
-      "https://www.tiktok.com/@eadaoinfitzmaurice/video/7624125752073538838",
-      "https://www.tiktok.com/@philfilmss/video/7646691693776981268"
-    ]
-  },
-  {
-    "hook": "imagine that you are in movie",
-    "results": 20,
-    "distinct_creators": 20,
-    "max_likes": 529562,
-    "median_likes": 216,
-    "niche_hits": 2,
-    "examples": [
-      "https://www.tiktok.com/@candydollcore/video/7672216540791524639",
-      "https://www.tiktok.com/@zayyxclusive/video/7661006424511761694",
-      "https://www.tiktok.com/@adelimey/video/7633395378749984007"
-    ]
-  },
-  {
-    "hook": "you can now change your background in any video",
-    "results": 20,
-    "distinct_creators": 20,
-    "max_likes": 132315,
-    "median_likes": 3550,
-    "niche_hits": 2,
-    "examples": [
-      "https://www.tiktok.com/@learnwithkayo/video/7646465747773869319",
-      "https://www.tiktok.com/@toluoflele/video/7634809989109927190",
-      "https://www.tiktok.com/@inshotapp.official/video/7664822771049843988"
+      "https://www.tiktok.com/@explorewithmia__/video/7621402699581476118",
+      "https://www.instagram.com/reel/DZcbBCNyUhR/"
     ]
   },
   {
     "hook": "anaras i through my lens",
-    "results": 20,
-    "distinct_creators": 20,
-    "max_likes": 20285,
-    "median_likes": 172,
+    "internal_creators": 1,
+    "distinct_creators": 3,
+    "external_matches": 2,
+    "template_matches": 2,
+    "results": 6,
     "niche_hits": 2,
+    "max_likes": 5240,
+    "median_likes": 500,
+    "verified_by": "targeted_search",
+    "confirmed": true,
     "examples": [
-      "https://www.tiktok.com/@gbnf.corp/video/7585760490572352782",
-      "https://www.tiktok.com/@jessicahnsn/video/7084323105220431147",
-      "https://www.tiktok.com/@richforever92/video/7568183560109100319"
+      "https://www.tiktok.com/@eyeofshe/video/7575711820082629919",
+      "https://www.tiktok.com/@frhqu/video/7571134470112218390",
+      "https://www.instagram.com/reel/DZNeYddI5N-/"
+    ]
+  },
+  {
+    "hook": "What do you dream about?",
+    "internal_creators": 1,
+    "distinct_creators": 2,
+    "external_matches": 1,
+    "template_matches": 4,
+    "results": 5,
+    "niche_hits": 1,
+    "max_likes": 639605,
+    "median_likes": 220886,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.tiktok.com/@asilcinematicfilmes/video/7675859261276065056",
+      "https://www.instagram.com/reel/DZiWoOAsnAw/",
+      "https://www.instagram.com/reel/DZHjYuXs_Aw/"
+    ]
+  },
+  {
+    "hook": "I travelled 8,000 miles for this room view in China",
+    "internal_creators": 1,
+    "distinct_creators": 2,
+    "external_matches": 1,
+    "template_matches": 2,
+    "results": 7,
+    "niche_hits": 1,
+    "max_likes": 86779,
+    "median_likes": 2865,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.tiktok.com/@thelosttwo/video/7671278886268718357",
+      "https://www.instagram.com/reel/DZSsBBCS-uS/"
+    ]
+  },
+  {
+    "hook": "YOU MADE IT TO",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 5,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 34115,
+    "median_likes": 384,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZNSfJHApMr/"
+    ]
+  },
+  {
+    "hook": "imagine that you are in movie",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 4,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 911042,
+    "median_likes": 81,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DYxLaOzR9-2/"
+    ]
+  },
+  {
+    "hook": "pov: you see your room in Saudi for the first time",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 2,
+    "results": 7,
+    "niche_hits": 0,
+    "max_likes": 72391,
+    "median_likes": 4942,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZYCKTftO42/"
+    ]
+  },
+  {
+    "hook": "How to make APPLE STYLE ADS on your phone",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 1,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 738841,
+    "median_likes": 338,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZTDoPMAEbc/"
+    ]
+  },
+  {
+    "hook": "you can now change your background in any video",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 1,
+    "results": 7,
+    "niche_hits": 0,
+    "max_likes": 56317,
+    "median_likes": 7589,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZDLEnGsXBz/"
     ]
   }
 ]
