@@ -87,22 +87,6 @@
     ]
   },
   {
-    "hook": "more work. more life.",
-    "internal_creators": 1,
-    "distinct_creators": 1,
-    "external_matches": 0,
-    "template_matches": 2,
-    "results": 7,
-    "niche_hits": 0,
-    "max_likes": 88774,
-    "median_likes": 8963,
-    "verified_by": "unconfirmed",
-    "confirmed": false,
-    "examples": [
-      "https://www.instagram.com/reel/DZYMfeNOptR/"
-    ]
-  },
-  {
     "hook": "how to make a fireball Attempt #1",
     "internal_creators": 1,
     "distinct_creators": 1,
@@ -116,6 +100,22 @@
     "confirmed": false,
     "examples": [
       "https://www.instagram.com/reel/DZu-fy1Cb5x/"
+    ]
+  },
+  {
+    "hook": "more work. more life.",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 1,
+    "results": 7,
+    "niche_hits": 0,
+    "max_likes": 88774,
+    "median_likes": 8963,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZYMfeNOptR/"
     ]
   },
   {
