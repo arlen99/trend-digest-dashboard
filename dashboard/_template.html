@@ -186,6 +186,15 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .hooktable{width:100%;border-collapse:collapse;min-width:640px}
 .hooktable th{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--faint);text-align:left;padding:13px 16px;border-bottom:1px solid var(--line2);white-space:nowrap;font-weight:500}
+.hk-th{position:relative;cursor:help;border-bottom:1px dotted var(--faint);padding-bottom:1px}
+.hk-tip{position:absolute;top:100%;left:0;margin-top:9px;width:230px;max-width:58vw;
+  background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;
+  font-family:'Hanken Grotesk',sans-serif;font-size:12.5px;line-height:1.5;letter-spacing:0;
+  text-transform:none;font-weight:400;color:var(--muted);white-space:normal;box-shadow:var(--shadow);
+  opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s;
+  pointer-events:none;z-index:50}
+.hk-th:hover .hk-tip,.hk-th:focus-visible .hk-tip{opacity:1;visibility:visible;transform:translateY(0)}
+.hk-tip.hk-tip-r{left:auto;right:0}
 .hooktable td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
 .hooktable tr:last-child td{border-bottom:0}
 .hooktable tbody tr{transition:background .15s}
@@ -1044,13 +1053,15 @@ function renderHooks(){
   // separately since a hook can be well-evidenced by either signal alone.
   const cls=(n,d)=>{const r=d?n/d:0;return r>=.5?'hi':r>=.25?'mid':'lo';};
   const badge={keyword_scan:'found independently',targeted_search:'search-verified',internal_only:'internal only',unconfirmed:'unconfirmed'};
+  const th=(label,tip,right)=>`<th><span class="hk-th" tabindex="0">${label}<span class="hk-tip${right?' hk-tip-r':''}">${tip}</span></span></th>`;
   const head='<thead><tr><th></th><th>Hook</th>'
-    +'<th title="Of the outside TikTok posts we checked, how many actually reused this hook\'s structure — a different city or price still counts, but sharing only the topic doesn\'t">Same template</th>'
-    +'<th title="Of the same-template matches, how many were also travel/cinematic content — not just someone unrelated using the same wording">In our niche</th>'
-    +'<th title="How many accounts you already track use this hook">Our creators</th>'
-    +'<th title="Total distinct creators using this hook, tracked + outside matches combined">Creators</th>'
-    +'<th title="The single best-performing match we found">Max likes</th>'
-    +'<th title="Median likes across the outside posts we checked, matched or not">Median</th></tr></thead>';
+    +th('Same template','We search TikTok for this exact hook and OCR the on-screen text of the results it returns. This counts how many of those returned posts actually reused the hook\'s structure — a different city or price still counts, but sharing only the topic doesn\'t.')
+    +th('In our niche','Of those same-template matches, how many were also travel/cinematic content — not just someone unrelated using the same wording.')
+    +th('Our creators','How many accounts you already track use this hook.')
+    +th('Creators','Total distinct creators using this hook, tracked + outside matches combined.')
+    +th('Max likes','The single best-performing match we found.',true)
+    +th('Median','Median likes across the returned posts we checked, matched or not.',true)
+    +'</tr></thead>';
   const body=rows.map((r,i)=>{
     const exList=encodeURIComponent(JSON.stringify(r.examples||[]));
     const ex=(r.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-list="${exList}" data-reel-idx="${k}">ex ${k+1}</button>`).join('');
