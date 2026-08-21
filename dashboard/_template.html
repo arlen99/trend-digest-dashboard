@@ -192,6 +192,7 @@ button.lk.reel:hover{opacity:1;color:var(--teal);border-color:var(--teal)}
 .hooktable tbody tr:hover{background:rgba(255,255,255,.025)}
 .hk-rank{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);width:1%}
 .hk-text{font-family:'Fraunces',serif;font-size:16px;line-height:1.3;min-width:240px}
+.hk-verified{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:3px}
 .hk-num{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink);white-space:nowrap}
 .hk-num .u{font-size:10px;color:var(--faint)}
 /* niche-match strength — the signal that separates a real niche template from a
@@ -803,7 +804,7 @@ function renderTrendRadar(){
   const pa=$('#prov-accounts');
   if(pa&&v) pa.innerHTML=`<b>${n(v.igSeed)}</b> Instagram seed accounts (manually curated niche references) &nbsp;&plus;&nbsp; <b>${n(v.igDiscovered)}</b> discovered (snowballed via each seed's Instagram “related profiles” list — a candidate must appear under ${v.igDiscMinSeeds?`&ge;${n(v.igDiscMinSeeds)}`:'multiple'} different seeds to qualify, filtering out one-off noise; report-only, nothing auto-added — see Swipe File &rarr; Sources for detail) &nbsp;&plus;&nbsp; <b>${n(v.igBootstrap)}</b> bootstrapped (from keyword &amp; hashtag searches on Instagram — e.g. “cinematic travel”, “travel filmmaker”) &nbsp;&equals;&nbsp; <b>${n(v.igAccounts)}</b> total IG. TikTok: <b>${n(v.tiktokCreators)}</b> creators — discovered from scratch via keyword search (no seed accounts, no related-graph on TikTok). For each niche keyword (e.g. \"cinematic travel\", \"travel filmmaker\"), we run two TikTok searches: (1) <b>creator search</b> — returns user profiles whose handle/bio match the keyword; (2) <b>video search</b> — returns matching videos, from which we extract the video authors. All candidates are then vetted: bio/nickname must pass a niche-signal check (cinematic, travel film, drone, b-roll, etc.), spam signals are excluded, and a minimum of 5,000 followers is required. Survivors are ranked by follower count and the top 80 are added to the watchlist.`;
   if(v&&$('#prov-trends')) $('#prov-trends').innerHTML=`<button class="pl-btn" data-method="trends">Method ▸</button>A trend = a template a creator-cluster copies. <b>Audio</b> trends: sounds used by ≥3 niche creators (from the ${(v.audioTracks||0).toLocaleString()}-track scan). <b>Hook</b> trends: on-screen hook lines (free on-device OCR of each reel's first ~4s) clustered across creators — independent of audio. Momentum is week-over-week.`;
-  if(v&&$('#prov-hooks')) $('#prov-hooks').innerHTML=`<b>${n(v.hooksOcrd)}</b> reels OCR'd (free, on-device) &rarr; <b>${n(v.hooksReadable)}</b> had readable on-screen text &rarr; each distinct phrase searched on TikTok (which indexes on-screen text, unlike Instagram) &rarr; kept only if &ge;${v.hookMinNiche||2} of its ~20 results read as this niche and the top result cleared ${n(v.hookMinLikes)} likes. Currently OCR'd from <b>${(v.hookPlats||['Instagram']).join(' + ')}</b>.`;})();
+  if(v&&$('#prov-hooks')) $('#prov-hooks').innerHTML=`<b>${n(v.hooksOcrd)}</b> reels OCR'd (free, on-device) &rarr; <b>${n(v.hooksReadable)}</b> had readable on-screen text &rarr; near-duplicate lines clustered into candidate hooks &rarr; each candidate checked first against an independent TikTok keyword-scan corpus (already OCR'd, no extra cost), then against a targeted TikTok search (top ${v.hookSearchPool||8} results OCR'd) if the first pass found nothing &rarr; kept only if a Claude semantic judge confirms &ge;${v.hookMinNiche||2} of those results are genuinely the same reusable hook template, not just the same topic. Currently OCR'd from <b>${(v.hookPlats||['Instagram']).join(' + ')}</b>.`;})();
 
 /* ========== SWIPE FILE ========== */
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1034,24 +1035,29 @@ function renderHooks(){
     if(note)note.innerHTML='<span class="empty" style="display:block;margin:28px auto">No validated hooks for this week — either the run found none clearing the niche/engagement bar, or the TikTok validation step couldn\'t reach its API that week.</span>';
     return;
   }
-  // niche_hits is out of `results` (how many of the phrase's TikTok search results
-  // actually look like this niche) — the single best "is this OUR trend or just a
-  // viral phrase" signal, so it leads the sort and gets the colour treatment.
-  const cls=(n,d)=>{const r=d?n/d:0;return r>=.6?'hi':r>=.3?'mid':'lo';};
-  const head='<thead><tr><th></th><th>Hook</th><th>Niche match</th><th>Creators</th><th>Max likes</th><th>Median</th></tr></thead>';
+  // niche_hits is now confirmed EXTERNAL matches only (an independent post whose
+  // on-screen text was OCR'd and judged the SAME hook template, not just topically
+  // similar — see hook_search.py) out of how many independent texts were actually
+  // checked. internal_creators (people in OUR OWN tracked niche using it) is shown
+  // separately since a hook can be well-evidenced by either signal alone.
+  const cls=(n,d)=>{const r=d?n/d:0;return r>=.5?'hi':r>=.25?'mid':'lo';};
+  const badge={keyword_scan:'found independently',targeted_search:'search-verified',internal_only:'internal only'};
+  const head='<thead><tr><th></th><th>Hook</th><th>External match</th><th>Internal</th><th>Creators</th><th>Max likes</th><th>Median</th></tr></thead>';
   const body=rows.map((r,i)=>{
     const exList=encodeURIComponent(JSON.stringify(r.examples||[]));
     const ex=(r.examples||[]).map((u,k)=>`<button class="lk reel" type="button" data-reel-list="${exList}" data-reel-idx="${k}">ex ${k+1}</button>`).join('');
+    const vb=badge[r.verifiedBy]||r.verifiedBy||'';
     return `<tr>
       <td class="hk-rank">${i+1}</td>
-      <td><div class="hk-text">${escA(r.hook)}</div>${ex?`<div class="hk-ex">${ex}</div>`:''}</td>
-      <td class="hk-niche ${cls(r.nicheHits,r.results)}">${r.nicheHits}<span class="u">/${r.results}</span></td>
+      <td><div class="hk-text">${escA(r.hook)}</div>${vb?`<div class="hk-verified">${vb}</div>`:''}${ex?`<div class="hk-ex">${ex}</div>`:''}</td>
+      <td class="hk-niche ${cls(r.nicheHits,r.results)}">${r.results?r.nicheHits+'<span class="u">/'+r.results+'</span>':'<span class="u">—</span>'}</td>
+      <td class="hk-num">${r.internalCreators||0}</td>
       <td class="hk-num">${r.creators}</td>
       <td class="hk-num">${fmtN(r.maxLikes)}</td>
       <td class="hk-num">${fmtN(r.medianLikes)}</td>
     </tr>`;}).join('');
   t.innerHTML=head+'<tbody>'+body+'</tbody>';
-  if(note)note.innerHTML=`<b>${rows.length}</b> hooks cleared validation this week. <b>Niche match</b> = how many of the phrase's top TikTok search results actually read as travel/cinematic — a high count means the phrase is a template <i>this niche</i> is copying, not just a generic viral line. <b>Max likes</b> is the single best-performing result, so a high ceiling with a low median means the format has breakout potential but isn't a guaranteed hit.`;
+  if(note)note.innerHTML=`<b>${rows.length}</b> hooks cleared validation this week. Each one is checked against independently-sourced posts (a broad TikTok keyword scan, or a targeted search as fallback) — a post only counts as a match if its on-screen text was OCR'd and judged the <i>same reusable template</i> as the hook, not just a similar topic. <b>External match</b> = confirmed matches out of texts checked; <b>Internal</b> = how many of our own tracked creators already use it. <b>Max likes</b> is the single best-performing match, so a high ceiling with a low median means the format has breakout potential but isn't a guaranteed hit.`;
 }
 renderHooks();
 // Trend Radar: initial render + filter bar + save/dismiss delegation
@@ -1401,11 +1407,13 @@ function openMethod(kind){
       {n:n(v.audioReels),l:`recent reels we scanned (${platStr})`},
       {n:n(v.hooksOcrd),l:`of those, reels we've OCR'd for on-screen hook text (top performers by outlier score, result cached across runs)`},
       {n:n(v.hooksReadable),l:'had readable hook text in the first ~4 seconds'},
-      {l:'each distinct phrase → searched on TikTok'},
-      {n:n(v.hookValidated),l:`returned ≥${v.hookMinNiche} niche-relevant results &amp; ≥10K max likes → "confirmed trend"`,hl:true},
+      {l:'near-duplicate lines clustered into candidate hooks'},
+      {l:'each candidate checked against an independent TikTok keyword-scan corpus first (free, already OCR\'d)'},
+      {l:`no match there → targeted TikTok search, top ${v.hookSearchPool||8} results OCR'd`},
+      {n:n(v.hookValidated),l:`Claude judge confirms &ge;${v.hookMinNiche} of those results are the same reusable template → "confirmed trend"`,hl:true},
       {n:n(v.trendsHook),l:'Claude writes the top ones as cards'},
     ])+`</div></div>`
-    +`<div class="msec"><h4>What "confirmed" actually means here</h4><p>We don't gate on "≥N distinct accounts in our scan" — top performers rarely overlap. Instead, we OCR <b>one</b> hook from our scan, then <b>TikTok-search the exact phrase</b>. A hook is confirmed when those search results are clearly niche (≥${v.hookMinNiche} of the ~20 results match the niche regex) <i>and</i> show real distribution (top result ≥10K likes). Same hook used over different audio still counts — the phrase is the anchor, not the sound.</p></div>`
+    +`<div class="msec"><h4>What "confirmed" actually means here</h4><p>We don't gate on "≥N distinct accounts in our scan" — top performers rarely overlap. Instead, we OCR <b>one</b> hook from our scan, cluster it against every other hook we've read to catch internal repeats, then check it against outside evidence: first an already-OCR'd TikTok keyword-scan corpus, and if that turns up nothing, a targeted TikTok search of the exact phrase (top ${v.hookSearchPool||8} results, OCR'd). A hook is confirmed only when a Claude semantic judge — not a text match — agrees &ge;${v.hookMinNiche} of those results are genuinely the <i>same reusable template</i>, not just the same topic. That distinction matters: a search for "Bali" text will surface dozens of unrelated Bali travel videos, and only judging the actual template catches the difference. Same hook used over different audio still counts — the phrase is the anchor, not the sound.</p></div>`
     +`<div class="msec"><h4>Why search TikTok &amp; not Instagram?</h4><p>TikTok indexes the <b>on-screen text</b> of every video server-side, so searching a phrase returns everyone using it. Instagram has no equivalent — its search only matches captions and hashtags, not the text overlaid in the video. So the hook side runs through TikTok, even though our OCR currently reads <b>${platStr}</b> reels. (Adding TikTok to the OCR side is on the list — TikHub's web endpoint strips the video URL, so it'd need an extra fetch per post.)</p></div>`
     +`<div class="msec"><h4>The stack</h4>${stack}</div>`;
   }

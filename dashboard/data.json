@@ -4046,9 +4046,12 @@
     "igSeed": 129,
     "igDiscovered": 0,
     "igBootstrap": 0,
-    "igDiscMinSeeds": null,
-    "igDiscCandidates": null,
-    "igDiscSeedCoverage": null,
+    "igDiscMinSeeds": 3,
+    "igDiscCandidates": 289,
+    "igDiscSeedCoverage": [
+      83,
+      106
+    ],
     "tiktokCreators": 25,
     "postsPerIg": 8,
     "postsPerTt": 10,
@@ -4063,23 +4066,23 @@
     "keywordCarryover": 0,
     "discFresh": 0,
     "discCarryover": 0,
-    "audioAccounts": 124,
+    "audioAccounts": 91,
     "audioReelsPer": 20,
     "audioTracks": 964,
     "audioMulti": 56,
     "audioShown": 30,
     "ttSounds": 50,
-    "ttXplatform": 7,
+    "ttXplatform": 6,
     "ttShown": 20,
-    "audioReels": 2480,
+    "audioReels": 1820,
     "hooksOcrd": 481,
     "hooksReadable": 402,
-    "hookValidated": 0,
+    "hookValidated": 5,
     "hookPlats": [
       "Instagram"
     ],
     "hookMinNiche": 2,
-    "hookMinLikes": 10000,
+    "hookSearchPool": 8,
     "keywords": [
       "cinematic travel",
       "travel film",
@@ -4089,36 +4092,36 @@
       "travel cinematography"
     ],
     "trendsAudio": 10,
-    "trendsHook": 0,
-    "costTikhubCalls": 1386,
-    "costClaudeCalls": 80,
-    "costAuddCalls": 34,
-    "auddAuthDead": true,
-    "costAcrcloudCalls": 17,
-    "costTikhub": 1.386,
-    "costClaude": 1.183,
-    "costTotal": 2.569,
-    "igExcluded": 15,
-    "igEvaluated": 70,
+    "trendsHook": 4,
+    "costTikhubCalls": 1012,
+    "costClaudeCalls": 0,
+    "costAuddCalls": 0,
+    "auddAuthDead": false,
+    "costAcrcloudCalls": 27,
+    "costTikhub": 1.012,
+    "costClaude": 0.0,
+    "costTotal": 1.012,
+    "igExcluded": 22,
+    "igEvaluated": 77,
     "igExcludeReasons": [
       [
-        "AI-generated pet/novelty content promoting an AI video tool (Higgsfield) — sponsored/branded tool promo, not genuine travel/cinematic filmmaking content.",
+        "Branded/sponsored content promoting the Leapmotor C10 vehicle (tagged @leapmotor_australia), not organic travel/cinematic study material.",
         1
       ],
       [
-        "Gear-promo/branded content centered on DJI Ronin RS4 Mini gimbal, not a travel/cinematic content example to study visually.",
+        "Monetization bait — comment-to-DM growth-strategy pitch for the creator's IG coaching program.",
         1
       ],
       [
-        "This is \"make money on Instagram\" monetization bait/course funnel content using travel imagery as backdrop, not genuine travel or cinematic filmmaking content.",
+        "Self-help/inspirational quote carousel ('Quotes that rewired my brain') — not travel or cinematic-technique content.",
         1
       ],
       [
-        "Sponsored/branded content (Anzeige - ad for Decathlon SUP products), not organic travel/cinematic content worth studying for hooks or visual style.",
+        "Engagement-bait tag hook ('Send this to your bro') — mechanic-driven meme content rather than a travel/cinematic study piece.",
         1
       ],
       [
-        "Festival crowd/relationship-tag meme content, not travel or cinematic filmmaking craft to study.",
+        "Off-niche meme/challenge content (ice-skating-in-summer trend, inspired by another creator) — not travel or cinematic photography.",
         1
       ]
     ]
@@ -4295,34 +4298,18 @@
     },
     {
       "type": "hook",
-      "name": "The Skeptical Send-Off Quote",
-      "anchor": "Nice have fun in Bali …Bali??",
-      "format": "Casual handheld phone footage mid-transit — plane cabin, airport — with a line of real quoted dialogue centred over the frame, then the destination echoed back as an incredulous question. Deliberately unpolished; the text carries the hook, not the cinematography.",
-      "trigger": "Surprise",
-      "momentum": "steady",
-      "creators": 18,
-      "uses": 20,
-      "examples": [
-        "https://www.tiktok.com/@travelwithholl/video/7643854643025415446",
-        "https://www.tiktok.com/@expatamyy/video/7631055614591896839",
-        "https://www.tiktok.com/@mataharidharma/video/7658237265432349974"
-      ],
-      "howTo": "Film yourself mid-transit on your phone, overlay an actual line someone said about your trip in quotes, then echo the destination back with a question mark to tee up the reveal.",
-      "note": "Validated via TikTok search: 18 creators, ♥106,711 top, 20 niche-relevant results."
-    },
-    {
-      "type": "hook",
       "name": "Serif Title Card Over a Wide Landscape",
       "anchor": "The Art of Colourgrading",
       "format": "One wide, heavily graded landscape — mountain range with a lone hiker placed small for scale — carrying an oversized elegant serif title across the middle of the frame like a film title card rather than a caption.",
       "trigger": "Awe",
       "momentum": "rising",
-      "creators": 18,
-      "uses": 20,
+      "creators": 8,
+      "uses": 8,
       "examples": [
-        "https://www.tiktok.com/@zackroams/video/7652379793459121438",
+        "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
         "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@gakulange/video/7654920383790959893"
+        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
+        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
       ],
       "howTo": "Take your widest graded landscape, place one small figure in it for scale, then set an oversized serif title across the middle third and let the grade sell the shot.",
       "note": "Validated via TikTok search: 18 creators, ♥318,749 top, 15 niche-relevant results."
@@ -4363,34 +4350,18 @@
     },
     {
       "type": "hook",
-      "name": "Oversized Destination Title Card",
-      "anchor": "THIS IS VAKKARU MALDIVES",
-      "format": "A drone aerial of the destination with the property or place name stacked across the frame in oversized all-caps sans — a declarative name card, with no question or narrative setup.",
-      "trigger": "Desire/Wanderlust",
-      "momentum": "rising",
-      "creators": 17,
-      "uses": 20,
-      "examples": [
-        "https://www.tiktok.com/@theresortscollection/video/7624586020721347862",
-        "https://www.tiktok.com/@theresortscollection/video/7676078485508525345",
-        "https://www.tiktok.com/@anezka_travel/video/7482827282327948566"
-      ],
-      "howTo": "Open on your highest aerial and stamp the place name across two stacked all-caps lines — treat it as a destination title card, not a caption.",
-      "note": "Validated via TikTok search: 17 creators, ♥25,311 top, 11 niche-relevant results."
-    },
-    {
-      "type": "hook",
       "name": "Full-Scenario POV From Inside",
       "anchor": "POV: you found a shipwreck in the middle of the ocean",
       "format": "Shot from inside a confined vessel — a submarine porthole — looking out at the environment, with the entire POV: scenario spelled out in one long caption so the payoff is promised before it arrives. Heavy underwater teal cast.",
       "trigger": "Awe",
       "momentum": "new",
-      "creators": 18,
-      "uses": 20,
+      "creators": 5,
+      "uses": 5,
       "examples": [
-        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
         "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
-        "https://www.tiktok.com/@katarina.mandarina/video/7267090359526657286"
+        "https://www.tiktok.com/@intuitiveinquiry/video/7587737790234807574",
+        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
+        "https://www.tiktok.com/@pacificnorthblessed/video/7675861093759175950"
       ],
       "howTo": "Frame yourself inside the vehicle with the environment visible past you, and write the full POV: scenario out in one long line so viewers know the payoff is coming.",
       "note": "Validated via TikTok search: 18 creators, ♥823,772 top, 9 niche-relevant results."
@@ -27506,250 +27477,83 @@
   },
   "hookTrends": [
     {
-      "hook": "Nice have fun in Bali …Bali??",
-      "nicheHits": 20,
-      "results": 20,
-      "creators": 18,
-      "maxLikes": 106711,
-      "medianLikes": 3461,
+      "hook": "What is he doing??",
+      "nicheHits": 7,
+      "results": 8,
+      "creators": 8,
+      "internalCreators": 1,
+      "verifiedBy": "targeted_search",
+      "maxLikes": 5091,
+      "medianLikes": 522,
       "examples": [
-        "https://www.tiktok.com/@travelwithholl/video/7643854643025415446",
-        "https://www.tiktok.com/@expatamyy/video/7631055614591896839",
-        "https://www.tiktok.com/@mataharidharma/video/7658237265432349974"
-      ]
-    },
-    {
-      "hook": "The Art of Colourgrading",
-      "nicheHits": 15,
-      "results": 20,
-      "creators": 18,
-      "maxLikes": 318749,
-      "medianLikes": 4148,
-      "examples": [
-        "https://www.tiktok.com/@zackroams/video/7652379793459121438",
-        "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@gakulange/video/7654920383790959893"
-      ]
-    },
-    {
-      "hook": "$35 hotel room in China",
-      "nicheHits": 15,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 76867,
-      "medianLikes": 486,
-      "examples": [
-        "https://www.tiktok.com/@explorewithmia__/video/7621402699581476118",
-        "https://www.tiktok.com/@traveltomtom/video/7650102150843927830",
-        "https://www.tiktok.com/@rougiimooo/video/7561739887125286166"
-      ]
-    },
-    {
-      "hook": "I travelled 8,000 miles for this room view in China",
-      "nicheHits": 11,
-      "results": 20,
-      "creators": 18,
-      "maxLikes": 195514,
-      "medianLikes": 1313,
-      "examples": [
-        "https://www.tiktok.com/@jessmelu/video/7649642257888316694",
-        "https://www.tiktok.com/@ember2160/video/7649589319602130194",
-        "https://www.tiktok.com/@larioozz/video/7536758134728035614"
-      ]
-    },
-    {
-      "hook": "THIS IS VAKKARU MALDIVES",
-      "nicheHits": 11,
-      "results": 20,
-      "creators": 17,
-      "maxLikes": 25311,
-      "medianLikes": 181,
-      "examples": [
-        "https://www.tiktok.com/@theresortscollection/video/7624586020721347862",
-        "https://www.tiktok.com/@theresortscollection/video/7676078485508525345",
-        "https://www.tiktok.com/@anezka_travel/video/7482827282327948566"
-      ]
-    },
-    {
-      "hook": "POV: you found a shipwreck in the middle of the ocean",
-      "nicheHits": 9,
-      "results": 20,
-      "creators": 18,
-      "maxLikes": 823772,
-      "medianLikes": 84,
-      "examples": [
-        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
-        "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
-        "https://www.tiktok.com/@katarina.mandarina/video/7267090359526657286"
-      ]
-    },
-    {
-      "hook": "What do you dream about?",
-      "nicheHits": 8,
-      "results": 20,
-      "creators": 18,
-      "maxLikes": 639581,
-      "medianLikes": 29483,
-      "examples": [
-        "https://www.tiktok.com/@anonymus__vms/video/7217525843130649861",
-        "https://www.tiktok.com/@caidenjacksontravel/video/7621024607562239245",
-        "https://www.tiktok.com/@aesiraxo/video/7206440143710964998"
-      ]
-    },
-    {
-      "hook": "Philippines OPERATED BY: COASORATION Travelling with freediving fins is a nightmare",
-      "nicheHits": 8,
-      "results": 20,
-      "creators": 20,
-      "maxLikes": 104245,
-      "medianLikes": 181,
-      "examples": [
-        "https://www.tiktok.com/@tuongvimedi/video/7672736524827495700",
-        "https://www.tiktok.com/@chewchewwy27/video/7637435059800182037",
-        "https://www.tiktok.com/@amordnql/video/7676100165874502920"
-      ]
-    },
-    {
-      "hook": "When the captain says to go outside and you see this",
-      "nicheHits": 6,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 664080,
-      "medianLikes": 212,
-      "examples": [
-        "https://www.tiktok.com/@calumtravels/video/7646395499393600776",
-        "https://www.tiktok.com/@naturenrides/video/7641299047810174228",
-        "https://www.tiktok.com/@caitcoote/video/7660203059787697428"
-      ]
-    },
-    {
-      "hook": "anaras i through my lens",
-      "nicheHits": 4,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 76302,
-      "medianLikes": 132,
-      "examples": [
-        "https://www.tiktok.com/@amryraw/video/7455346447618182422",
-        "https://www.tiktok.com/@j3nna.rodg3rs/video/7660912778550562061",
-        "https://www.tiktok.com/@daughteroftheeart/video/7552877133819841806"
-      ]
-    },
-    {
-      "hook": "pov: you see your room in Saudi for the first time",
-      "nicheHits": 4,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 72392,
-      "medianLikes": 1733,
-      "examples": [
-        "https://www.tiktok.com/@aureliestoryy/video/7620397334563753238",
-        "https://www.tiktok.com/@aureliestoryy/video/7612292697763745046",
-        "https://www.tiktok.com/@halledebilirizz/video/7617711574354038037"
+        "https://www.tiktok.com/@gorillaguyz0/video/7669569723226492174",
+        "https://www.tiktok.com/@user87630914/video/7674057771905502478",
+        "https://www.tiktok.com/@zendayacoach/video/7673836983331966221",
+        "https://www.tiktok.com/@jad.cinematics/video/7632622094949338390"
       ]
     },
     {
       "hook": "Find yourself a man who takes you on dates like these:",
-      "nicheHits": 3,
-      "results": 20,
-      "creators": 20,
-      "maxLikes": 115406,
-      "medianLikes": 864,
+      "nicheHits": 7,
+      "results": 8,
+      "creators": 8,
+      "internalCreators": 1,
+      "verifiedBy": "targeted_search",
+      "maxLikes": 37424,
+      "medianLikes": 162,
       "examples": [
-        "https://www.tiktok.com/@houseofstandards/video/7666848217702632718",
+        "https://www.tiktok.com/@deeandcherrclips/video/7646884293339352334",
         "https://www.tiktok.com/@mrbenontheroad/video/7671728915630624013",
-        "https://www.tiktok.com/@kelsm1522/video/7625404358779276557"
+        "https://www.tiktok.com/@ricanprincess19/video/7643479579239140621",
+        "https://www.tiktok.com/@smalltownbellesboutique/video/7521496206778879262"
       ]
     },
     {
-      "hook": "you can now change your background in any video",
+      "hook": "The Art of Colourgrading",
+      "nicheHits": 6,
+      "results": 8,
+      "creators": 8,
+      "internalCreators": 2,
+      "verifiedBy": "targeted_search",
+      "maxLikes": 564563,
+      "medianLikes": 275506,
+      "examples": [
+        "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
+        "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
+        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
+        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
+      ]
+    },
+    {
+      "hook": "POV: you found a shipwreck in the middle of the ocean",
+      "nicheHits": 4,
+      "results": 5,
+      "creators": 5,
+      "internalCreators": 1,
+      "verifiedBy": "targeted_search",
+      "maxLikes": 9257,
+      "medianLikes": 87,
+      "examples": [
+        "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
+        "https://www.tiktok.com/@intuitiveinquiry/video/7587737790234807574",
+        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
+        "https://www.tiktok.com/@pacificnorthblessed/video/7675861093759175950"
+      ]
+    },
+    {
+      "hook": "What do you dream about?",
       "nicheHits": 3,
-      "results": 20,
-      "creators": 17,
-      "maxLikes": 56259,
-      "medianLikes": 2095,
+      "results": 4,
+      "creators": 4,
+      "internalCreators": 1,
+      "verifiedBy": "targeted_search",
+      "maxLikes": 639595,
+      "medianLikes": 302980,
       "examples": [
-        "https://www.tiktok.com/@toluoflele/video/7634809989109927190",
-        "https://www.tiktok.com/@learnwithkayo/video/7646465747773869319",
-        "https://www.tiktok.com/@simplysocialwithsuz/video/7673202528347049237"
-      ]
-    },
-    {
-      "hook": "a random Tuesday in Wexford",
-      "nicheHits": 3,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 19855,
-      "medianLikes": 1186,
-      "examples": [
-        "https://www.tiktok.com/@philfilmss/video/7665617870772030741",
-        "https://www.tiktok.com/@flamgurlrox101/video/7675778590281125151",
-        "https://www.tiktok.com/@catinthehatoffical3/video/7675721736372964630"
-      ]
-    },
-    {
-      "hook": "imagine that you are in movie",
-      "nicheHits": 2,
-      "results": 20,
-      "creators": 20,
-      "maxLikes": 862548,
-      "medianLikes": 140,
-      "examples": [
-        "https://www.tiktok.com/@reesenorthen/video/7669885828230810894",
-        "https://www.tiktok.com/@chris.affiliatemarketing/video/7441692375216442670",
-        "https://www.tiktok.com/@amandascamcorder/video/7672634171835043085"
-      ]
-    },
-    {
-      "hook": "How to make APPLE STYLE ADS on your phone",
-      "nicheHits": 2,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 738731,
-      "medianLikes": 534,
-      "examples": [
-        "https://www.tiktok.com/@onyxlumorastudios/video/7277000338941496582",
-        "https://www.tiktok.com/@92angelz/video/7573087136249826573",
-        "https://www.tiktok.com/@buildwithfreddy/video/7650587942200577293"
-      ]
-    },
-    {
-      "hook": "mam! Vice My AMI BEACH",
-      "nicheHits": 2,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 184315,
-      "medianLikes": 1000,
-      "examples": [
-        "https://www.tiktok.com/@eauderica/video/7662078039638969614",
-        "https://www.tiktok.com/@dah_chosen_one26/video/7659221204611517710",
-        "https://www.tiktok.com/@zanzanlifestyle/video/7300600405933706527"
-      ]
-    },
-    {
-      "hook": "Dein australischer Freund ist deutscher als du pt 2 OBEY",
-      "nicheHits": 2,
-      "results": 20,
-      "creators": 15,
-      "maxLikes": 46730,
-      "medianLikes": 571,
-      "examples": [
-        "https://www.tiktok.com/@katiebbu/video/7675873458185620768",
-        "https://www.tiktok.com/@janinasph/video/7615872854399192352",
-        "https://www.tiktok.com/@hannaahcarolina/video/7596635985413262614"
-      ]
-    },
-    {
-      "hook": "DONTHS Adobe Partner",
-      "nicheHits": 2,
-      "results": 20,
-      "creators": 19,
-      "maxLikes": 14957,
-      "medianLikes": 1260,
-      "examples": [
-        "https://www.tiktok.com/@yungpicari/video/7673959953761160461",
-        "https://www.tiktok.com/@colinandsamir/video/7667632093630958862",
-        "https://www.tiktok.com/@justtjc/video/7647903285965344022"
+        "https://www.tiktok.com/@drameown/video/7277510079027596590",
+        "https://www.tiktok.com/@raffymillado/video/7640602199784951071",
+        "https://www.tiktok.com/@aesiraxo/video/7206440143710964998",
+        "https://www.instagram.com/reel/DZiWoOAsnAw/"
       ]
     }
   ]

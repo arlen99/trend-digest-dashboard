@@ -169,7 +169,7 @@ def main():
         # pipeline-diagram fields
         "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
         "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hookValidated": hook_validated,
-        "hookPlats": hook_plats, "hookMinNiche": 2, "hookMinLikes": 10000,
+        "hookPlats": hook_plats, "hookMinNiche": 2, "hookSearchPool": 8,
         "keywords": kw_list, "tiktokCreators": tt_creators,
         "trendsAudio": sum(1 for t in data.get("trends", []) if t.get("type") == "audio"),
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),

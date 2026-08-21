@@ -67,6 +67,8 @@ def main():
             "nicheHits": h.get("niche_hits", 0),
             "results": h.get("results", 0),
             "creators": h.get("distinct_creators", 0),
+            "internalCreators": h.get("internal_creators", 0),
+            "verifiedBy": h.get("verified_by", ""),
             "maxLikes": h.get("max_likes", 0),
             "medianLikes": h.get("median_likes", 0),
             "examples": (h.get("examples") or [])[:4],

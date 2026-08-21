@@ -85,7 +85,7 @@ jobs:
           run_critical python3 fetch_thumbs.py output/top_posts_${TODAY}_fresh.json
           run_critical python3 fetch_carousels.py output/top_posts_${TODAY}_fresh.json
           run_critical python3 trends.py
-          run_critical python3 hook_search.py
+          run_optional python3 hook_search.py   # now does real OCR + Claude semantic judgment (was a cheap caption regex) — meaningfully more failure-prone; curate_trends.py and hooks_to_dashboard.py both already degrade gracefully (empty/missing file -> no hook cards this run, carryover guard keeps last committed data) if this fails or finds nothing
           # dashboard data refresh
           run_critical python3 curate_posts.py output/top_posts_${TODAY}_fresh.json   # the IG Swipe File itself — Claude picks + tags
           run_critical python3 curate_trends.py output/trends_${TODAY}.json output/hook_trends_${TODAY}.json   # Trend Radar cards — Claude writes name/format/trigger/howTo
