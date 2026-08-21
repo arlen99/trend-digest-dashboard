@@ -108,7 +108,15 @@ def main():
         hook_plats.append("Instagram")
     if "tiktok.com" in hook_url_strs:
         hook_plats.append("TikTok")
-    hook_validated = len(jload(latest("hook_trends_*.json"), []) or [])
+    hook_rows = jload(latest("hook_trends_*.json"), []) or []
+    # Rows now include unconfirmed candidates (see hook_search.py --min-rows); the
+    # pipeline diagram's "confirmed trend" step must count only what actually cleared.
+    hook_validated = sum(1 for h in hook_rows if h.get("confirmed", True))
+    hook_shown = len(hook_rows)
+    try:
+        from hook_search import NICHE_GROUPS as niche_groups
+    except Exception:  # noqa: BLE001
+        niche_groups = {}
     try:
         from keyword_posts import KEYWORDS as kw_list
     except Exception:  # noqa: BLE001
@@ -170,6 +178,8 @@ def main():
         "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
         "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hookValidated": hook_validated,
         "hookPlats": hook_plats, "hookMinNiche": 2, "hookSearchPool": 8,
+        "hookShown": hook_shown, "nicheSignals": niche_groups,
+        "keywordScanKeywords": kw_list,
         "keywords": kw_list, "tiktokCreators": tt_creators,
         "trendsAudio": sum(1 for t in data.get("trends", []) if t.get("type") == "audio"),
         "trendsHook": sum(1 for t in data.get("trends", []) if t.get("type") == "hook"),

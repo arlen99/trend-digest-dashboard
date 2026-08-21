@@ -71,14 +71,53 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MODEL = "claude-sonnet-5"
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
       "(KHTML, like Gecko) Version/16 Safari/605.1.15")
+# Grouped so the dashboard can SHOW what "niche-relevant" actually means rather than
+# asserting it — provenance.py exports these verbatim to the Hooks method popup.
+# The camera/technique terms are ported from tiktok_discover.py's creator-vetting NICHE
+# regex: same project, same niche definition, applied to a video instead of a bio.
+NICHE_GROUPS = {
+    "Travel & destinations": [
+        "travel", "adventure", "wander", "landscape", "roadtrip", "backpack", "nomad",
+        "explor", "bali", "iceland", "dolomit",
+    ],
+    "Filmmaking & camera": [
+        "cinematic", "cinematograph", "filmmak", "drone", "fpv", "b-roll", "broll",
+        "color grading", "colour grading", "colorgrading", "davinci", "gimbal",
+        "shot on", "fx3", "fx6", "a7s", "bmpcc",
+    ],
+    "Underwater": [
+        "underwater", "freedive", "freediving", "scuba", "snorkel", "dive", "diving",
+    ],
+}
 NICHE = re.compile(r"travel|cinematic|filmmak|adventure|drone|wander|explor|landscape|"
                    r"roadtrip|backpack|nomad|bali|iceland|dolomit|b-?roll|fpv|"
                    r"underwater|freedivi?|scuba|snorkel|\bdiv(e|ing)\b|"
-                   # ported from tiktok_discover.py's creator-vetting NICHE regex — same
-                   # project, same niche definition, just applied to a video's own caption
-                   # instead of an account's bio
                    r"colou?r ?grad|davinci|fx3|fx6|a7s|bmpcc|gimbal|shot on|cinematograph",
                    re.I)
+
+
+def niche_signal(caption, hashtags=()):
+    """Is this result actually about OUR niche, not just reusing our phrasing?
+
+    Checks the video's own caption AND its parsed hashtag list. TikTok returns
+    hashtags pre-parsed in `text_extra` (name + id + offsets), which is strictly
+    better than regexing the raw caption string: a tag buried in an emoji run or
+    punctuation soup ("🎨#colorgrading#fyp") is a clean token there, while the raw
+    caption can also produce false hits inside ordinary prose ("wandering around"
+    reads the same as a deliberate #wander tag). Checked live 2026-08: TikHub
+    exposes NO topic/theme classifier on this endpoint — video_labels and
+    cover_labels come back empty and video_text is never populated — so caption +
+    hashtags is the best structured signal available.
+    """
+    if NICHE.search(caption or ""):
+        return True
+    return any(NICHE.search(h or "") for h in hashtags)
+
+
+def hashtags_of(aweme):
+    """Parsed hashtag names from TikTok's own `text_extra` block (see niche_signal)."""
+    return [(t.get("hashtag_name") or "") for t in (aweme.get("text_extra") or [])
+            if t.get("hashtag_name")]
 STOP = {"the","a","an","and","or","but","in","on","at","to","of","for","with","is","are",
         "was","were","you","your","i","my","this","that","it","its","just","how","what",
         "when","where","why","who","pov","did","do","does"}
@@ -88,10 +127,76 @@ def norm(s):
     return re.sub(r"\s+", " ", re.sub(r"[^\w\s?']", "", (s or "").lower())).strip()
 
 
+# Places deliberately EXCLUDED because they're also ordinary English words and would
+# over-merge unrelated hooks: nice, bath, split, turkey, chile, jordan, georgia, mali,
+# chad. Under-merging is the safe failure here — a missed merge costs one duplicate
+# candidate, a bad merge silently fuses two different templates into one wrong row.
+PLACES = {
+    "japan", "tokyo", "kyoto", "osaka", "china", "beijing", "shanghai", "vietnam",
+    "hanoi", "thailand", "bangkok", "phuket", "korea", "seoul", "singapore", "malaysia",
+    "indonesia", "jakarta", "philippines", "manila", "india", "nepal", "bhutan",
+    "cambodia", "laos", "taiwan", "mongolia", "maldives", "srilanka", "dubai",
+    "abudhabi", "qatar", "doha", "oman", "saudi", "jordan's", "egypt", "cairo",
+    "morocco", "marrakech", "tunisia", "kenya", "tanzania", "zanzibar", "uganda",
+    "rwanda", "namibia", "botswana", "madagascar", "seychelles", "mauritius",
+    "iceland", "norway", "sweden", "finland", "denmark", "scotland", "ireland",
+    "england", "london", "wales", "france", "paris", "spain", "barcelona", "madrid",
+    "portugal", "lisbon", "porto", "italy", "rome", "milan", "venice", "florence",
+    "tuscany", "sicily", "greece", "athens", "santorini", "mykonos", "croatia",
+    "dubrovnik", "slovenia", "austria", "vienna", "switzerland", "zurich", "germany",
+    "berlin", "munich", "netherlands", "amsterdam", "belgium", "poland", "czechia",
+    "prague", "hungary", "budapest", "romania", "bulgaria", "albania", "montenegro",
+    "dolomites", "alps", "patagonia", "peru", "cusco", "bolivia", "brazil", "rio",
+    "argentina", "colombia", "ecuador", "uruguay", "mexico", "tulum", "oaxaca",
+    "guatemala", "belize", "panama", "costarica", "cuba", "jamaica", "bahamas",
+    "canada", "vancouver", "toronto", "banff", "alaska", "hawaii", "california",
+    "colorado", "utah", "arizona", "florida", "texas", "seattle", "portland",
+    "denver", "chicago", "boston", "miami", "vegas", "australia", "sydney",
+    "melbourne", "brisbane", "perth", "tasmania", "zealand", "queenstown",
+    "auckland", "fiji", "tahiti", "bali", "lombok", "sumatra", "java", "borneo",
+}
+_MULTI_PLACES = ["new zealand", "new york", "south africa", "cape town", "costa rica",
+                 "sri lanka", "hong kong", "abu dhabi", "las vegas", "los angeles",
+                 "san francisco", "united states", "saudi arabia", "south korea",
+                 "faroe islands", "canary islands", "machu picchu"]
+
+
+def skeletonize(s):
+    """Strip the SPECIFICS out of a hook so the reusable template underneath is what
+    gets compared.
+
+    "$35 hotel room in China" and "$12 hotel room in Vietnam" are one hook template
+    used twice, but compared literally they share almost nothing — the price and the
+    country are exactly the parts that change on every reuse. Replacing them with
+    placeholders makes both read "<price> hotel room in <loc>", so clustering merges
+    them and the lexical pre-filter stops treating "35"/"china" as required words.
+
+    Used for MATCHING only — the displayed hook text stays the real, specific line.
+    """
+    t = (s or "").lower()
+    # Numbers first, while their commas/decimals are still intact — stripping
+    # punctuation earlier would split "8,000" into two separate numbers.
+    t = re.sub(r"[$€£¥]\s?\d[\d,.]*\s?[km]?\b", " <price> ", t)
+    t = re.sub(r"\b\d[\d,.]*\s?(?:usd|eur|gbp|dollars?|euros?|pounds?|bucks?)\b", " <price> ", t)
+    t = re.sub(r"\b\d[\d,.]*\b", " <num> ", t)
+    t = re.sub(r"[^\w\s?'<>]", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    for p in _MULTI_PLACES:  # before single-word pass, so "new zealand" isn't half-matched
+        t = t.replace(p, " <loc> ")
+    # Match places on the bare word — "bali??" and "bali" are the same place.
+    out = []
+    for w in t.split():
+        bare = w.strip("?'")
+        out.append("<loc>" if bare in PLACES else w)
+    return re.sub(r"\s+", " ", " ".join(out)).strip()
+
+
 def sig_words(s):
     """Significant words for the cheap lexical pre-filter — drop stopwords/short words
-    so two hooks sharing only "the"/"you"/etc. don't look related."""
-    return {w for w in norm(s).split() if len(w) >= 4 and w not in STOP}
+    so two hooks sharing only "the"/"you"/etc. don't look related. Runs on the
+    SKELETON so a differing price/place can't stop two uses of one template matching."""
+    return {w for w in skeletonize(s).split() if len(w) >= 4 and w not in STOP
+            and not w.startswith("<")}
 
 
 # ---------------------------------------------------------------------------
@@ -126,10 +231,10 @@ def cluster_internal(raw, threshold=0.82):
     dependency, and plenty precise for "same OCR pass, minor read variance"."""
     clusters = []  # each: {"hook": canonical text, "examples": [{"account","url"}], "accounts": set}
     for r in raw:
-        n = norm(r["hook"])
+        n = skeletonize(r["hook"])  # compare templates, not the specifics (see skeletonize)
         best, best_score = None, 0.0
         for c in clusters:
-            score = difflib.SequenceMatcher(None, n, norm(c["hook"])).ratio()
+            score = difflib.SequenceMatcher(None, n, skeletonize(c["hook"])).ratio()
             if score > best_score:
                 best, best_score = c, score
         if best and best_score >= threshold:
@@ -286,19 +391,22 @@ def stage2_verify(candidate):
             url = f"https://www.tiktok.com/@{author}/video/{aweme_id}" if author and aweme_id else ""
             likes = (a.get("statistics") or {}).get("digg_count", 0)
             caption = a.get("desc", "")
-            ocrd.append({"text": text, "account": author, "url": url, "likes": likes, "caption": caption})
+            ocrd.append({"text": text, "account": author, "url": url, "likes": likes,
+                         "caption": caption, "hashtags": hashtags_of(a)})
         time.sleep(0.2)
     if len(ocrd) < 2:
-        return [], ocrd
+        return [], [], ocrd
     texts = [o["text"] for o in ocrd]
     matched_texts = judge_matches(candidate["hook"], texts)
-    # Same template alone isn't enough — a viral caption template used by a dating-advice
-    # or reaction-meme account is a real trend, just not one relevant to THIS niche.
-    # A search on the raw hook phrase (unlike Stage 1's niche-keyword-sourced corpus)
-    # pulls in whoever else used the same words regardless of subject, so require the
-    # matched video's own caption to carry a niche signal too (see NICHE below).
-    matched = [o for o in ocrd if o["text"] in matched_texts and NICHE.search(o.get("caption") or o["text"])]
-    return matched, ocrd
+    # Two INDEPENDENT questions, tracked separately so the dashboard can show both:
+    #   template — is this actually the same reusable hook? (Claude's judgment)
+    #   niche    — is it about OUR subject? (caption + hashtags)
+    # A search on the raw hook phrase pulls in whoever else used those words regardless
+    # of subject, so a dating-advice or reaction-meme account can genuinely reuse a
+    # template without it being a trend worth surfacing here.
+    template = [o for o in ocrd if o["text"] in matched_texts]
+    niche = [o for o in template if niche_signal(o.get("caption"), o.get("hashtags"))]
+    return niche, template, ocrd
 
 
 def main():
@@ -308,6 +416,14 @@ def main():
     # (curate_trends.py's MAX_HOOK). Ranked by internal reuse first, so the ones worth
     # spending budget on go first regardless of the cap.
     ap.add_argument("--max", type=int, default=20)
+    # Always report at least this many candidates, even ones that didn't clear
+    # verification. A hook can stay genuinely useful while scoring 0 external niche
+    # matches — TikTok search is non-deterministic (two calls for one phrase return
+    # different sets, confirmed live 2026-08), the niche gate is deliberately strict,
+    # and last week's still-relevant hooks shouldn't vanish because this week's draw
+    # was unlucky. Unconfirmed rows ship with their real counts and an explicit
+    # "unconfirmed" badge rather than being silently dropped.
+    ap.add_argument("--min-rows", type=int, default=10)
     args = ap.parse_args()
     if not KEY:
         raise SystemExit("TIKHUB_TOKEN not set.")
@@ -329,61 +445,70 @@ def main():
     corpus = stage1_corpus()
     print(f"  {len(corpus)} independently-sourced texts OCR'd")
 
-    confirmed = []
+    rows = []
     stage1_hits = stage2_hits = 0
     for c in clusters:
         sw = sig_words(c["hook"])
         shortlist = [t for t in corpus if sw & sig_words(t["text"])][:10]
-        s1_matches = []
+        s1_niche, s1_template = [], []
         if shortlist:
             matched_texts = judge_matches(c["hook"], [t["text"] for t in shortlist])
-            s1_matches = [t for t in shortlist if t["text"] in matched_texts]
+            s1_template = [t for t in shortlist if t["text"] in matched_texts]
+            # The keyword scan is niche-sourced BY CONSTRUCTION (keyword_posts.py only
+            # searches this niche's terms), so a template match there is already a niche
+            # match — no caption gate needed, unlike the raw-phrase search in Stage 2.
+            s1_niche = s1_template
 
-        s2_matches, s2_checked = [], []
+        s2_niche, s2_template, s2_checked = [], [], []
         verified_by = None
-        if s1_matches:
+        if s1_niche:
             verified_by = "keyword_scan"; stage1_hits += 1
         elif ANTHROPIC_KEY:
             # Without a key, judge_matches() always returns [] — Stage 2's 8 OCR
             # downloads per candidate would be pure waste (confirmed nothing local
             # testing: ~15min for 15 candidates that could never be confirmed anyway).
-            s2_matches, s2_checked = stage2_verify(c)
-            if len(s2_matches) >= 2:
+            s2_niche, s2_template, s2_checked = stage2_verify(c)
+            if len(s2_niche) >= 2:
                 verified_by = "targeted_search"; stage2_hits += 1
+        if not verified_by and len(c["accounts"]) >= 3:
+            verified_by = "internal_only"
 
-        external = s1_matches + s2_matches
-        if not (verified_by or len(c["accounts"]) >= 3):
-            continue  # neither externally confirmed nor a strong-enough internal-only signal
-
-        ext_urls = [e["url"] for e in external if e.get("url")]
+        niche_ext = s1_niche + s2_niche
+        template_ext = s1_template + s2_template
+        ext_urls = [e["url"] for e in niche_ext if e.get("url")]
         int_urls = [e["url"] for e in c["examples"] if e.get("url")]
         examples = (ext_urls + int_urls)[:4]  # external proof first — it's the real evidence
         likes_pool = [e.get("likes", 0) for e in s2_checked] or [0]
-        confirmed.append({
+        rows.append({
             "hook": c["hook"],
             "internal_creators": len(c["accounts"]),
-            "distinct_creators": len(c["accounts"] | {e.get("account", "") for e in external}),
-            "external_matches": len(external),
+            "distinct_creators": len(c["accounts"] | {e.get("account", "") for e in niche_ext}),
+            "external_matches": len(niche_ext),
+            # How many checked results reused the TEMPLATE, regardless of subject.
+            "template_matches": len(template_ext),
             "results": len(shortlist) + len(s2_checked),
-            # Confirmed EXTERNAL matches only — mixing internal_creators in here would
-            # let niche_hits exceed results (an internal_only-confirmed hook has
-            # accounts >= 3 but 0 external matches), producing a nonsensical >100%
-            # "niche match" ratio on the dashboard table. internal_creators is its own
-            # field for exactly that case.
-            "niche_hits": len(external),
+            # Of those, how many were also about THIS niche. Always <= template_matches
+            # and <= results, so the dashboard ratio can never exceed 100%.
+            "niche_hits": len(niche_ext),
             "max_likes": max(likes_pool),
             "median_likes": sorted(likes_pool)[len(likes_pool) // 2],
-            "verified_by": verified_by or "internal_only",
+            "verified_by": verified_by or "unconfirmed",
+            "confirmed": bool(verified_by),
             "examples": examples,
         })
-        print(f"  [{verified_by or 'internal_only':15}] {c['hook'][:48]!r}  "
-              f"(internal={len(c['accounts'])}, external={len(external)})")
+        print(f"  [{verified_by or 'unconfirmed':15}] {c['hook'][:44]!r}  "
+              f"(internal={len(c['accounts'])}, template={len(template_ext)}, niche={len(niche_ext)})")
 
-    confirmed.sort(key=lambda t: (t["external_matches"], t["internal_creators"]), reverse=True)
+    # Confirmed first, then best-evidenced unconfirmed to fill out --min-rows.
+    rows.sort(key=lambda t: (t["confirmed"], t["niche_hits"], t["template_matches"],
+                             t["internal_creators"]), reverse=True)
+    n_conf = sum(1 for r in rows if r["confirmed"])
+    kept = rows[: max(n_conf, min(args.min_rows, len(rows)))]
     stamp = datetime.now().strftime("%Y-%m-%d")
-    (OUT / f"hook_trends_{stamp}.json").write_text(json.dumps(confirmed, indent=2, ensure_ascii=False))
-    print(f"\n{len(confirmed)} confirmed hook trends ({stage1_hits} via keyword-scan, "
-          f"{stage2_hits} via targeted-search fallback) -> output/hook_trends_{stamp}.json")
+    (OUT / f"hook_trends_{stamp}.json").write_text(json.dumps(kept, indent=2, ensure_ascii=False))
+    print(f"\n{n_conf} confirmed hook trends ({stage1_hits} via keyword-scan, "
+          f"{stage2_hits} via targeted-search fallback); writing {len(kept)} rows "
+          f"(min-rows={args.min_rows}) -> output/hook_trends_{stamp}.json")
     import cost_tracker
     cost_tracker.record("hook_search", tikhub_calls=th_calls, claude_calls=claude_calls,
                         claude_input_tokens=claude_input_tokens, claude_output_tokens=claude_output_tokens)

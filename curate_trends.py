@@ -245,6 +245,12 @@ def main() -> None:
     audio = audio[:MAX_AUDIO]
 
     hooks = json.loads(Path(hooks_path).read_text()) if hooks_path and Path(hooks_path).exists() else []
+    # hook_search.py now reports UNCONFIRMED candidates too (so the Hooks table can show
+    # a full picture rather than only what cleared a strict gate), but a Trend Radar card
+    # is an assertion that something IS trending — only confirmed hooks earn one. Rows
+    # predating this field have no "confirmed" key; treat them as confirmed since the old
+    # file format only ever contained confirmed hooks.
+    hooks = [h for h in hooks if h.get("confirmed", True)]
     hooks.sort(key=lambda c: (c["niche_hits"], c["max_likes"]), reverse=True)
     hooks = hooks[:MAX_HOOK]
     momentum_map = hook_momentum(hooks)
@@ -296,8 +302,10 @@ def main() -> None:
         prompt = (
             f"Type: hook-anchored trend (on-screen text template, independent of audio)\n"
             f"Representative hook line (OCR'd, may have minor errors): {h['hook']}\n"
-            f"Confirmed via live TikTok search: {h['distinct_creators']} distinct creators in the "
-            f"top 20 results, {h['niche_hits']} of them niche-relevant, top result {h['max_likes']:,} likes.\n\n"
+            f"Confirmed against independently-sourced posts: {h['niche_hits']} of "
+            f"{h['results']} checked reused this same template AND are about this niche, "
+            f"across {h['distinct_creators']} distinct creators; top result "
+            f"{h['max_likes']:,} likes.\n\n"
             "This is a candidate for the Trend Radar on a travel & cinematic filmmaking "
             "reference board — a repeatable on-screen HOOK TEMPLATE creators are copying, "
             "independent of any specific song. Judge the visual template from the sample "
@@ -315,8 +323,9 @@ def main() -> None:
             "format": result.get("format", ""), "trigger": result.get("trigger") or TRIGGERS[0],
             "momentum": momentum_map.get(norm(h["hook"]), "new"), "creators": h["distinct_creators"], "uses": h["results"],
             "examples": samples[:4], "howTo": result.get("howTo", ""),
-            "note": f"Validated via TikTok search: {h['distinct_creators']} creators, "
-                    f"♥{h['max_likes']:,} top, {h['niche_hits']} niche-relevant results.",
+            "note": f"Validated: {h['niche_hits']} of {h['results']} checked results reused "
+                    f"this template in-niche, across {h['distinct_creators']} creators; "
+                    f"top ♥{h['max_likes']:,}.",
         })
         print(f"  [hook] {h['hook'][:40]} -> {result.get('name','')}")
 

@@ -4083,6 +4083,58 @@
     ],
     "hookMinNiche": 2,
     "hookSearchPool": 8,
+    "hookShown": 10,
+    "nicheSignals": {
+      "Travel & destinations": [
+        "travel",
+        "adventure",
+        "wander",
+        "landscape",
+        "roadtrip",
+        "backpack",
+        "nomad",
+        "explor",
+        "bali",
+        "iceland",
+        "dolomit"
+      ],
+      "Filmmaking & camera": [
+        "cinematic",
+        "cinematograph",
+        "filmmak",
+        "drone",
+        "fpv",
+        "b-roll",
+        "broll",
+        "color grading",
+        "colour grading",
+        "colorgrading",
+        "davinci",
+        "gimbal",
+        "shot on",
+        "fx3",
+        "fx6",
+        "a7s",
+        "bmpcc"
+      ],
+      "Underwater": [
+        "underwater",
+        "freedive",
+        "freediving",
+        "scuba",
+        "snorkel",
+        "dive",
+        "diving"
+      ]
+    },
+    "keywordScanKeywords": [
+      "cinematic travel",
+      "travel film",
+      "cinematic photography",
+      "travel filmmaker",
+      "cinematic b roll",
+      "travel cinematography"
+    ],
     "keywords": [
       "cinematic travel",
       "travel film",
@@ -4093,14 +4145,14 @@
     ],
     "trendsAudio": 10,
     "trendsHook": 3,
-    "costTikhubCalls": 1012,
+    "costTikhubCalls": 997,
     "costClaudeCalls": 0,
     "costAuddCalls": 0,
     "auddAuthDead": false,
     "costAcrcloudCalls": 27,
-    "costTikhub": 1.012,
+    "costTikhub": 0.997,
     "costClaude": 0.0,
-    "costTotal": 1.012,
+    "costTotal": 0.997,
     "igExcluded": 22,
     "igEvaluated": 77,
     "igExcludeReasons": [
@@ -4303,16 +4355,16 @@
       "format": "One wide, heavily graded landscape — mountain range with a lone hiker placed small for scale — carrying an oversized elegant serif title across the middle of the frame like a film title card rather than a caption.",
       "trigger": "Awe",
       "momentum": "rising",
-      "creators": 8,
-      "uses": 7,
+      "creators": 10,
+      "uses": 8,
       "examples": [
         "https://www.tiktok.com/@zackroams/video/7652379793459121438",
         "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
         "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
+        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
       ],
       "howTo": "Take your widest graded landscape, place one small figure in it for scale, then set an oversized serif title across the middle third and let the grade sell the shot.",
-      "note": "Validated via TikTok search: 6 of 7 checked results matched the same template, top ♥564,563."
+      "note": "Validated: 8 of 8 checked results reused this template in-niche, across 10 creators; top ♥564,563."
     },
     {
       "type": "hook",
@@ -27460,18 +27512,159 @@
   "hookTrends": [
     {
       "hook": "The Art of Colourgrading",
-      "nicheHits": 6,
-      "results": 7,
-      "creators": 8,
+      "nicheHits": 8,
+      "templateMatches": 8,
+      "results": 8,
+      "creators": 10,
       "internalCreators": 2,
       "verifiedBy": "targeted_search",
+      "confirmed": true,
       "maxLikes": 564563,
-      "medianLikes": 17886,
+      "medianLikes": 17889,
       "examples": [
         "https://www.tiktok.com/@zackroams/video/7652379793459121438",
         "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
         "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
+        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
+      ]
+    },
+    {
+      "hook": "What is he doing??",
+      "nicheHits": 1,
+      "templateMatches": 7,
+      "results": 8,
+      "creators": 2,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 1940,
+      "medianLikes": 522,
+      "examples": [
+        "https://www.tiktok.com/@jad.cinematics/video/7632622094949338390",
+        "https://www.instagram.com/reel/DZcH3SozCOT/"
+      ]
+    },
+    {
+      "hook": "POV: you found a shipwreck in the middle of the ocean",
+      "nicheHits": 1,
+      "templateMatches": 4,
+      "results": 5,
+      "creators": 2,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 9309,
+      "medianLikes": 29,
+      "examples": [
+        "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
+        "https://www.instagram.com/reel/DZNqp3CxD5H/"
+      ]
+    },
+    {
+      "hook": "What do you dream about?",
+      "nicheHits": 1,
+      "templateMatches": 4,
+      "results": 5,
+      "creators": 2,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 302980,
+      "medianLikes": 11609,
+      "examples": [
+        "https://www.tiktok.com/@fabianamsolano/video/7662764407109291294",
+        "https://www.instagram.com/reel/DZiWoOAsnAw/",
+        "https://www.instagram.com/reel/DZHjYuXs_Aw/"
+      ]
+    },
+    {
+      "hook": "Find yourself a man who takes you on dates like these:",
+      "nicheHits": 0,
+      "templateMatches": 6,
+      "results": 8,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 4552,
+      "medianLikes": 200,
+      "examples": [
+        "https://www.instagram.com/reel/DZ49AdRsuX_/"
+      ]
+    },
+    {
+      "hook": "more work. more life.",
+      "nicheHits": 0,
+      "templateMatches": 2,
+      "results": 7,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 88774,
+      "medianLikes": 8963,
+      "examples": [
+        "https://www.instagram.com/reel/DZYMfeNOptR/"
+      ]
+    },
+    {
+      "hook": "how to make a fireball Attempt #1",
+      "nicheHits": 0,
+      "templateMatches": 2,
+      "results": 7,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 252950,
+      "medianLikes": 401,
+      "examples": [
+        "https://www.instagram.com/reel/DZu-fy1Cb5x/"
+      ]
+    },
+    {
+      "hook": "Philippines OPERATED BY: COASORATION Travelling with freediving fins is a nightmare",
+      "nicheHits": 0,
+      "templateMatches": 0,
+      "results": 8,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 109713,
+      "medianLikes": 49,
+      "examples": [
+        "https://www.instagram.com/reel/DZpQLJpMVeV/"
+      ]
+    },
+    {
+      "hook": "THIS IS VAKKARU MALDIVES",
+      "nicheHits": 0,
+      "templateMatches": 0,
+      "results": 8,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 313,
+      "medianLikes": 146,
+      "examples": [
+        "https://www.instagram.com/reel/DZFgaIGsz2v/"
+      ]
+    },
+    {
+      "hook": "There is a saving",
+      "nicheHits": 0,
+      "templateMatches": 0,
+      "results": 8,
+      "creators": 1,
+      "internalCreators": 1,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "maxLikes": 226437,
+      "medianLikes": 1077,
+      "examples": [
+        "https://www.instagram.com/reel/DZXrbwQqusR/"
       ]
     }
   ]

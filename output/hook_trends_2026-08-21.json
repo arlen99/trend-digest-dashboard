@@ -2,18 +2,168 @@
   {
     "hook": "The Art of Colourgrading",
     "internal_creators": 2,
-    "distinct_creators": 8,
-    "external_matches": 6,
-    "results": 7,
-    "niche_hits": 6,
+    "distinct_creators": 10,
+    "external_matches": 8,
+    "template_matches": 8,
+    "results": 8,
+    "niche_hits": 8,
     "max_likes": 564563,
-    "median_likes": 17886,
+    "median_likes": 17889,
     "verified_by": "targeted_search",
+    "confirmed": true,
     "examples": [
       "https://www.tiktok.com/@zackroams/video/7652379793459121438",
       "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
       "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-      "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
+      "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
+    ]
+  },
+  {
+    "hook": "What is he doing??",
+    "internal_creators": 1,
+    "distinct_creators": 2,
+    "external_matches": 1,
+    "template_matches": 7,
+    "results": 8,
+    "niche_hits": 1,
+    "max_likes": 1940,
+    "median_likes": 522,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.tiktok.com/@jad.cinematics/video/7632622094949338390",
+      "https://www.instagram.com/reel/DZcH3SozCOT/"
+    ]
+  },
+  {
+    "hook": "POV: you found a shipwreck in the middle of the ocean",
+    "internal_creators": 1,
+    "distinct_creators": 2,
+    "external_matches": 1,
+    "template_matches": 4,
+    "results": 5,
+    "niche_hits": 1,
+    "max_likes": 9309,
+    "median_likes": 29,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
+      "https://www.instagram.com/reel/DZNqp3CxD5H/"
+    ]
+  },
+  {
+    "hook": "What do you dream about?",
+    "internal_creators": 1,
+    "distinct_creators": 2,
+    "external_matches": 1,
+    "template_matches": 4,
+    "results": 5,
+    "niche_hits": 1,
+    "max_likes": 302980,
+    "median_likes": 11609,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.tiktok.com/@fabianamsolano/video/7662764407109291294",
+      "https://www.instagram.com/reel/DZiWoOAsnAw/",
+      "https://www.instagram.com/reel/DZHjYuXs_Aw/"
+    ]
+  },
+  {
+    "hook": "Find yourself a man who takes you on dates like these:",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 6,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 4552,
+    "median_likes": 200,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZ49AdRsuX_/"
+    ]
+  },
+  {
+    "hook": "more work. more life.",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 2,
+    "results": 7,
+    "niche_hits": 0,
+    "max_likes": 88774,
+    "median_likes": 8963,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZYMfeNOptR/"
+    ]
+  },
+  {
+    "hook": "how to make a fireball Attempt #1",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 2,
+    "results": 7,
+    "niche_hits": 0,
+    "max_likes": 252950,
+    "median_likes": 401,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZu-fy1Cb5x/"
+    ]
+  },
+  {
+    "hook": "Philippines OPERATED BY: COASORATION Travelling with freediving fins is a nightmare",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 0,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 109713,
+    "median_likes": 49,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZpQLJpMVeV/"
+    ]
+  },
+  {
+    "hook": "THIS IS VAKKARU MALDIVES",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 0,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 313,
+    "median_likes": 146,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZFgaIGsz2v/"
+    ]
+  },
+  {
+    "hook": "There is a saving",
+    "internal_creators": 1,
+    "distinct_creators": 1,
+    "external_matches": 0,
+    "template_matches": 0,
+    "results": 8,
+    "niche_hits": 0,
+    "max_likes": 226437,
+    "median_likes": 1077,
+    "verified_by": "unconfirmed",
+    "confirmed": false,
+    "examples": [
+      "https://www.instagram.com/reel/DZXrbwQqusR/"
     ]
   }
 ]

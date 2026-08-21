@@ -65,10 +65,12 @@ def main():
         rows.append({
             "hook": hook,
             "nicheHits": h.get("niche_hits", 0),
+            "templateMatches": h.get("template_matches", h.get("niche_hits", 0)),
             "results": h.get("results", 0),
             "creators": h.get("distinct_creators", 0),
             "internalCreators": h.get("internal_creators", 0),
             "verifiedBy": h.get("verified_by", ""),
+            "confirmed": h.get("confirmed", True),
             "maxLikes": h.get("max_likes", 0),
             "medianLikes": h.get("median_likes", 0),
             "examples": (h.get("examples") or [])[:4],
