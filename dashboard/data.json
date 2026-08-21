@@ -4077,7 +4077,7 @@
     "audioReels": 1820,
     "hooksOcrd": 481,
     "hooksReadable": 402,
-    "hookValidated": 5,
+    "hookValidated": 1,
     "hookPlats": [
       "Instagram"
     ],
@@ -4092,7 +4092,7 @@
       "travel cinematography"
     ],
     "trendsAudio": 10,
-    "trendsHook": 4,
+    "trendsHook": 3,
     "costTikhubCalls": 1012,
     "costClaudeCalls": 0,
     "costAuddCalls": 0,
@@ -4304,15 +4304,15 @@
       "trigger": "Awe",
       "momentum": "rising",
       "creators": 8,
-      "uses": 8,
+      "uses": 7,
       "examples": [
+        "https://www.tiktok.com/@zackroams/video/7652379793459121438",
         "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
         "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
+        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
       ],
       "howTo": "Take your widest graded landscape, place one small figure in it for scale, then set an oversized serif title across the middle third and let the grade sell the shot.",
-      "note": "Validated via TikTok search: 18 creators, ♥318,749 top, 15 niche-relevant results."
+      "note": "Validated via TikTok search: 6 of 7 checked results matched the same template, top ♥564,563."
     },
     {
       "type": "hook",
@@ -4347,24 +4347,6 @@
       ],
       "howTo": "Shoot the unopened door with your keycard in frame, overlay how far you travelled, then cut to one unbroken pan of the view so the delayed payoff holds watch-time.",
       "note": "Validated via TikTok search: 18 creators, ♥195,514 top, 11 niche-relevant results."
-    },
-    {
-      "type": "hook",
-      "name": "Full-Scenario POV From Inside",
-      "anchor": "POV: you found a shipwreck in the middle of the ocean",
-      "format": "Shot from inside a confined vessel — a submarine porthole — looking out at the environment, with the entire POV: scenario spelled out in one long caption so the payoff is promised before it arrives. Heavy underwater teal cast.",
-      "trigger": "Awe",
-      "momentum": "new",
-      "creators": 5,
-      "uses": 5,
-      "examples": [
-        "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
-        "https://www.tiktok.com/@intuitiveinquiry/video/7587737790234807574",
-        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
-        "https://www.tiktok.com/@pacificnorthblessed/video/7675861093759175950"
-      ],
-      "howTo": "Frame yourself inside the vehicle with the environment visible past you, and write the full POV: scenario out in one long line so viewers know the payoff is coming.",
-      "note": "Validated via TikTok search: 18 creators, ♥823,772 top, 9 niche-relevant results."
     }
   ],
   "pools": {
@@ -27477,83 +27459,19 @@
   },
   "hookTrends": [
     {
-      "hook": "What is he doing??",
-      "nicheHits": 7,
-      "results": 8,
-      "creators": 8,
-      "internalCreators": 1,
-      "verifiedBy": "targeted_search",
-      "maxLikes": 5091,
-      "medianLikes": 522,
-      "examples": [
-        "https://www.tiktok.com/@gorillaguyz0/video/7669569723226492174",
-        "https://www.tiktok.com/@user87630914/video/7674057771905502478",
-        "https://www.tiktok.com/@zendayacoach/video/7673836983331966221",
-        "https://www.tiktok.com/@jad.cinematics/video/7632622094949338390"
-      ]
-    },
-    {
-      "hook": "Find yourself a man who takes you on dates like these:",
-      "nicheHits": 7,
-      "results": 8,
-      "creators": 8,
-      "internalCreators": 1,
-      "verifiedBy": "targeted_search",
-      "maxLikes": 37424,
-      "medianLikes": 162,
-      "examples": [
-        "https://www.tiktok.com/@deeandcherrclips/video/7646884293339352334",
-        "https://www.tiktok.com/@mrbenontheroad/video/7671728915630624013",
-        "https://www.tiktok.com/@ricanprincess19/video/7643479579239140621",
-        "https://www.tiktok.com/@smalltownbellesboutique/video/7521496206778879262"
-      ]
-    },
-    {
       "hook": "The Art of Colourgrading",
       "nicheHits": 6,
-      "results": 8,
+      "results": 7,
       "creators": 8,
       "internalCreators": 2,
       "verifiedBy": "targeted_search",
       "maxLikes": 564563,
-      "medianLikes": 275506,
+      "medianLikes": 17886,
       "examples": [
+        "https://www.tiktok.com/@zackroams/video/7652379793459121438",
         "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
         "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-        "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
-      ]
-    },
-    {
-      "hook": "POV: you found a shipwreck in the middle of the ocean",
-      "nicheHits": 4,
-      "results": 5,
-      "creators": 5,
-      "internalCreators": 1,
-      "verifiedBy": "targeted_search",
-      "maxLikes": 9257,
-      "medianLikes": 87,
-      "examples": [
-        "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
-        "https://www.tiktok.com/@intuitiveinquiry/video/7587737790234807574",
-        "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
-        "https://www.tiktok.com/@pacificnorthblessed/video/7675861093759175950"
-      ]
-    },
-    {
-      "hook": "What do you dream about?",
-      "nicheHits": 3,
-      "results": 4,
-      "creators": 4,
-      "internalCreators": 1,
-      "verifiedBy": "targeted_search",
-      "maxLikes": 639595,
-      "medianLikes": 302980,
-      "examples": [
-        "https://www.tiktok.com/@drameown/video/7277510079027596590",
-        "https://www.tiktok.com/@raffymillado/video/7640602199784951071",
-        "https://www.tiktok.com/@aesiraxo/video/7206440143710964998",
-        "https://www.instagram.com/reel/DZiWoOAsnAw/"
+        "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
       ]
     }
   ]

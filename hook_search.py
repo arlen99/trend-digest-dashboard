@@ -71,8 +71,14 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MODEL = "claude-sonnet-5"
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
       "(KHTML, like Gecko) Version/16 Safari/605.1.15")
-NICHE = re.compile(r"travel|cinematic|filmmak|adventure|drone|wander|explore|landscape|"
-                   r"roadtrip|backpack|nomad|bali|iceland|dolomit|b-?roll|fpv", re.I)
+NICHE = re.compile(r"travel|cinematic|filmmak|adventure|drone|wander|explor|landscape|"
+                   r"roadtrip|backpack|nomad|bali|iceland|dolomit|b-?roll|fpv|"
+                   r"underwater|freedivi?|scuba|snorkel|\bdiv(e|ing)\b|"
+                   # ported from tiktok_discover.py's creator-vetting NICHE regex — same
+                   # project, same niche definition, just applied to a video's own caption
+                   # instead of an account's bio
+                   r"colou?r ?grad|davinci|fx3|fx6|a7s|bmpcc|gimbal|shot on|cinematograph",
+                   re.I)
 STOP = {"the","a","an","and","or","but","in","on","at","to","of","for","with","is","are",
         "was","were","you","your","i","my","this","that","it","its","just","how","what",
         "when","where","why","who","pov","did","do","does"}
@@ -239,7 +245,8 @@ def stage1_corpus():
         vurl = p.get("video") or video_url_for(p)
         text = ocr_post(vurl)
         if text:
-            corpus.append({"text": text, "account": p.get("account", ""), "url": p.get("url", "")})
+            corpus.append({"text": text, "account": p.get("account", ""), "url": p.get("url", ""),
+                            "caption": p.get("caption", "")})
         time.sleep(0.1)
     return corpus
 
@@ -278,13 +285,19 @@ def stage2_verify(candidate):
             aweme_id = a.get("aweme_id", "")
             url = f"https://www.tiktok.com/@{author}/video/{aweme_id}" if author and aweme_id else ""
             likes = (a.get("statistics") or {}).get("digg_count", 0)
-            ocrd.append({"text": text, "account": author, "url": url, "likes": likes})
+            caption = a.get("desc", "")
+            ocrd.append({"text": text, "account": author, "url": url, "likes": likes, "caption": caption})
         time.sleep(0.2)
     if len(ocrd) < 2:
         return [], ocrd
     texts = [o["text"] for o in ocrd]
     matched_texts = judge_matches(candidate["hook"], texts)
-    matched = [o for o in ocrd if o["text"] in matched_texts]
+    # Same template alone isn't enough — a viral caption template used by a dating-advice
+    # or reaction-meme account is a real trend, just not one relevant to THIS niche.
+    # A search on the raw hook phrase (unlike Stage 1's niche-keyword-sourced corpus)
+    # pulls in whoever else used the same words regardless of subject, so require the
+    # matched video's own caption to carry a niche signal too (see NICHE below).
+    matched = [o for o in ocrd if o["text"] in matched_texts and NICHE.search(o.get("caption") or o["text"])]
     return matched, ocrd
 
 

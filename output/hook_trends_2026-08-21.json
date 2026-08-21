@@ -1,87 +1,19 @@
 [
   {
-    "hook": "What is he doing??",
-    "internal_creators": 1,
-    "distinct_creators": 8,
-    "external_matches": 7,
-    "results": 8,
-    "niche_hits": 7,
-    "max_likes": 5091,
-    "median_likes": 522,
-    "verified_by": "targeted_search",
-    "examples": [
-      "https://www.tiktok.com/@gorillaguyz0/video/7669569723226492174",
-      "https://www.tiktok.com/@user87630914/video/7674057771905502478",
-      "https://www.tiktok.com/@zendayacoach/video/7673836983331966221",
-      "https://www.tiktok.com/@jad.cinematics/video/7632622094949338390"
-    ]
-  },
-  {
-    "hook": "Find yourself a man who takes you on dates like these:",
-    "internal_creators": 1,
-    "distinct_creators": 8,
-    "external_matches": 7,
-    "results": 8,
-    "niche_hits": 7,
-    "max_likes": 37424,
-    "median_likes": 162,
-    "verified_by": "targeted_search",
-    "examples": [
-      "https://www.tiktok.com/@deeandcherrclips/video/7646884293339352334",
-      "https://www.tiktok.com/@mrbenontheroad/video/7671728915630624013",
-      "https://www.tiktok.com/@ricanprincess19/video/7643479579239140621",
-      "https://www.tiktok.com/@smalltownbellesboutique/video/7521496206778879262"
-    ]
-  },
-  {
     "hook": "The Art of Colourgrading",
     "internal_creators": 2,
     "distinct_creators": 8,
     "external_matches": 6,
-    "results": 8,
+    "results": 7,
     "niche_hits": 6,
     "max_likes": 564563,
-    "median_likes": 275506,
+    "median_likes": 17886,
     "verified_by": "targeted_search",
     "examples": [
+      "https://www.tiktok.com/@zackroams/video/7652379793459121438",
       "https://www.tiktok.com/@tylersalescreative/video/7468870429843770670",
       "https://www.tiktok.com/@shotbykenii/video/7613219134964354334",
-      "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638",
-      "https://www.tiktok.com/@leonidas.edit0/video/7597044684107566358"
-    ]
-  },
-  {
-    "hook": "POV: you found a shipwreck in the middle of the ocean",
-    "internal_creators": 1,
-    "distinct_creators": 5,
-    "external_matches": 4,
-    "results": 5,
-    "niche_hits": 4,
-    "max_likes": 9257,
-    "median_likes": 87,
-    "verified_by": "targeted_search",
-    "examples": [
-      "https://www.tiktok.com/@divingoceanmakadibay/video/7643013995728866578",
-      "https://www.tiktok.com/@intuitiveinquiry/video/7587737790234807574",
-      "https://www.tiktok.com/@lolaprecious1/video/7668455400643005710",
-      "https://www.tiktok.com/@pacificnorthblessed/video/7675861093759175950"
-    ]
-  },
-  {
-    "hook": "What do you dream about?",
-    "internal_creators": 1,
-    "distinct_creators": 4,
-    "external_matches": 3,
-    "results": 4,
-    "niche_hits": 3,
-    "max_likes": 639595,
-    "median_likes": 302980,
-    "verified_by": "targeted_search",
-    "examples": [
-      "https://www.tiktok.com/@drameown/video/7277510079027596590",
-      "https://www.tiktok.com/@raffymillado/video/7640602199784951071",
-      "https://www.tiktok.com/@aesiraxo/video/7206440143710964998",
-      "https://www.instagram.com/reel/DZiWoOAsnAw/"
+      "https://www.tiktok.com/@alvarovaliente_/video/7669466387018042638"
     ]
   }
 ]
