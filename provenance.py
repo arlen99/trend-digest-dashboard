@@ -68,6 +68,18 @@ def main():
         if m2:
             disc_candidates, disc_min_seeds = int(m2.group(1)), int(m2.group(2))
 
+    # how many of those candidates actually got sampled + surfaced as review cards —
+    # real count from discovery_posts.py's own output, not the --max config value,
+    # since a candidate can clear the seed-overlap bar but still fail to resolve/scrape
+    disc_reviewed = disc_posts_per = None
+    disc_json = jload(latest("discovery_candidates_*.json"), [])
+    if disc_json:
+        disc_reviewed = sum(1 for c in disc_json if c.get("platform", "instagram") == "instagram")
+        try:
+            from discovery_posts import POSTS_PER_CANDIDATE as disc_posts_per
+        except Exception:  # noqa: BLE001
+            disc_posts_per = None
+
     # how many of the tracked handles actually resolve to an IG id (= scrapable set)
     ids = jload(ROOT / "output" / "user_ids.json", {}) or {}
     ig_resolved = sum(1 for h in acc.get("accounts", []) if h in ids or h.lstrip("@") in ids)
@@ -169,6 +181,7 @@ def main():
         "igAccounts": ig_total, "igResolved": ig_resolved,
         "igSeed": ig_seed, "igDiscovered": disc, "igBootstrap": boot,
         "igDiscMinSeeds": disc_min_seeds, "igDiscCandidates": disc_candidates, "igDiscSeedCoverage": disc_seed_coverage,
+        "igDiscReviewed": disc_reviewed, "igDiscPostsPerCandidate": disc_posts_per,
         "tiktokCreators": tt_creators,
         "postsPerIg": int(env.get("POSTS_PER_ACCOUNT", 8)), "postsPerTt": int(env.get("TT_POSTS_PER", 10)),
         "daysBack": int(env.get("DAYS_BACK", 30)),
