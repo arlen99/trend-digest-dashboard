@@ -68,17 +68,23 @@ def main():
         if m2:
             disc_candidates, disc_min_seeds = int(m2.group(1)), int(m2.group(2))
 
-    # how many of those candidates actually got sampled + surfaced as review cards —
-    # real count from discovery_posts.py's own output, not the --max config value,
-    # since a candidate can clear the seed-overlap bar but still fail to resolve/scrape
-    disc_reviewed = disc_posts_per = None
+    # The cap itself (config, not a run result) — imported so the dashboard can't cite
+    # a stale number the way an earlier version of this page did (hardcoded "20" in
+    # discovery_posts.py's own docstring, three commits after the real default had
+    # already been lowered to 10).
+    try:
+        from discovery_posts import MAX_CANDIDATES as disc_cap, POSTS_PER_CANDIDATE as disc_posts_per
+    except Exception:  # noqa: BLE001
+        disc_cap = disc_posts_per = None
+
+    # How many of those candidates actually got sampled + surfaced as review cards on
+    # the LAST run — real count from discovery_posts.py's own output, not just disc_cap,
+    # since a candidate can clear the seed-overlap bar but still fail to resolve/scrape,
+    # landing this at or below the cap.
+    disc_reviewed = None
     disc_json = jload(latest("discovery_candidates_*.json"), [])
     if disc_json:
         disc_reviewed = sum(1 for c in disc_json if c.get("platform", "instagram") == "instagram")
-        try:
-            from discovery_posts import POSTS_PER_CANDIDATE as disc_posts_per
-        except Exception:  # noqa: BLE001
-            disc_posts_per = None
 
     # how many of the tracked handles actually resolve to an IG id (= scrapable set)
     ids = jload(ROOT / "output" / "user_ids.json", {}) or {}
@@ -181,7 +187,7 @@ def main():
         "igAccounts": ig_total, "igResolved": ig_resolved,
         "igSeed": ig_seed, "igDiscovered": disc, "igBootstrap": boot,
         "igDiscMinSeeds": disc_min_seeds, "igDiscCandidates": disc_candidates, "igDiscSeedCoverage": disc_seed_coverage,
-        "igDiscReviewed": disc_reviewed, "igDiscPostsPerCandidate": disc_posts_per,
+        "igDiscReviewed": disc_reviewed, "igDiscPostsPerCandidate": disc_posts_per, "igDiscCap": disc_cap,
         "tiktokCreators": tt_creators,
         "postsPerIg": int(env.get("POSTS_PER_ACCOUNT", 8)), "postsPerTt": int(env.get("TT_POSTS_PER", 10)),
         "daysBack": int(env.get("DAYS_BACK", 30)),

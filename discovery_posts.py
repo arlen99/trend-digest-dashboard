@@ -17,8 +17,8 @@ own fetch+normalize functions so results are identical in shape to a normal scra
 Usage:
   set -a && . ./.env && set +a
   python3 discover.py && python3 bootstrap.py && python3 tiktok_discover.py   # refresh candidates first
-  python3 discovery_posts.py                  # both platforms, up to 20 candidates each
-  python3 discovery_posts.py --max 10         # cheaper test
+  python3 discovery_posts.py                  # both platforms, up to MAX_CANDIDATES each (see below)
+  python3 discovery_posts.py --max 20         # override for one run
 Env: TIKHUB_TOKEN.
 """
 import argparse
@@ -36,6 +36,12 @@ import hook_text
 ROOT = Path(__file__).parent
 OUT = ROOT / "output"
 POSTS_PER_CANDIDATE = 5  # a sniff test, not a full harvest — just enough to judge the account
+# Per platform, per run. Candidates arrive from discover.py already ranked by
+# seed-overlap (strongest niche-signal first), so this cap keeps the top N, not an
+# arbitrary slice — see ig_candidates()/tt_candidates() below. Named constant so the
+# dashboard's Sources description (provenance.py's igDiscCap) can't drift out of sync
+# with the real value the way the old hardcoded docstring number did.
+MAX_CANDIDATES = 10
 
 
 def latest(pattern):
@@ -90,7 +96,7 @@ def tt_candidates(max_n):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--max", type=int, default=10, help="cap candidates scraped, per platform")
+    ap.add_argument("--max", type=int, default=MAX_CANDIDATES, help="cap candidates scraped, per platform")
     args = ap.parse_args()
     stamp = datetime.now().strftime("%Y-%m-%d")
     rows = []
