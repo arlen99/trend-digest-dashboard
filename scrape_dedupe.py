@@ -62,7 +62,7 @@ def dedupe_file(path: Path, prior: set):
     out.write_text(json.dumps(fresh, indent=2))
     excluded = len(rows) - len(fresh)
     print(f"  {path.name}: {len(rows)} → {len(fresh)} fresh ({excluded} prior-week dupes removed) → {out.name}")
-    return fresh
+    return fresh, len(rows), excluded
 
 
 def main():
@@ -72,12 +72,22 @@ def main():
               "writing *_fresh.json unchanged so downstream steps still find it.")
     today = datetime.now().strftime("%Y-%m-%d")
     targets = [OUT / f"top_posts_{today}.json", OUT / f"top_posts_tiktok_{today}.json"]
+    total_scraped = total_excluded = 0
     for f in targets:
         if f.exists():
-            dedupe_file(f, prior)
+            _, scraped, excluded = dedupe_file(f, prior)
+            total_scraped += scraped
+            total_excluded += excluded
         else:
             print(f"  {f.name}: not found, skipping")
     print(f"Prior-week curated URLs in registry: {len(prior)}")
+
+    # Real numbers for the dashboard's Sources description — same "every figure traces
+    # to a real file" convention the rest of the pipeline follows, rather than the
+    # Sources text asserting this mechanism exists without evidence from THIS run.
+    (OUT / f"dedupe_{today}.json").write_text(json.dumps({
+        "registrySize": len(prior), "scraped": total_scraped, "excluded": total_excluded,
+    }, indent=2))
 
 
 if __name__ == "__main__":

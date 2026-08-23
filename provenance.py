@@ -121,6 +121,8 @@ def main():
     tt_sounds = jload(latest("tiktok_trends_*.json"), []) or []
     kw_scanned = len(jload(latest("keyword_posts_*.json"), []) or [])
 
+    dedupe = jload(latest("dedupe_*.json"), {}) or {}
+
     # pipeline counts for the "how it's built" popups
     hooks = jload(ROOT / "output" / "hook_texts.json", {}) or {}
     hooks_ocrd = len(hooks)
@@ -191,6 +193,8 @@ def main():
         "tiktokCreators": tt_creators,
         "postsPerIg": int(env.get("POSTS_PER_ACCOUNT", 8)), "postsPerTt": int(env.get("TT_POSTS_PER", 10)),
         "daysBack": int(env.get("DAYS_BACK", 30)),
+        "dedupeRegistry": dedupe.get("registrySize"), "dedupeScraped": dedupe.get("scraped"),
+        "dedupeExcluded": dedupe.get("excluded"),
         "igCurated": ig_curated, "tiktokCurated": tt_curated,
         "keywordFinds": kw_finds, "keywordScanned": kw_scanned, "boardAccounts": board_accounts,
         "igCarryover": ig_carryover, "tiktokCarryover": tt_carryover, "keywordCarryover": kw_carryover,
