@@ -21,7 +21,6 @@ Usage: python3 hooks_to_dashboard.py [--top 20]
 import argparse
 import glob
 import json
-import os
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -29,7 +28,9 @@ DASH = ROOT / "dashboard"
 
 
 def latest(pattern):
-    fs = sorted(glob.glob(str(ROOT / "output" / pattern)), key=os.path.getmtime)
+    # Sort by filename (YYYY-MM-DD is a reliable chronological key), not mtime — see
+    # provenance.py's latest() for why mtime broke this on a retroactive backfill.
+    fs = sorted(glob.glob(str(ROOT / "output" / pattern)))
     if not fs:
         return []
     try:

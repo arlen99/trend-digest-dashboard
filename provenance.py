@@ -20,7 +20,13 @@ DASH = ROOT / "dashboard"
 
 
 def latest(pat):
-    fs = sorted(glob.glob(str(ROOT / "output" / pat)), key=os.path.getmtime)
+    # Sort by filename, not mtime: every file here is named <prefix>_YYYY-MM-DD.json,
+    # a reliable chronological key, but mtime isn't — re-running a script against an
+    # OLDER dated file (e.g. a retroactive backfill) touches its mtime without making
+    # it the actually-latest week. Caught live 2026-08 when re-verifying the Aug 10
+    # hook file left it with a newer mtime than the real current week's file, which
+    # silently made this function return Aug 10's data for "latest".
+    fs = sorted(glob.glob(str(ROOT / "output" / pat)))
     return fs[-1] if fs else None
 
 

@@ -4145,14 +4145,14 @@
     ],
     "trendsAudio": 10,
     "trendsHook": 3,
-    "costTikhubCalls": 997,
+    "costTikhubCalls": 1009,
     "costClaudeCalls": 0,
     "costAuddCalls": 0,
     "auddAuthDead": false,
     "costAcrcloudCalls": 27,
-    "costTikhub": 0.997,
+    "costTikhub": 1.009,
     "costClaude": 0.0,
-    "costTotal": 0.997,
+    "costTotal": 1.009,
     "igExcluded": 22,
     "igEvaluated": 77,
     "igExcludeReasons": [
@@ -27576,6 +27576,318 @@
       "examples": [
         "https://www.instagram.com/reel/DZXrbwQqusR/"
       ]
+    }
+  ],
+  "generalHookTrends": [
+    {
+      "hook": "new gens would never understand",
+      "creators": 5,
+      "uses": 1,
+      "templateMatches": 4,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 388258,
+      "medianLikes": 290851,
+      "totalViews": 150200,
+      "verifiedBy": "search_verified",
+      "confirmed": true,
+      "examples": [
+        "https://www.tiktok.com/@devil_7xx8/video/7672682003598232854",
+        "https://www.tiktok.com/@fadedfeedz/video/7674856914857266453",
+        "https://www.tiktok.com/@justarandomgoathere67/video/7675584582191828238",
+        "https://www.tiktok.com/@nostalgicaiimages/video/7655807244793105678"
+      ]
+    },
+    {
+      "hook": "POV: W florist finally gets his flowers too @ I'm sorry I'm late man",
+      "creators": 2,
+      "uses": 1,
+      "templateMatches": 2,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 280884,
+      "medianLikes": 280884,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@floraebymarcos/video/7662944781827427614",
+        "https://www.tiktok.com/@izepu.qzwoy/video/7672718228522667277"
+      ]
+    },
+    {
+      "hook": "Galaxy Z Fold& Ultra VISION every • story has a Stat",
+      "creators": 2,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 25964,
+      "medianLikes": 25964,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@samsung/video/7668278577204448532"
+      ]
+    },
+    {
+      "hook": "COME ON A STAYCATION WITH US 6- we stepped away from our typical routine",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 50960,
+      "medianLikes": 50960,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@sabriena_abrre/video/7626101034376613150"
+      ]
+    },
+    {
+      "hook": "LET'S GO SHOPPING FOR MY DAUGHTER'S NEW BEDROOM a new place in Miami",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 8958,
+      "medianLikes": 8958,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@brufava/video/7666150039986769183"
+      ]
+    },
+    {
+      "hook": "Picking out a big girl bed for my daughter... ashwille SAY HAPPY PLACE",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 13670,
+      "medianLikes": 13670,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@thedaniaustin/video/7667258005238467870"
+      ]
+    },
+    {
+      "hook": "my man tryna get in on my future Kalshi winnings on big brother",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 7,
+      "maxLikes": 1521256,
+      "medianLikes": 1521256,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@x.ody/video/7662909267317509407"
+      ]
+    },
+    {
+      "hook": "My daughter thinks this is ice cream",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 7,
+      "maxLikes": 220250,
+      "medianLikes": 220250,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@ann_aknows/video/7655412321245728014"
+      ]
+    },
+    {
+      "hook": "Reply to Jess's comment Lol no gatekeeping here wait so it actually worked",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 3260,
+      "medianLikes": 3260,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@sallykim7_/video/7656214252427971853"
+      ]
+    },
+    {
+      "hook": "POV: that one person who thinks farting is funny",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 465895,
+      "medianLikes": 465895,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@colecake/video/7667711463905168670"
+      ]
+    },
+    {
+      "hook": "RAX I've started to ramp up my summer workouts lately",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 1,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 4794,
+      "medianLikes": 4794,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@rolandpollard/video/7657942608727035167"
+      ]
+    },
+    {
+      "hook": "Someone: \"how lazy are you? me: LANA DEL MAMINI",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 18000,
+      "medianLikes": 18000,
+      "totalViews": 166400,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@girls/video/7675451064186866965"
+      ]
+    },
+    {
+      "hook": "Reply to DarkE's comment Fly somewhere PPL don't visit",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 5564,
+      "medianLikes": 5564,
+      "totalViews": 127100,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": [
+        "https://www.tiktok.com/@jordentually/video/7659167803202702599"
+      ]
+    },
+    {
+      "hook": "Where are you doing dressed like that 8™™",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 7,
+      "maxLikes": 1034,
+      "medianLikes": 1034,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "I'm playing my lyrics in genres 1 would never listen to",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "when your nails are also the menu",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "Almost 14 and Thriving! WHENITELL THEM",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "sometimes aiter l go to the bathroom a 48mm Cotto ULTRA CLEAN",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 4,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "putting my husband through a workout where I can't do half the moves... lol",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
+    },
+    {
+      "hook": "POV: You're a boy mom and need some alone time",
+      "creators": 1,
+      "uses": 1,
+      "templateMatches": 0,
+      "stableReads": 1,
+      "results": 8,
+      "maxLikes": 0,
+      "medianLikes": 0,
+      "totalViews": 0,
+      "verifiedBy": "unconfirmed",
+      "confirmed": false,
+      "examples": []
     }
   ]
 }

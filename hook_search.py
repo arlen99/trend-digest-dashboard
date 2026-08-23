@@ -26,9 +26,13 @@ if the previous one found nothing:
   wild, unbiased by search ranking" signal.
 
   STAGE 2 (bounded fallback, only for candidates Stage 0-1 didn't confirm) — the
-  original targeted TikTok search, but OCR the top 8 results (TikTok's own top-ranked,
-  not all 20 — marginal relevance drops off fast past ~8 in every sample checked) and
-  require >=2 of those 8 to actually match, instead of trusting captions.
+  original targeted search, but on BOTH TikTok and Instagram (top 8 each platform's
+  own relevance order — marginal relevance drops off fast past ~8 in every sample
+  checked), OCR every result, and require >=2 to actually match, instead of trusting
+  captions. Instagram's search_reels is included even though its search relevance is
+  exactly as untrustworthy pre-OCR as TikTok's (checked live 2026-08: no on-screen-text
+  field exists in its response either) — it's simply a second raw candidate pool for
+  the SAME OCR-then-judge verification, not a shortcut around it.
 
 "Match" in stages 1-2 means Claude judges the OCR'd/captioned text as the SAME
 reusable hook TEMPLATE as the candidate (paraphrase-tolerant: different price, city,
@@ -377,11 +381,42 @@ def search(phrase):
     return []
 
 
-def stage2_verify(candidate):
-    """Top-8 (TikTok's own relevance order) of the targeted search, OCR'd and
-    Claude-judged — not the raw 20 trusted on caption keywords."""
-    items = [it.get("aweme_info") or {} for it in search(candidate["hook"])][:8]
-    ocrd = []
+def search_ig(phrase):
+    """Instagram's search_reels — same TIKHUB_TOKEN, no separate credential.
+
+    Its own search relevance is caption-driven, same as TikTok's (checked live 2026-08:
+    no on-screen-text field exists in the response — media_overlay_info is null on
+    every result, no accessibility_caption, nothing like TikTok's search_highlight).
+    So this is NOT a shortcut around OCR — it's a second raw candidate pool, verified
+    exactly like TikTok's: OCR'd, then judged same-template + niche by the code below.
+    Worth including anyway since it's genuinely independent evidence from a platform
+    your own Stage-0 corpus doesn't already live on... except it DOES: your internal
+    hooks are sourced from Instagram, so a hit here is weaker proof of a real trend
+    than a TikTok hit (could just be your own network's neighborhood), which is why
+    this stays a same-tier add to Stage 2 rather than a replacement for TikTok.
+    """
+    global th_calls
+    q = urllib.parse.quote(phrase)
+    u = f"https://api.tikhub.io/api/v1/instagram/v2/search_reels?keyword={q}"
+    for _ in range(4):
+        try:
+            req = urllib.request.Request(u, headers={"Authorization": "Bearer " + KEY, "User-Agent": UA, "accept": "application/json"})
+            th_calls += 1
+            with urllib.request.urlopen(req, timeout=60) as r:
+                # TikHub double-wraps this endpoint's payload (data.data.items), unlike
+                # the single data.search_item_list on the TikTok endpoint above — verified
+                # live 2026-08 by inspecting the raw response after this silently returned
+                # empty on every query.
+                outer = (json.loads(r.read().decode()).get("data") or {})
+                return (outer.get("data") or {}).get("items") or []
+        except Exception:  # noqa: BLE001
+            time.sleep(2)
+    return []
+
+
+def _ocr_tiktok_results(phrase):
+    items = [it.get("aweme_info") or {} for it in search(phrase)][:8]
+    out = []
     for a in items:
         vurl = ((a.get("video") or {}).get("play_addr") or {}).get("url_list", [""])[0]
         text = ocr_post(vurl)
@@ -389,11 +424,38 @@ def stage2_verify(candidate):
             author = (a.get("author") or {}).get("unique_id", "")
             aweme_id = a.get("aweme_id", "")
             url = f"https://www.tiktok.com/@{author}/video/{aweme_id}" if author and aweme_id else ""
-            likes = (a.get("statistics") or {}).get("digg_count", 0)
-            caption = a.get("desc", "")
-            ocrd.append({"text": text, "account": author, "url": url, "likes": likes,
-                         "caption": caption, "hashtags": hashtags_of(a)})
+            out.append({"text": text, "account": author, "url": url,
+                       "likes": (a.get("statistics") or {}).get("digg_count", 0),
+                       "caption": a.get("desc", ""), "hashtags": hashtags_of(a),
+                       "platform": "tiktok"})
         time.sleep(0.2)
+    return out
+
+
+def _ocr_ig_results(phrase):
+    items = search_ig(phrase)[:8]
+    out = []
+    for it in items:
+        vurl = it.get("video_url", "")
+        text = ocr_post(vurl)
+        if text:
+            cap = it.get("caption") or {}
+            author = ((it.get("user") or {}).get("username")
+                      or (cap.get("user") or {}).get("username", ""))
+            code = it.get("code", "")
+            out.append({"text": text, "account": author,
+                       "url": f"https://www.instagram.com/reel/{code}/" if code else "",
+                       "likes": it.get("like_count", 0),
+                       "caption": cap.get("text", ""), "hashtags": cap.get("hashtags") or [],
+                       "platform": "instagram"})
+        time.sleep(0.2)
+    return out
+
+
+def stage2_verify(candidate):
+    """Top-8 (each platform's own relevance order) from TikTok AND Instagram search,
+    OCR'd and Claude-judged — not the raw results trusted on caption keywords."""
+    ocrd = _ocr_tiktok_results(candidate["hook"]) + _ocr_ig_results(candidate["hook"])
     if len(ocrd) < 2:
         return [], [], ocrd
     texts = [o["text"] for o in ocrd]
