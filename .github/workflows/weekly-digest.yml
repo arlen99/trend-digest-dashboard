@@ -46,6 +46,13 @@ jobs:
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
           OCR_CMD: tools/ocr_tesseract.sh          # macOS Vision -> Tesseract on Linux
           CLIPS_PER_ACCOUNT: "20"
+          # Optional — general_hooks.py's semantic clustering tier. Absent, that pass is a
+          # no-op and the lane falls back to word-level clustering, so leaving this unset
+          # degrades quality rather than breaking anything.
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Optional — personalises the For You feed source in general_corpus.py.
+          # Absent, it fetches the generic (non-personalised) feed.
+          TIKTOK_COOKIE: ${{ secrets.TIKTOK_COOKIE }}
         run: |
           set -eo pipefail
           TODAY=$(date +%F)
@@ -96,6 +103,34 @@ jobs:
           run_optional python3 tiktok_videotext.py     # on-screen hook OCR for TikTok cards — was never wired in before, only IG (hook_text.py) got this automatically
           run_optional python3 fetch_videos.py        # self-host videos on Vercel Blob → durable native inline playback
           run_optional python3 fetch_audio.py         # self-host each sound-chart track's REAL audio → durable inline previews (replaces Deezer)
+          # ---- IG account discovery (Instagram's related-profiles graph) ----
+          # Report-only, never auto-adds: surfaces untracked accounts as "⚡ new find"
+          # cards on the Swipe File; an account only joins accounts.json when a human
+          # saves one of its posts and confirms the "add to watchlist?" prompt. All
+          # optional — was previously never wired into this workflow at all (ran, if
+          # ever, by hand locally), which is why igDiscovered sat at 0 for weeks
+          # regardless of how many real candidates discover.py found.
+          MIN_SEEDS=3 run_optional python3 discover.py   # accounts.json seeds → related-profiles candidates (code default is 2; 3 matches the threshold the last real run used)
+          run_optional python3 discovery_posts.py     # sample posts for untracked candidates
+          run_optional python3 discovery_to_dashboard.py   # merge as reviewable "⚡ new find" cards — must run AFTER curate_posts.py/tiktok_to_dashboard.py/keyword_posts_to_dashboard.py, which don't preserve this lane if they run after it
+          # ---- General (niche-free) hook lane ----
+          # Separate from everything above: it answers "what hooks are trending on TikTok
+          # at all", not "…in the travel/cinematic niche", and writes its own page
+          # (dashboard/general_hooks.html) plus its own data key (generalHookTrends).
+          # ALL OPTIONAL — this lane is newer and depends on surfaces that have already
+          # proven flaky (the Creative Center billboard returns nothing outside the US),
+          # and nothing in the travel board reads its output, so a failure here must never
+          # cost the main run. general_hooks_to_dashboard.py keeps last week's rows rather
+          # than blanking the section when a run produces nothing.
+          # --pages 5 = full 100-video billboard pool (its hard cap per region/period).
+          # --explore 900 makes up the rest — explore has no such cap, just a low usable-hook
+          # yield (~8% measured), so most of its volume feeds clustering/cross-run reuse
+          # (historic_rows in general_hooks.py) rather than confirmed hooks directly.
+          run_optional python3 general_corpus.py --pages 5 --explore 900
+          run_optional python3 general_hooks.py --limit 1000 --verify 25
+          run_optional python3 general_hooks_to_dashboard.py
+          run_optional python3 build_general_dashboard.py
+
           run_critical python3 provenance.py
           run_critical python3 build_dashboard.py
 
