@@ -431,8 +431,12 @@ def _ocr_tiktok_results(phrase):
             author = (a.get("author") or {}).get("unique_id", "")
             aweme_id = a.get("aweme_id", "")
             url = f"https://www.tiktok.com/@{author}/video/{aweme_id}" if author and aweme_id else ""
+            # `.get(k, 0)` only falls back to 0 when the key is MISSING — TikHub can
+            # return "digg_count": null (present, explicitly None), which then breaks
+            # max()/sorted() downstream comparing None to int. `or 0` catches both
+            # cases. Caused a real crash in the 2026-08-24 automated run.
             out.append({"text": text, "account": author, "url": url,
-                       "likes": (a.get("statistics") or {}).get("digg_count", 0),
+                       "likes": (a.get("statistics") or {}).get("digg_count") or 0,
                        "caption": a.get("desc", ""), "hashtags": hashtags_of(a),
                        "platform": "tiktok"})
         time.sleep(0.2)
@@ -452,7 +456,7 @@ def _ocr_ig_results(phrase):
             code = it.get("code", "")
             out.append({"text": text, "account": author,
                        "url": f"https://www.instagram.com/reel/{code}/" if code else "",
-                       "likes": it.get("like_count", 0),
+                       "likes": it.get("like_count") or 0,
                        "caption": cap.get("text", ""), "hashtags": cap.get("hashtags") or [],
                        "platform": "instagram"})
         time.sleep(0.2)
@@ -547,7 +551,9 @@ def main():
         ext_urls = [e["url"] for e in niche_ext if e.get("url")]
         int_urls = [e["url"] for e in c["examples"] if e.get("url")]
         examples = (ext_urls + int_urls)[:4]  # external proof first — it's the real evidence
-        likes_pool = [e.get("likes", 0) for e in s2_checked] or [0]
+        # `or 0`, not `.get(..., 0)` — a source can supply an explicit null, which
+        # `.get` would pass through untouched and crash max()/sorted() below.
+        likes_pool = [e.get("likes") or 0 for e in s2_checked] or [0]
         rows.append({
             "hook": c["hook"],
             "internal_creators": len(c["accounts"]),
