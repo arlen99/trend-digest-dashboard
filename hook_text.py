@@ -39,6 +39,7 @@ Usage:
 Env: TIKHUB_TOKEN (only for posts lacking a video url). OCR_CMD overrides the engine.
 """
 import argparse
+import difflib
 import json
 import os
 import re
@@ -63,6 +64,24 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
 # retry pool, only spent when needed. Widened based on the live case above,
 # where nearly every timestamp from 0.5s-6.0s read clean except the original 2s.
 FRAME_TIMES = [2.0, 4.0, 1.0, 3.0, 5.0, 0.5, 5.5, 6.0]
+
+# A hook overlay stays on screen; a rolling auto-caption changes every beat as
+# someone speaks. If the SAME text turns up at two separate timestamps, that's a
+# persistent overlay — the strongest signal available that it's a real hook, not a
+# caption fragment. Ported from general_hooks.py, which hit this exact problem on
+# a general (non-niche) corpus, where most videos carry burned-in captions and the
+# old "keep the longer read" rule just picked whatever sentence the speaker was
+# mid-way through. Same fix, same threshold, applied here too — a persistent
+# overlay is the norm for this niche's title-card-style hooks, but nothing stops a
+# talking-head reel from carrying the same rolling-caption problem.
+STABLE_RATIO = 0.60
+
+
+def _norm(s):
+    """Local copy of hook_search.norm() — hook_search.py imports FROM this module,
+    so importing back would be circular. Tiny enough to duplicate."""
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s?']", "", (s or "").lower())).strip()
+
 
 _COMMON_WORDS = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "of", "for",
                  "with", "is", "are", "was", "were", "you", "your", "i", "my", "this", "that",
@@ -157,19 +176,35 @@ def ocr(path):
 def best_hook_from_video(vurl):
     """Try FRAME_TIMES in order, stop at the first coherent read. Falls back to
     the longest gibberish read if nothing coherent turns up (never worse than
-    the old single-best-of-2 behavior, just tries harder first)."""
+    the old single-best-of-2 behavior, just tries harder first).
+
+    Prefers a STABLE read (recurs across two separate frames — see STABLE_RATIO)
+    over a merely-coherent one: a repeating chunk of noise (e.g. a watermark) isn't
+    a hook either, so stability only counts once coherence has already passed.
+    Returns (hook, stable, attempts) — stable=False covers both "coherent but only
+    seen once" (still returned — a hook shown once and gone is real, just less
+    certain) and "nothing coherent at all" (the old length-only fallback)."""
     tmp = "/tmp/hk_retry.jpg"
-    attempts = []
+    seen = []          # every {"text", "coherent"} attempt, in order
+    fallback = None    # first coherent-but-unconfirmed read, kept in case nothing stabilizes
     for t in FRAME_TIMES:
         if not frame(vurl, t, tmp):
             continue
         text = ocr(tmp)
         if not text:
             continue
-        attempts.append(text)
-        if not is_gibberish(text):
-            return text, len(attempts)
-    return (max(attempts, key=len) if attempts else ""), len(attempts)
+        coherent = not is_gibberish(text)
+        if coherent:
+            for prev in seen:
+                if prev["coherent"] and difflib.SequenceMatcher(None, _norm(text), _norm(prev["text"])).ratio() >= STABLE_RATIO:
+                    return max((text, prev["text"]), key=len), True, len(seen) + 1
+            if fallback is None:
+                fallback = text
+        seen.append({"text": text, "coherent": coherent})
+    if fallback is not None:
+        return fallback, False, len(seen)
+    all_texts = [a["text"] for a in seen]
+    return (max(all_texts, key=len) if all_texts else ""), False, len(seen)
 
 
 def best_hook_from_images(urls, max_images=2):
@@ -194,6 +229,7 @@ def process_row(r, cache):
     (possibly gibberish) hook was written, False if there was nothing to OCR."""
     code = shortcode(r.get("url", ""))
     fmt = r.get("format", "")
+    stable = None  # not applicable to a single image or unrelated carousel slides — video-only signal
     if fmt == "Carousel" and r.get("carousel_urls"):
         hook, tries = best_hook_from_images(r["carousel_urls"])
     elif fmt == "Photo" and r.get("thumbnail"):
@@ -203,9 +239,9 @@ def process_row(r, cache):
         if not vurl:
             cache[code] = {"hook": "", "reason": "no video"}
             return False
-        hook, tries = best_hook_from_video(vurl)
+        hook, stable, tries = best_hook_from_video(vurl)
     cache[code] = {"hook": hook, "account": r.get("account", ""), "url": r.get("url", ""),
-                   "gibberish": is_gibberish(hook) if hook else None}
+                   "gibberish": is_gibberish(hook) if hook else None, "stable": stable}
     return True
 
 

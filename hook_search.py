@@ -223,7 +223,14 @@ def raw_candidates():
         realish = sum(1 for w in words if len(w) >= 2 and w.isalpha())
         if realish / len(words) < 0.7:
             continue
-        out.append({"hook": h, "account": v.get("account", ""), "url": v.get("url", "")})
+        out.append({"hook": h, "account": v.get("account", ""), "url": v.get("url", ""),
+                    "stable": v.get("stable")})
+    # Stable reads (the same text persisted across two separate frames — see
+    # hook_text.py's STABLE_RATIO) go first, so a cluster's REPRESENTATIVE text —
+    # whichever row arrives first in cluster_internal() — prefers a confirmed
+    # overlay over a rolling caption that happened to read as coherent once.
+    # Ported from general_hooks.py's identical ordering for the same reason.
+    out.sort(key=lambda r: r["stable"] is True, reverse=True)
     return out
 
 

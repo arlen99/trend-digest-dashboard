@@ -4398,6 +4398,8 @@
     "hooksOcrd": 524,
     "hooksReadable": 441,
     "hooksGibberish": 43,
+    "hooksStable": null,
+    "hooksStableChecked": null,
     "hookValidated": 1,
     "hookPlats": [
       "Instagram"

@@ -132,6 +132,12 @@ def main():
         hooks_gibberish = sum(1 for v in hooks.values() if v.get("hook") and is_gibberish(v["hook"]))
     except Exception:  # noqa: BLE001
         hooks_gibberish = None
+    # "stable" only exists on rows OCR'd since the rolling-caption fix shipped — legacy
+    # rows read None and are excluded from both counts rather than silently counting as
+    # "checked, not stable", which would understate the real stable rate.
+    checked = [v for v in hooks.values() if v.get("stable") is not None]
+    hooks_stable = sum(1 for v in checked if v["stable"]) if checked else None
+    hooks_stable_checked = len(checked) if checked else None
     # which platforms got OCR'd (today: IG-only, since the TikTok web endpoint strips video URLs)
     hook_url_strs = " ".join((v.get("url") or "") for v in hooks.values())
     hook_plats = []
@@ -211,6 +217,7 @@ def main():
         # pipeline-diagram fields
         "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
         "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hooksGibberish": hooks_gibberish,
+        "hooksStable": hooks_stable, "hooksStableChecked": hooks_stable_checked,
         "hookValidated": hook_validated,
         "hookPlats": hook_plats, "hookMinNiche": 2, "hookSearchPool": 8,
         "hookShown": hook_shown, "nicheSignals": niche_groups,
