@@ -127,6 +127,11 @@ def main():
     hooks = jload(ROOT / "output" / "hook_texts.json", {}) or {}
     hooks_ocrd = len(hooks)
     hooks_readable = sum(1 for v in hooks.values() if v.get("hook"))
+    try:
+        from hook_text import is_gibberish
+        hooks_gibberish = sum(1 for v in hooks.values() if v.get("hook") and is_gibberish(v["hook"]))
+    except Exception:  # noqa: BLE001
+        hooks_gibberish = None
     # which platforms got OCR'd (today: IG-only, since the TikTok web endpoint strips video URLs)
     hook_url_strs = " ".join((v.get("url") or "") for v in hooks.values())
     hook_plats = []
@@ -205,7 +210,8 @@ def main():
         "ttShown": len(data.get("tiktokSounds", [])),
         # pipeline-diagram fields
         "audioReels": audio_accounts * int(os.environ.get("CLIPS_PER_ACCOUNT", 20)),
-        "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hookValidated": hook_validated,
+        "hooksOcrd": hooks_ocrd, "hooksReadable": hooks_readable, "hooksGibberish": hooks_gibberish,
+        "hookValidated": hook_validated,
         "hookPlats": hook_plats, "hookMinNiche": 2, "hookSearchPool": 8,
         "hookShown": hook_shown, "nicheSignals": niche_groups,
         "keywordScanKeywords": kw_list,

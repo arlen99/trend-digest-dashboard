@@ -4361,21 +4361,21 @@
     "igDiscovered": 0,
     "igBootstrap": 0,
     "igDiscMinSeeds": 3,
-    "igDiscCandidates": 363,
+    "igDiscCandidates": 289,
     "igDiscSeedCoverage": [
-      109,
-      125
+      83,
+      106
     ],
-    "igDiscReviewed": 11,
+    "igDiscReviewed": 21,
     "igDiscPostsPerCandidate": 5,
     "igDiscCap": 10,
     "tiktokCreators": 25,
     "postsPerIg": 8,
     "postsPerTt": 10,
     "daysBack": 30,
-    "dedupeRegistry": 404,
-    "dedupeScraped": 190,
-    "dedupeExcluded": 64,
+    "dedupeRegistry": null,
+    "dedupeScraped": null,
+    "dedupeExcluded": null,
     "igCurated": 53,
     "tiktokCurated": 10,
     "keywordFinds": 10,
@@ -4386,7 +4386,7 @@
     "keywordCarryover": 0,
     "discFresh": 11,
     "discCarryover": 0,
-    "audioAccounts": 125,
+    "audioAccounts": 118,
     "audioReelsPer": 20,
     "audioTracks": 1130,
     "audioMulti": 56,
@@ -4394,9 +4394,10 @@
     "ttSounds": 50,
     "ttXplatform": 7,
     "ttShown": 20,
-    "audioReels": 2500,
+    "audioReels": 2360,
     "hooksOcrd": 524,
-    "hooksReadable": 443,
+    "hooksReadable": 441,
+    "hooksGibberish": 43,
     "hookValidated": 1,
     "hookPlats": [
       "Instagram"
@@ -4465,35 +4466,35 @@
     ],
     "trendsAudio": 10,
     "trendsHook": 0,
-    "costTikhubCalls": 1088,
-    "costClaudeCalls": 80,
-    "costAuddCalls": 40,
-    "auddAuthDead": true,
-    "costAcrcloudCalls": 20,
-    "costTikhub": 1.088,
-    "costClaude": 1.27,
-    "costTotal": 2.358,
-    "igExcluded": 17,
-    "igEvaluated": 70,
+    "costTikhubCalls": 1009,
+    "costClaudeCalls": 0,
+    "costAuddCalls": 0,
+    "auddAuthDead": false,
+    "costAcrcloudCalls": 27,
+    "costTikhub": 1.009,
+    "costClaude": 0.0,
+    "costTotal": 1.009,
+    "igExcluded": 22,
+    "igEvaluated": 75,
     "igExcludeReasons": [
       [
-        "AI-generated pet/novelty content promoting Higgsfield app (sponsored/branded), not travel or cinematic filmmaking content.",
+        "Branded/sponsored content promoting the Leapmotor C10 vehicle (tagged @leapmotor_australia), not organic travel/cinematic study material.",
         1
       ],
       [
-        "This is a quote/caption carousel using stock-style whale photography as a backdrop for relationship advice content—not travel or cinematic filmmaking content itself.",
+        "Monetization bait — comment-to-DM growth-strategy pitch for the creator's IG coaching program.",
         1
       ],
       [
-        "Sponsored/branded gear content promoting DJI Ronin RS4 Mini gimbal rather than genuine travel/cinematic technique showcase.",
+        "Self-help/inspirational quote carousel ('Quotes that rewired my brain') — not travel or cinematic-technique content.",
         1
       ],
       [
-        "Personal life-story/monetization content with \"comment DREAM for the strategy\" bait — not travel/cinematic filmmaking content.",
+        "Engagement-bait tag hook ('Send this to your bro') — mechanic-driven meme content rather than a travel/cinematic study piece.",
         1
       ],
       [
-        "Sponsored/branded content promoting Hasselblad camera gear, not travel/cinematic filmmaking content; it's a product showcase for a figure skating photo shoot.",
+        "Off-niche meme/challenge content (ice-skating-in-summer trend, inspired by another creator) — not travel or cinematic photography.",
         1
       ]
     ]
