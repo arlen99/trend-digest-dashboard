@@ -827,6 +827,12 @@ const ICON={
   ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>'};
 const LS={get:k=>{try{return new Set(JSON.parse(localStorage.getItem(k)||'[]'))}catch(e){return new Set()}},set:(k,s)=>localStorage.setItem(k,JSON.stringify([...s]))};
 let dismissed=LS.get('td_dismissed');
+// When each URL in `dismissed` was dismissed (ms epoch) — fetch_videos.py reads
+// this to auto-delete a dismissed post's download after a grace period, as a
+// backstop for the immediate delete in dismissWithConfirm() below (which only
+// fires when this tab has edit access on). Entries for anything no longer in
+// `dismissed` (restored) are pruned in toggleDismiss().
+let dismissedAt={};try{dismissedAt=JSON.parse(localStorage.getItem('td_dismissed_at')||'{}')}catch(e){}
 let platformFilter='all';
 // Saved posts are stored as full SNAPSHOTS (td_saved_v2 = {url: post}), so a saved post
 // stays in your Saved view permanently — even after the weekly refresh rotates it off the board.
@@ -862,10 +868,10 @@ let SECRET=localStorage.getItem('td_secret')||'';
 // POST can also be mid-flight on reload — either way the read comes back stale, and
 // without this guard it would clobber the change we just made.
 let localTs=+(localStorage.getItem('td_state_ts')||0);
-function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);LS.set('td_removed_videos',removedVideos);}
+function saveLocal(){localStorage.setItem('td_saved_v2',JSON.stringify(savedData));LS.set('td_dismissed',dismissed);localStorage.setItem('td_dismissed_at',JSON.stringify(dismissedAt));localStorage.setItem('td_account_edits',JSON.stringify(accountEdits));LS.set('td_saved_trends',savedTrends);LS.set('td_dis_trends',dismissedTrends);LS.set('td_saved_sounds',savedSounds);LS.set('td_dis_sounds',dismissedSounds);LS.set('td_dis_audiolinks',dismissedAudioLinks);LS.set('td_removed_videos',removedVideos);}
 function setSync(st){const el=$('#syncstat');if(el){el.textContent={on:'● synced',saving:'saving…',saved:'✓ saved',off:'sync off',err:'sync error',blocked:'⚠ storage plan limit reached',bad:'wrong passphrase',checking:'verifying…'}[st]||st;el.title=st==='blocked'?"The storage plan's limit has been reached — nothing is being read or saved right now. It'll resume once the plan resets or is upgraded.":'';}}
 let _pushT, _pendingWrite=false;
-function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],removedVideos:[...removedVideos],updatedAt:localTs});}
+function stateBody(){return JSON.stringify({saved:savedData,dismissed:[...dismissed],dismissedAt,accountEdits,savedTrends:[...savedTrends],dismissedTrends:[...dismissedTrends],savedSounds:[...savedSounds],dismissedSounds:[...dismissedSounds],dismissedAudioLinks:[...dismissedAudioLinks],removedVideos:[...removedVideos],updatedAt:localTs});}
 // Debounced backend save WITHOUT re-rendering — used by the Reels scroll mode so a
 // save/dismiss updates just the tapped button in place instead of tearing down and
 // rebuilding the scroll stack (which would reset scroll position & restart the video).
@@ -896,7 +902,7 @@ async function pullState(){if(!SECRET){setSync('off');return;}
       // backend converges. Genuinely newer edits from another device have remoteTs>=localTs.
       setSync('on');persistState();return;
     }
-    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.dismissedAudioLinks))dismissedAudioLinks=new Set(s.dismissedAudioLinks);saveLocal();
+    if(s&&typeof s==='object'){if(s.saved&&typeof s.saved==='object')savedData=s.saved;if(Array.isArray(s.dismissed))dismissed=new Set(s.dismissed);if(s.dismissedAt&&typeof s.dismissedAt==='object')dismissedAt=s.dismissedAt;if(s.accountEdits)accountEdits=s.accountEdits;saved=new Set(Object.keys(savedData));if(Array.isArray(s.savedTrends))savedTrends=new Set(s.savedTrends);if(Array.isArray(s.dismissedTrends))dismissedTrends=new Set(s.dismissedTrends);if(Array.isArray(s.savedSounds))savedSounds=new Set(s.savedSounds);if(Array.isArray(s.dismissedSounds))dismissedSounds=new Set(s.dismissedSounds);if(Array.isArray(s.dismissedAudioLinks))dismissedAudioLinks=new Set(s.dismissedAudioLinks);saveLocal();
       localTs=remoteTs;localStorage.setItem('td_state_ts',String(remoteTs));  // adopt the backend's clock so our next read compares correctly
       // hydrate removedVideos (not just consume it) so our OWN next write round-trips
       // it instead of silently dropping it — and strip them from DATA.videos so
@@ -1105,7 +1111,7 @@ function toggleSave(u){
   else{const p=posts.find(x=>x.url===u);savedData[u]=p?JSON.parse(JSON.stringify(p)):{url:u};}
   saved=new Set(Object.keys(savedData));pushState();
 }
-function toggleDismiss(u){dismissed.has(u)?dismissed.delete(u):dismissed.add(u);pushState();}
+function toggleDismiss(u){if(dismissed.has(u)){dismissed.delete(u);delete dismissedAt[u];}else{dismissed.add(u);dismissedAt[u]=Date.now();}pushState();}
 const modal=$('#modal');
 
 function uniq(key){const s=new Set();posts.forEach(p=>{const v=p[key];(Array.isArray(v)?v:[v]).forEach(x=>x&&s.add(x))});return [...s].sort();}

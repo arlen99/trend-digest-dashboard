@@ -9,10 +9,13 @@ a STABLE pathname (videos/<platform>_<shortcode>.mp4 → stable public URL), and
 the card's `video` field at the Blob URL.
 
 Board posts (this week + every archived week) and Inspiration Links are kept
-PERMANENTLY — never pruned, so a saved post always plays natively. Trend Radar
-/ Audio chart example reels ARE pruned every run once they roll out of the
-current week's cards, unless bookmarked (★ saved) or otherwise still
-referenced — see the prune step after the example-reel section below.
+PERMANENTLY — never pruned, so a saved post always plays natively, UNLESS
+dismissed: a dismissed post's download is deleted immediately if the
+dismissing tab has edit access on (dashboard/_template.html), or within
+DISMISS_GRACE_DAYS regardless, by this script (see below). Trend Radar /
+Audio chart example reels are pruned every run once they roll out of the
+current week's cards. Neither prune touches a bookmarked (★ saved) post or
+a saved Inspiration Link.
 
 Pure stdlib (urllib) — runs in CI with no extra deps.
 Usage: set -a && . ./.env && set +a && python3 fetch_videos.py
@@ -319,6 +322,55 @@ def main():
         print(f"  example-reel prune failed (cosmetic, kept everything): {str(e)[:80]}")
     data["videos"] = video_map
 
+    # ---- AUTO-CLEANUP: delete a dismissed board post's download after a grace
+    # period. dismissWithConfirm() (dashboard/_template.html) already deletes it
+    # immediately when the dismissing tab has edit access (SECRET) turned on —
+    # this is the backstop for every case that doesn't cover: no edit access at
+    # dismiss time, or the live delete call racing/failing. Without this, a
+    # dismissed download just sits there forever — the exact gap blob_cleanup.py
+    # had to catch up on by hand for the pre-2026-08-29 backlog. dismissedAt
+    # (synced alongside `dismissed`) is the client's own local-clock timestamp of
+    # when each URL was dismissed — same last-write-wins staleness caveat as
+    # _load_state() above, harmless at weekly cadence. Never touches a bookmarked
+    # (★ saved) post or a saved Inspiration Link, same protection as the
+    # example-reel prune above — dismissing the board card doesn't mean giving
+    # up a copy saved through a different feature.
+    DISMISS_GRACE_DAYS = 7
+    dismissed_at = state.get("dismissedAt") or {}
+    dismissed_raw = set(state.get("dismissed") or [])
+    cutoff_ms = (time.time() - DISMISS_GRACE_DAYS * 86400) * 1000
+    expired = [u for u in dismissed_raw if u not in saved and u not in link_urls
+               and dismissed_at.get(u, 0) and dismissed_at[u] < cutoff_ms]
+    dismiss_pruned = 0
+    if expired:
+        try:
+            all_blobs = {b["pathname"]: b["url"] for b in blob_list("videos/")}
+            found = {}  # source url -> blob url, only for URLs that still have a live blob
+            for u in expired:
+                plat = "tiktok" if "tiktok.com" in u else "instagram"
+                code = tt_id(u) if plat == "tiktok" else ig_code(u)
+                if not code:
+                    continue
+                bu = all_blobs.get(f"videos/{plat}_{code}.mp4")
+                if bu:
+                    found[u] = bu
+            if found:
+                blob_delete(list(found.values()))
+                deleted_blob_urls = set(found.values())
+                for p in data.get("posts", []):
+                    if p.get("video") in deleted_blob_urls:
+                        p["video"] = ""
+                for wk in (data.get("weeks") or {}).values():
+                    for p in (wk.get("posts") or []):
+                        if p.get("video") in deleted_blob_urls:
+                            p["video"] = ""
+                for u in list(video_map):
+                    if video_map[u] in deleted_blob_urls:
+                        del video_map[u]
+                dismiss_pruned = len(found)
+        except Exception as e:  # noqa: BLE001
+            print(f"  dismissed-timeout cleanup failed (cosmetic, left downloads in place): {str(e)[:80]}")
+
     # ---- ALSO self-host Inspiration Links (dashboard/api/save-link.js) — that feature
     # has never been wired into Blob hosting at all, so every saved link's `video` field
     # is whatever raw, SIGNED, hours-lived CDN URL TikHub returned at save time. Once
@@ -394,6 +446,7 @@ def main():
     print(f"\nBoard posts: {ok} new, {kept} kept, {fail} failed."
           f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed, {ex_pruned} pruned (rotated out, unsaved)."
           f"\nInspiration links: {li_ok} new, {li_kept} kept, {li_fail} failed."
+          f"\nDismissed >{DISMISS_GRACE_DAYS}d: {dismiss_pruned} download(s) removed."
           f"\nBlob now holds {total if total >= 0 else 'an unknown number of'} videos.")
     import cost_tracker
     cost_tracker.record("fetch_videos", tikhub_calls=th_calls)
