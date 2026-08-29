@@ -6,8 +6,13 @@ and never expire (IG/TikTok signed CDN URLs die in hours).
 Per displayed video post: fetch a FRESH source URL (IG via fetch_post_by_url, TikTok
 via fetch_one_video — the web endpoint strips it), download the MP4, upload to Blob at
 a STABLE pathname (videos/<platform>_<shortcode>.mp4 → stable public URL), and point
-the card's `video` field at the Blob URL. Then PRUNE: delete any Blob video no longer
-referenced, so storage stays bounded (~the displayed set), never accumulating.
+the card's `video` field at the Blob URL.
+
+Board posts (this week + every archived week) and Inspiration Links are kept
+PERMANENTLY — never pruned, so a saved post always plays natively. Trend Radar
+/ Audio chart example reels ARE pruned every run once they roll out of the
+current week's cards, unless bookmarked (★ saved) or otherwise still
+referenced — see the prune step after the example-reel section below.
 
 Pure stdlib (urllib) — runs in CI with no extra deps.
 Usage: set -a && . ./.env && set +a && python3 fetch_videos.py
@@ -134,25 +139,16 @@ def blob_delete(urls):
     urllib.request.urlopen(req, timeout=60).read()
 
 
-def removed_set():
-    """URLs to never (re-)download a video for: explicit removals (removedVideos —
-    also covers the "Remove download" button on a post that's NOT dismissed, a
-    separate valid action) UNION every currently-dismissed post (dismissed — dismissing
-    is supposed to free its download too, per dismissWithConfirm, so honour that
-    directly here rather than depending solely on removedVideos staying in sync).
-    dismissed is the older, far more heavily-used field — relying on it too makes this
-    robust even if removedVideos itself is incomplete (e.g. an active browser tab's
-    stale in-memory copy overwriting a fresher server value between visits — a real,
-    observed race in this single-user last-write-wins sync design).
-    NOTE: match["url"] is still the public CDN URL under the hood (just discovered via
-    the list API rather than hardcoded), so a read can be up to ~60s+ stale/incomplete
-    relative to a very recent write — documented elsewhere in this project, no full fix
-    without a timestamp to compare against. Harmless in real weekly-cadence usage (an
-    edit is always at least days old by the next run) and self-healing regardless
-    (every run re-reads this fresh). This retry only covers outright read failures,
-    not partial staleness."""
+def _load_state():
+    """Fetch the live dashboard-state.json blob (dismissed/removedVideos/saved/…).
+    NOTE: the returned state can be up to ~60s+ stale/incomplete relative to a
+    very recent write — documented elsewhere in this project, no full fix
+    without a timestamp to compare against. Harmless in real weekly-cadence
+    usage (an edit is always at least days old by the next run) and
+    self-healing regardless (every run re-reads this fresh). This retry only
+    covers outright read failures, not partial staleness."""
     if not BLOB:
-        return set()
+        return {}
     for attempt in range(3):
         try:
             req = urllib.request.Request(f"{BLOB_API}?prefix=state/dashboard-state.json",
@@ -161,22 +157,43 @@ def removed_set():
                 blobs = json.loads(r.read()).get("blobs", [])
             match = next((b for b in blobs if b["pathname"] == "state/dashboard-state.json"), None)
             if not match:
-                return set()
+                return {}
             with urllib.request.urlopen(f"{match['url']}?t={int(time.time()*1000)}", timeout=30) as r:
-                state = json.loads(r.read())
-            return set(state.get("removedVideos") or []) | set(state.get("dismissed") or [])
+                return json.loads(r.read())
         except Exception:  # noqa: BLE001
             if attempt == 2:
-                return set()
+                return {}
             time.sleep(3)
-    return set()
+    return {}
+
+
+def removed_set(state):
+    """URLs to never (re-)download a video for: explicit removals (removedVideos —
+    also covers the "Remove download" button on a post that's NOT dismissed, a
+    separate valid action) UNION every currently-dismissed post (dismissed — dismissing
+    is supposed to free its download too, per dismissWithConfirm, so honour that
+    directly here rather than depending solely on removedVideos staying in sync).
+    dismissed is the older, far more heavily-used field — relying on it too makes this
+    robust even if removedVideos itself is incomplete (e.g. an active browser tab's
+    stale in-memory copy overwriting a fresher server value between visits — a real,
+    observed race in this single-user last-write-wins sync design)."""
+    return set(state.get("removedVideos") or []) | set(state.get("dismissed") or [])
+
+
+def saved_set(state):
+    """Bookmarked (★ saved) post URLs, from the live dashboard state — the one
+    thing that protects an example/sample reel from the rotated-out prune below
+    even after it drops out of this week's Trend Radar / Audio chart."""
+    return set((state.get("saved") or {}).keys())
 
 
 def main():
     if not (TIKHUB and BLOB):
         raise SystemExit("Need TIKHUB_TOKEN and BLOB_READ_WRITE_TOKEN in env.")
     data = json.loads((DASH / "data.json").read_text())
-    removed = removed_set()
+    state = _load_state()
+    removed = removed_set(state)
+    saved = saved_set(state)
     if removed:
         print(f"Skipping {len(removed)} URLs the user removed from Blob (won't be re-downloaded).")
         # A dismiss+remove only clears the CURRENT week's copy of a post at the moment
@@ -268,6 +285,38 @@ def main():
             ex_fail += 1
             print(f"  ✗ EX {plat} {url[-18:]}: {str(e)[:50]}")
         time.sleep(0.2)
+
+    # ---- PRUNE example/sample reels that dropped out of THIS week's Trend Radar
+    # + Audio chart. Unlike board posts, video_map/data["videos"] is a flat,
+    # never-pruned accumulator — every week's cards pull a mostly-different
+    # sample of reels, so this was the single biggest source of Blob storage
+    # growth (649MB of the 1019MB store filling up on 2026-08-29, most of it
+    # backing rotated-out cards nothing still pointed at). Kept regardless of
+    # week: a reel still in THIS week's cards (ex_urls), one that's also a
+    # displayed board post (by_url — shares the same file, no extra cost to
+    # keep), and one whose post is bookmarked (★ saved) or saved as an
+    # Inspiration Link — those are explicit "don't touch this" signals.
+    try:
+        link_urls = set()
+        req = urllib.request.Request(f"{BLOB_API}?prefix=links/", headers={"authorization": "Bearer " + BLOB})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            for b in json.loads(r.read().decode()).get("blobs", []):
+                try:
+                    with urllib.request.urlopen(f"{b['url']}?t={int(time.time()*1000)}", timeout=30) as r2:
+                        link_urls.add(json.loads(r2.read().decode()).get("url", ""))
+                except Exception:  # noqa: BLE001
+                    pass
+        protected = ex_urls | set(by_url) | saved | link_urls
+        stale = [u for u in video_map if u not in protected]
+        stale_blob_urls = [video_map[u] for u in stale if video_map[u]]
+        if stale_blob_urls:
+            blob_delete(stale_blob_urls)
+        for u in stale:
+            del video_map[u]
+        ex_pruned = len(stale)
+    except Exception as e:  # noqa: BLE001
+        ex_pruned = 0
+        print(f"  example-reel prune failed (cosmetic, kept everything): {str(e)[:80]}")
     data["videos"] = video_map
 
     # ---- ALSO self-host Inspiration Links (dashboard/api/save-link.js) — that feature
@@ -329,8 +378,11 @@ def main():
                 print(f"  ✗ LINK {plat} {url[-18:]}: {str(e)[:50]}")
             time.sleep(0.2)
 
-    # NO pruning — videos are kept PERMANENTLY so saved posts always play natively (no embed).
-    # This is a cosmetic count for the summary line below — unlike every write above,
+    # Board posts (this week + every archived week) and Inspiration Links are still
+    # kept PERMANENTLY so saved posts always play natively (no embed) — no pruning
+    # for those. Example/sample reels ARE pruned now, above, once they roll out of
+    # the current week's cards (unless bookmarked or otherwise still referenced).
+    # This count is cosmetic for the summary line below — unlike every write above,
     # it was never wrapped, so a transient Blob failure here would crash the whole
     # pipeline after everything else already succeeded. Not worth that risk.
     try:
@@ -340,9 +392,9 @@ def main():
         print(f"  blob_list failed (cosmetic only): {str(e)[:80]}")
     (DASH / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
     print(f"\nBoard posts: {ok} new, {kept} kept, {fail} failed."
-          f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed."
+          f"\nExample reels: {ex_ok} new, {ex_kept} kept, {ex_fail} failed, {ex_pruned} pruned (rotated out, unsaved)."
           f"\nInspiration links: {li_ok} new, {li_kept} kept, {li_fail} failed."
-          f"\nBlob now holds {total if total >= 0 else 'an unknown number of'} videos (kept permanently).")
+          f"\nBlob now holds {total if total >= 0 else 'an unknown number of'} videos.")
     import cost_tracker
     cost_tracker.record("fetch_videos", tikhub_calls=th_calls)
 
