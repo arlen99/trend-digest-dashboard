@@ -1,0 +1,527 @@
+<title>Hook Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Figtree:wght@800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+/* Complete light palette on bare :root — the un-stamped "system" state resolves here. */
+:root{
+  --ink:#101822; --ground:#F4F7F7; --panel:#FFFFFF; --panel-2:#EDF2F2;
+  --line:#D6E0E0; --line-soft:#E5ECEC;
+  --text:#101822; --text-2:#4A5A63; --text-3:#75868F;
+  --signal:#0E8C85; --signal-soft:#D8EFED;
+  --strong:#2E9A63; --partial:#B7822A; --idle:#8A9AA3;
+  --shadow:0 1px 2px rgba(16,24,34,.06),0 8px 24px -12px rgba(16,24,34,.18);
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#0E1520; --ground:#0E1520; --panel:#161F2C; --panel-2:#1D2837;
+    --line:#2A3849; --line-soft:#212D3C;
+    --text:#E8EFF2; --text-2:#9FB1BD; --text-3:#71838F;
+    --signal:#3FCFC4; --signal-soft:#123334;
+    --strong:#4FCB88; --partial:#E0A33E; --idle:#64757F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -14px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#0E1520; --ground:#0E1520; --panel:#161F2C; --panel-2:#1D2837;
+  --line:#2A3849; --line-soft:#212D3C;
+  --text:#E8EFF2; --text-2:#9FB1BD; --text-3:#71838F;
+  --signal:#3FCFC4; --signal-soft:#123334;
+  --strong:#4FCB88; --partial:#E0A33E; --idle:#64757F;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -14px rgba(0,0,0,.6);
+}
+body{
+  margin:0; background:var(--ground); color:var(--text);
+  font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px 72px;display:flex;flex-direction:column;gap:28px}
+
+/* ---- header ---- */
+.head{display:flex;flex-direction:column;gap:10px}
+.eyebrow{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--signal);
+  font-weight:600;display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--signal);border-radius:2px}
+h1{margin:0;font-size:clamp(28px,4.2vw,40px);font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+.sub{margin:0;color:var(--text-2);max-width:62ch}
+.stamp{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--text-3)}
+
+/* ---- funnel ---- */
+.funnel{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px 22px;display:flex;flex-direction:column;gap:16px;
+}
+.funnel h2{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--panel-2)}
+.bar span{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px 22px}
+.lg{display:flex;align-items:baseline;gap:8px;font-size:13px}
+.dot{width:9px;height:9px;border-radius:2px;flex:none;transform:translateY(-1px)}
+.lg b{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-weight:600}
+.lg span{color:var(--text-2)}
+/* per-source yield */
+.srcs{display:flex;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line-soft);padding-top:14px}
+.src{
+  flex:1 1 150px;min-width:0;background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;
+}
+.src .nm{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);font-weight:600}
+.src .yld{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
+  font-size:15px;font-weight:600;
+}
+.src .yld u{text-decoration:none;color:var(--text-3);font-weight:400;font-size:12px}
+.src .rt{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.src .rt i{display:block;height:100%;background:var(--signal)}
+.src .pc{font-size:11px;color:var(--text-2)}
+
+/* ---- rows ---- */
+.rows{display:flex;flex-direction:column;gap:12px}
+.sect{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600;margin:8px 0 0}
+.row{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 20px;display:grid;gap:14px;
+  grid-template-columns:auto 1fr auto;align-items:start;
+}
+.row.confirmed{border-left:3px solid var(--strong)}
+.row.partial{border-left:3px solid var(--partial)}
+.row.idle{border-left:3px solid var(--line)}
+.rank{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--text-3);
+  font-variant-numeric:tabular-nums;padding-top:4px;
+}
+.mid{display:flex;flex-direction:column;gap:10px;min-width:0}
+/* The hook set as it appears in its native medium: burned-in on-screen caption type. */
+.hook{
+  font-family:"Figtree",system-ui,sans-serif;font-weight:800;font-size:17px;
+  line-height:1.3;letter-spacing:-.01em;text-wrap:balance;overflow-wrap:anywhere;
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-size:11px;letter-spacing:.04em;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line);color:var(--text-2);background:var(--panel-2);white-space:nowrap;
+}
+.chip.on{border-color:transparent;background:var(--strong);color:#06210F;font-weight:600}
+.chip.mid{border-color:transparent;background:var(--partial);color:#251803;font-weight:600}
+.ex{display:flex;flex-wrap:wrap;gap:6px}
+.ex a{
+  font-size:11px;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  color:var(--signal);text-decoration:none;border:1px solid var(--line);
+  padding:3px 8px;border-radius:6px;background:var(--panel-2);
+}
+.ex a:hover,.ex a:focus-visible{border-color:var(--signal);background:var(--signal-soft)}
+.right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:132px}
+/* Reuse strength readable as form before it is read as a number. */
+.sig{display:flex;gap:3px}
+.sig i{width:11px;height:16px;border-radius:2px;background:var(--panel-2);border:1px solid var(--line-soft)}
+.sig i.f{background:var(--strong);border-color:transparent}
+.sig i.p{background:var(--partial);border-color:transparent}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--text-2)}
+.num b{color:var(--text);font-weight:600}
+
+/* ---- method ---- */
+.method{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;display:flex;flex-direction:column;gap:10px;
+}
+.method h2{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600}
+.method p{margin:0;color:var(--text-2);font-size:14px;max-width:70ch}
+.method code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;color:var(--signal)}
+.empty{color:var(--text-2);font-size:14px}
+
+/* ---- method dialog ---- */
+.mbtn{
+  font:inherit;font-size:12px;font-weight:600;letter-spacing:.04em;cursor:pointer;
+  color:var(--signal);background:var(--signal-soft);border:1px solid var(--signal);
+  padding:7px 13px;border-radius:999px;align-self:flex-start;
+}
+.mbtn:hover{filter:brightness(1.08)}
+dialog#method{
+  border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);
+  color:var(--text);padding:0;max-width:640px;width:calc(100% - 32px);box-shadow:var(--shadow);
+}
+dialog#method::backdrop{background:rgba(6,12,18,.62)}
+.mwrap{padding:26px 28px;display:flex;flex-direction:column;gap:18px}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.mhead h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.mx{
+  font:inherit;cursor:pointer;background:none;border:1px solid var(--line);color:var(--text-2);
+  width:28px;height:28px;border-radius:6px;line-height:1;flex:none;
+}
+.mx:hover{border-color:var(--signal);color:var(--signal)}
+.step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.sn{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;font-weight:600;
+  color:var(--signal);background:var(--signal-soft);border-radius:5px;
+  padding:3px 7px;line-height:1.4;
+}
+.step p{margin:0 0 5px;font-size:13.5px;color:var(--text-2)}
+.step p b{color:var(--text);font-weight:600}
+.ep{
+  display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;
+  color:var(--signal);background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:5px;padding:5px 8px;overflow-x:auto;white-space:nowrap;
+}
+.mnote{
+  font-size:12.5px;color:var(--text-3);border-top:1px solid var(--line-soft);
+  padding-top:14px;margin:0;
+}
+a:focus-visible,.ex a:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+@media (max-width:640px){
+  .row{grid-template-columns:auto 1fr}
+  .right{grid-column:2;align-items:flex-start;min-width:0}
+}
+</style>
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">TikTok · general trending</div>
+    <h1>Which opening lines are creators actually reusing</h1>
+    <p class="sub">On-screen hook text read straight off trending videos, grouped into reusable
+      templates, then checked against TikTok search to see whether anyone else is really using them.
+      Captions are ignored — only text burned into the video counts.</p>
+    <p class="stamp">Run 2026-08-23 · 1 confirmed of 20 candidates</p>
+    <button class="mbtn" type="button" id="open-method">How this is measured</button>
+  </header>
+
+  <dialog id="method" aria-labelledby="method-title">
+    <div class="mwrap">
+      <div class="mhead">
+        <h2 id="method-title">How this is measured</h2>
+        <button class="mx" type="button" id="close-method" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="step"><span class="sn">1</span><div>
+        <p><b>Collect trending videos.</b> Two feeds, no keyword and no topic — so nothing
+          is pre-selected for a niche. The first is TikTok's own ranked board of top
+          content, sorted by how many people were still watching at six seconds. The second
+          is the Explore tab, which is fresher but unranked.</p>
+        <code class="ep">POST /api/v1/tiktok/ads/get_top_contents_list</code>
+        <code class="ep">GET&nbsp; /api/v1/tiktok/web/fetch_explore_post</code>
+      </div></div>
+
+      <div class="step"><span class="sn">2</span><div>
+        <p><b>Read the text off the video.</b> Each video carries a direct video link, so
+          three still frames are grabbed from the opening seconds and the text in them is
+          read on-device. Nothing is downloaded and stored. Captions are ignored entirely —
+          only text burned into the picture counts, because that is the hook the viewer sees.</p>
+      </div></div>
+
+      <div class="step"><span class="sn">3</span><div>
+        <p><b>Tell a hook from a subtitle.</b> Text that stays on screen across those frames
+          is treated as a hook. Text that changes between them is a rolling subtitle and is
+          set aside. Sponsored posts and non-English videos are dropped here too.</p>
+      </div></div>
+
+      <div class="step"><span class="sn">4</span><div>
+        <p><b>Group hooks into templates.</b> Two passes. First a word-level one: prices and
+          place names are swapped for blanks, so “$35 hotel in China” and “$12 hotel in
+          Vietnam” read as one template. That only catches hooks differing by a number or a
+          place, so a second pass compares hooks by <em>meaning</em> — enough to see that
+          “My daughter thinks this is ice cream” and “My son thinks this is candy” are the
+          same idea. Meaning alone never merges anything: it only nominates pairs, and the
+          same judge from step 5 decides.</p>
+      </div></div>
+
+      <div class="step"><span class="sn">5</span><div>
+        <p><b>Check whether anyone else really uses it.</b> Each template is searched on
+          TikTok, and the text is read off the results the same way. A result only counts
+          if its own on-screen text matches the structure — appearing in the search is never
+          treated as proof, since a post can match the words while sharing only the subject.</p>
+        <code class="ep">GET&nbsp; /api/v1/tiktok/app/v3/fetch_video_search_result</code>
+      </div></div>
+
+      <div class="step"><span class="sn">6</span><div>
+        <p><b>Confirm.</b> A template is confirmed when at least two creators outside the
+          original sample are found reusing it, on posts under six months old with at least
+          1,000 likes. That bar exists because search surfaces a long tail of dead reposts,
+          and three copies of one video with under a hundred likes each is not a trend.
+          Reuse found weeks apart counts the same as reuse in one week — it has to clear
+          the same bar either way.</p>
+      </div></div>
+
+      <p class="mnote">Everything above reads public data only. Nothing is posted, followed,
+        or liked, and no logged-in account is used.</p>
+    </div>
+  </dialog>
+
+  <section class="funnel">
+    <h2>What the run saw</h2>
+    <div class="bar"><span style="width:24.26%;background:var(--signal)"></span><span style="width:22.79%;background:var(--partial)"></span><span style="width:34.56%;background:var(--idle)"></span><span style="width:18.38%;background:var(--line)"></span></div>
+    <div class="legend"><div class="lg"><i class="dot" style="background:var(--signal)"></i><b>33</b><span>usable</span></div><div class="lg"><i class="dot" style="background:var(--partial)"></i><b>31</b><span>branded / sponsored</span></div><div class="lg"><i class="dot" style="background:var(--idle)"></i><b>47</b><span>unreadable text</span></div><div class="lg"><i class="dot" style="background:var(--line)"></i><b>25</b><span>no on-screen text</span></div></div>
+    <div class="srcs"><div class="src"><div class="nm">Ranked board</div><div class="yld">30<u> / 100 videos</u></div><div class="rt"><i style="width:30.0%"></i></div><div class="pc">30% gave a usable hook</div></div><div class="src"><div class="nm">Explore feed</div><div class="yld">3<u> / 36 videos</u></div><div class="rt"><i style="width:8.3%"></i></div><div class="pc">8% gave a usable hook</div></div></div>
+    <p class="stamp">1,005 API calls this run · about $1.00</p>
+  </section>
+
+  <h2 class="sect">Confirmed templates</h2>
+  <div class="rows"><article class="row confirmed">
+  <div class="rank">01</div>
+  <div class="mid">
+    <div class="hook">new gens would never understand</div>
+    <div class="meta"><span class="chip on">reused by other creators</span><span class="chip">5 creators</span>
+      <span class="chip">388,258 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@devil_7xx8/video/7672682003598232854" target="_blank" rel="noopener">example 1</a><a href="https://www.tiktok.com/@fadedfeedz/video/7674856914857266453" target="_blank" rel="noopener">example 2</a><a href="https://www.tiktok.com/@justarandomgoathere67/video/7675584582191828238" target="_blank" rel="noopener">example 3</a><a href="https://www.tiktok.com/@nostalgicaiimages/video/7655807244793105678" target="_blank" rel="noopener">example 4</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="4 of 8 checked posts qualified"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>4</b>/8 qualified</div>
+  </div>
+</article></div>
+
+  <h2 class="sect">Checked, not confirmed</h2>
+  <div class="rows"><article class="row partial">
+  <div class="rank">02</div>
+  <div class="mid">
+    <div class="hook">POV: W florist finally gets his flowers too @ I'm sorry I'm late man</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">2 creators</span>
+      <span class="chip">280,884 peak likes</span><span class="chip">2 below the bar</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@floraebymarcos/video/7662944781827427614" target="_blank" rel="noopener">example 1</a><a href="https://www.tiktok.com/@izepu.qzwoy/video/7672718228522667277" target="_blank" rel="noopener">example 2</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="2 of 8 checked posts qualified"><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>2</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">03</div>
+  <div class="mid">
+    <div class="hook">Galaxy Z Fold&amp; Ultra VISION every • story has a Stat</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">2 creators</span>
+      <span class="chip">25,964 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@samsung/video/7668278577204448532" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">04</div>
+  <div class="mid">
+    <div class="hook">COME ON A STAYCATION WITH US 6- we stepped away from our typical routine</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">50,960 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@sabriena_abrre/video/7626101034376613150" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">05</div>
+  <div class="mid">
+    <div class="hook">LET'S GO SHOPPING FOR MY DAUGHTER'S NEW BEDROOM a new place in Miami</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">8,958 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@brufava/video/7666150039986769183" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">06</div>
+  <div class="mid">
+    <div class="hook">Picking out a big girl bed for my daughter... ashwille SAY HAPPY PLACE</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">13,670 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@thedaniaustin/video/7667258005238467870" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">07</div>
+  <div class="mid">
+    <div class="hook">my man tryna get in on my future Kalshi winnings on big brother</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">1,521,256 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@x.ody/video/7662909267317509407" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 7 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i style="opacity:.35"></i></div>
+    <div class="num"><b>1</b>/7 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">08</div>
+  <div class="mid">
+    <div class="hook">My daughter thinks this is ice cream</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">220,250 peak likes</span><span class="chip">1 below the bar</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@ann_aknows/video/7655412321245728014" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 7 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i style="opacity:.35"></i></div>
+    <div class="num"><b>1</b>/7 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">09</div>
+  <div class="mid">
+    <div class="hook">Reply to Jess's comment Lol no gatekeeping here wait so it actually worked</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">3,260 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@sallykim7_/video/7656214252427971853" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">10</div>
+  <div class="mid">
+    <div class="hook">POV: that one person who thinks farting is funny</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">465,895 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@colecake/video/7667711463905168670" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row partial">
+  <div class="rank">11</div>
+  <div class="mid">
+    <div class="hook">RAX I've started to ramp up my summer workouts lately</div>
+    <div class="meta"><span class="chip mid">one other creator</span><span class="chip">1 creators</span>
+      <span class="chip">4,794 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@rolandpollard/video/7657942608727035167" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="1 of 8 checked posts qualified"><i class="p"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>1</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">12</div>
+  <div class="mid">
+    <div class="hook">Someone: &quot;how lazy are you? me: LANA DEL MAMINI</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">18,000 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@girls/video/7675451064186866965" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">13</div>
+  <div class="mid">
+    <div class="hook">Reply to DarkE's comment Fly somewhere PPL don't visit</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">5,564 peak likes</span></div>
+    <div class="ex"><a href="https://www.tiktok.com/@jordentually/video/7659167803202702599" target="_blank" rel="noopener">example 1</a></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">14</div>
+  <div class="mid">
+    <div class="hook">Where are you doing dressed like that 8™™</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">1,034 peak likes</span><span class="chip">1 below the bar</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 7 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i style="opacity:.35"></i></div>
+    <div class="num"><b>0</b>/7 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">15</div>
+  <div class="mid">
+    <div class="hook">I'm playing my lyrics in genres 1 would never listen to</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">16</div>
+  <div class="mid">
+    <div class="hook">when your nails are also the menu</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">17</div>
+  <div class="mid">
+    <div class="hook">Almost 14 and Thriving! WHENITELL THEM</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">18</div>
+  <div class="mid">
+    <div class="hook">sometimes aiter l go to the bathroom a 48mm Cotto ULTRA CLEAN</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 4 checked posts qualified"><i></i><i></i><i></i><i></i><i style="opacity:.35"></i><i style="opacity:.35"></i><i style="opacity:.35"></i><i style="opacity:.35"></i></div>
+    <div class="num"><b>0</b>/4 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">19</div>
+  <div class="mid">
+    <div class="hook">putting my husband through a workout where I can't do half the moves... lol</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article><article class="row idle">
+  <div class="rank">20</div>
+  <div class="mid">
+    <div class="hook">POV: You're a boy mom and need some alone time</div>
+    <div class="meta"><span class="chip">no reuse found</span><span class="chip">1 creators</span>
+      <span class="chip">0 peak likes</span></div>
+    <div class="ex"></div>
+  </div>
+  <div class="right">
+    <div class="sig" role="img" aria-label="0 of 8 checked posts qualified"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="num"><b>0</b>/8 qualified</div>
+  </div>
+</article></div>
+
+  <section class="method">
+    <h2>How a row gets confirmed</h2>
+    <p>Every hook is read from three frames in the opening seconds; text that stays put
+      across them is treated as a hook, text that changes is treated as a rolling caption.
+      Hooks are grouped both by wording — with prices and place names blanked out, so
+      <code>$35 hotel in China</code> and <code>$12 hotel in Vietnam</code> count as one
+      template — and by meaning, which catches the ones that differ by anything else.</p>
+    <p>A template is confirmed only when at least two creators <em>outside</em> the original
+      sample are found reusing its structure. Search results are never counted on their own —
+      each result's own on-screen text is read and compared, because a post can match a phrase
+      while sharing nothing but the topic.</p>
+  </section>
+</div>
+<script>
+(function(){
+  var dlg=document.getElementById('method');
+  document.getElementById('open-method').addEventListener('click',function(){dlg.showModal();});
+  document.getElementById('close-method').addEventListener('click',function(){dlg.close();});
+  // Click outside the panel closes it — the backdrop is part of the dialog element,
+  // so a click landing on the dialog itself (not its content) is a backdrop click.
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close();});
+})();
+</script>
