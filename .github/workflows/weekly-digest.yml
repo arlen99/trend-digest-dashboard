@@ -67,9 +67,12 @@ jobs:
           # a latest-file-or-default pattern) — worst case is stale data in one
           # section, never a crash. fetch_videos.py/fetch_audio.py are here too since
           # the dashboard already has a platform-embed fallback for missing native video.
+          # Each optional step is also time-boxed (OPT_TIMEOUT, default 60m): on 2026-09-21
+          # general_hooks.py hung for 4h, the job hit GitHub's 6h cap, and the cancel
+          # skipped Commit & deploy — losing the whole week over one non-critical lane.
           run_optional() {
             echo "▶ $* (non-critical)" | tee -a "$LOG"
-            if ! "$@" 2>&1 | tee -a "$LOG"; then
+            if ! timeout -k 60 "${OPT_TIMEOUT:-60m}" "$@" 2>&1 | tee -a "$LOG"; then
               echo "⚠ FAILED (non-critical, continuing): $*" | tee -a "$LOG"
             fi
           }
@@ -127,7 +130,7 @@ jobs:
           # yield (~8% measured), so most of its volume feeds clustering/cross-run reuse
           # (historic_rows in general_hooks.py) rather than confirmed hooks directly.
           run_optional python3 general_corpus.py --pages 5 --explore 900
-          run_optional python3 general_hooks.py --limit 1000 --verify 25
+          OPT_TIMEOUT=45m run_optional python3 general_hooks.py --limit 1000 --verify 25
           run_optional python3 general_hooks_to_dashboard.py
           run_optional python3 build_general_dashboard.py
 
