@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-12",
+  "generated": "2026-10-14",
   "source": "Notion Swipe File — Top Posts (315bd81d-51ab-4c10-918e-c0ad958ef156)",
   "posts": [
     {
@@ -2531,12 +2531,18 @@
       "shares": 555,
       "engRate": 21.5,
       "outlier": 24.2,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Signal-bars '5G' overlay on motorbike ride into the Tetons pairs the 'rather be in no service' caption with a literal visual — freedom-from-connectivity hook.",
       "week": "2026-10-12",
       "date": "2026-10-03",
       "thumb": "thumbs/tt_bennnji.fm_7692474779118341406.jpg",
@@ -2544,34 +2550,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "MheFa,* rey > Py ~~“ a“ 7 es! “wl 5G , ky - a, 5 ak eS"
-    },
-    {
-      "account": "cinematictravelcontent",
-      "url": "https://www.tiktok.com/@cinematictravelcontent/video/7693539808836193549",
-      "platform": "tiktok",
-      "hook": "Big E 2026 with Insta360 Luna Ultra #insta360 #lunaultra #thingstodo #cinematic #colorgrading",
-      "format": "TikTok",
-      "views": 102400,
-      "likes": 9714,
-      "comments": 31,
-      "shares": 2580,
-      "engRate": 12.0,
-      "outlier": 19.35,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - Cinematic Travel Content",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-10-12",
-      "date": "2026-10-06",
-      "thumb": "thumbs/tt_cinematictravelcontent_7693539808836193549.jpg",
-      "video": "",
-      "carousel": [],
-      "carryover": false,
-      "sourceDate": "2026-10-12",
-      "videoText": "s, = Zoom ae a a Se! wou Atgeme"
+      "videoText": "5G"
     },
     {
       "account": "dillonfilms_",
@@ -2585,12 +2564,18 @@
       "shares": 103,
       "engRate": 13.8,
       "outlier": 6.16,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "Originalton",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Blue-hour Stuttgart skyline held wide and quiet; 'late nights in…' caption sells mood over spectacle.",
       "week": "2026-10-12",
       "date": "2026-09-28",
       "thumb": "thumbs/tt_dillonfilms__7690528989680651552.jpg",
@@ -2598,7 +2583,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "uf; dest arr owe —_—™ = a oem a = _ _ ee Mente -~«"
+      "videoText": ""
     },
     {
       "account": "sedyyfilms",
@@ -2612,12 +2597,18 @@
       "shares": 270,
       "engRate": 19.9,
       "outlier": 4.78,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "'POV: your apartment view in Paris' — silhouette on a balcony at dusk with the Eiffel glow; aspirational POV framing.",
       "week": "2026-10-12",
       "date": "2026-10-03",
       "thumb": "thumbs/tt_sedyyfilms_7692436528215117078.jpg",
@@ -2625,7 +2616,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "lll Ned bas Mh {| the"
+      "videoText": ""
     },
     {
       "account": "tonyolsenfilm",
@@ -2639,12 +2630,19 @@
       "shares": 11,
       "engRate": 10.3,
       "outlier": 3.52,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Crouched figure by an alpine tarn under a jagged peak at sunset; 'had to wake up Josh' caption adds a human, in-the-moment story.",
       "week": "2026-10-12",
       "date": "2026-09-18",
       "thumb": "thumbs/tt_tonyolsenfilm_7686900708515302670.jpg",
@@ -2652,7 +2650,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "Dike > > ete"
+      "videoText": ""
     },
     {
       "account": "tonyolsenfilm",
@@ -2666,12 +2664,19 @@
       "shares": 5,
       "engRate": 10.1,
       "outlier": 2.78,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Nostalgia"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange",
+        "Film grain"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Arms-wide silhouette against a purple-orange horizon; 'Sunset memories' leans on pure feeling, no text hook.",
       "week": "2026-10-12",
       "date": "2026-10-03",
       "thumb": "thumbs/tt_tonyolsenfilm_7692528690718182670.jpg",
@@ -2680,33 +2685,6 @@
       "carryover": false,
       "sourceDate": "2026-10-12",
       "videoText": ""
-    },
-    {
-      "account": "hawk330i",
-      "url": "https://www.tiktok.com/@hawk330i/video/7689236574067903764",
-      "platform": "tiktok",
-      "hook": "Mornings like this.. #prague #cz",
-      "format": "TikTok",
-      "views": 324,
-      "likes": 31,
-      "comments": 0,
-      "shares": 0,
-      "engRate": 9.6,
-      "outlier": 2.7,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "Sea Waves",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-10-12",
-      "date": "2026-09-24",
-      "thumb": "thumbs/tt_hawk330i_7689236574067903764.jpg",
-      "video": "",
-      "carousel": [],
-      "carryover": false,
-      "sourceDate": "2026-10-12",
-      "videoText": "Morning 6am and a coffee > as —— az mai ——— ~~ oe"
     },
     {
       "account": "sedyyfilms",
@@ -2720,12 +2698,18 @@
       "shares": 145,
       "engRate": 17.9,
       "outlier": 2.64,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Two friends watching the NYC skyline across the water at night; 'bro found this spot' discovery POV.",
       "week": "2026-10-12",
       "date": "2026-09-27",
       "thumb": "thumbs/tt_sedyyfilms_7690251933646376214.jpg",
@@ -2733,7 +2717,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "TT pat laren, —== no str"
+      "videoText": "this and no stress."
     },
     {
       "account": "oui.photo",
@@ -2747,12 +2731,18 @@
       "shares": 5,
       "engRate": 4.9,
       "outlier": 1.86,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "الصوت الأصلي",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Couple strolling a Paris street, long caption overlay speaks to camera-shy couples — service pitch framed as a mini story. Photographer promo, keep as a format reference.",
       "week": "2026-10-12",
       "date": "2026-09-24",
       "thumb": "thumbs/tt_oui.photo_7688954433597738272.jpg",
@@ -2760,34 +2750,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "S\\N erm i — CAMERA) Tiana Sinhé{e COUFLERNOU: WANTED ~yoUR PHOTOS ERMINE -LOVEIN THEN MARE soe YOU. HIRED) wT F ] Lill A"
-    },
-    {
-      "account": "pierluigibarcaa",
-      "url": "https://www.tiktok.com/@pierluigibarcaa/video/7689400870609358112",
-      "platform": "tiktok",
-      "hook": "In this video, I wanted to try creating something with SIRUI’s new Ironstar anamorphic lens, and I have to say… the result really surprised me. 🤯 Already in love with this lens! 😍 @siruiimaging  #anamorphiclens #sirui #videographer #boxingvideos #anamorphic",
-      "format": "TikTok",
-      "views": 696,
-      "likes": 40,
-      "comments": 7,
-      "shares": 1,
-      "engRate": 6.9,
-      "outlier": 1.85,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "audio originale",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-10-12",
-      "date": "2026-09-25",
-      "thumb": "thumbs/tt_pierluigibarcaa_7689400870609358112.jpg",
-      "video": "",
-      "carousel": [],
-      "carryover": false,
-      "sourceDate": "2026-10-12",
-      "videoText": "Boxing, butgnake it Ab netean iC ‘es mas tte Y al"
+      "videoText": "YOU ARE CAMERA SHY COUPLE & YOU WANTED YOUR PHOTOS FEEL LIKE LOVE IN THE MOVIE SO YOU HIRED ME"
     },
     {
       "account": "juancardozofilms",
@@ -2805,12 +2768,18 @@
       "shares": 21476,
       "engRate": 34.3,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "original sound - juancardozofilms",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Travel-film recap of NYC opening on Times Square with a person walking to camera.",
       "week": "2026-10-12",
       "date": "2026-10-08",
       "thumb": "thumbs/kw_juancardozofilms_7694231999162109185.jpg",
@@ -2818,7 +2787,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "gan INRWAND} © * » a: . a e ®"
+      "videoText": ""
     },
     {
       "account": "poynton_travels",
@@ -2836,12 +2805,18 @@
       "shares": 5508,
       "engRate": 32.4,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "call your mom · QUIT",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Warm desert sunset with minimal 'give yourself a reason.' text — a single nudge line over a calm landscape.",
       "week": "2026-10-12",
       "date": "2026-10-09",
       "thumb": "thumbs/kw_poynton_travels_7694699575793192212.jpg",
@@ -2849,7 +2824,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": ""
+      "videoText": "give yourself a reason."
     },
     {
       "account": "rosa_arreguinm",
@@ -2867,12 +2842,18 @@
       "shares": 2004,
       "engRate": 31.3,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "The One · Jorja Smith",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Sideways-rotated Iceland basalt-column shot with a woman in a beanie — playful orientation twist on a landscape.",
       "week": "2026-10-12",
       "date": "2026-10-07",
       "thumb": "thumbs/kw_rosa_arreguinm_7694039008166399239.jpg",
@@ -2880,38 +2861,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "Bh |"
-    },
-    {
-      "account": "wearetheaivisuals",
-      "url": "https://www.tiktok.com/@wearetheaivisuals/video/7689842038199618847",
-      "platform": "tiktok",
-      "lane": "keyword",
-      "newFind": true,
-      "source": "keyword:cinematic photography",
-      "trendScore": 30.9,
-      "hook": "Bloom Sis 🌻 Part 1             Bloom where you are, sis. 🌺 A surreal exploration of Black beauty, growth, femininity, and becoming, told through AI art, cinematic storytelling, and the warmth of 1970s editorial photography. You don’t have to bloom all at once. You just have to keep growing. Welcome to BLOOM SIS, an AI visual series by WeAreTheAIVisuals. 🌹 🌱🌺 #bloomsis",
-      "format": "TikTok",
-      "views": 74370,
-      "likes": 20738,
-      "comments": 542,
-      "shares": 1708,
-      "engRate": 30.9,
-      "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "original sound - thehumanjamie · yung.goat.J",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-10-12",
-      "date": "2026-09-26",
-      "thumb": "thumbs/kw_wearetheaivisuals_7689842038199618847.jpg",
-      "video": "",
-      "carousel": [],
-      "carryover": false,
-      "sourceDate": "2026-10-12",
-      "videoText": "Pos"
+      "videoText": ""
     },
     {
       "account": "ksc.mp",
@@ -2929,12 +2879,19 @@
       "shares": 14908,
       "engRate": 30.6,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "List/Number",
+        "Relatable confession"
+      ],
+      "triggers": [
+        "Relatability"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Hyehwadong (or Sangmundong) · Park Boram",
       "audioDetected": false,
-      "notes": "",
+      "notes": "'POV: you don't sleep during travels because you want to see the locals in their normal day' — street-level handheld, relatable traveller confession.",
       "week": "2026-10-12",
       "date": "2026-10-10",
       "thumb": "thumbs/kw_ksc.mp_7695014928675097864.jpg",
@@ -2942,7 +2899,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "Hee ~ thei mal"
+      "videoText": "POV: you don't sleep during travels because you want to see the locals in their normal day"
     },
     {
       "account": "shotbydcl",
@@ -2960,12 +2917,18 @@
       "shares": 2542,
       "engRate": 29.4,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - shotbydcl",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Close portrait in front of Big Ben, London 'classics' montage; handheld street-style travel diary.",
       "week": "2026-10-12",
       "date": "2026-10-10",
       "thumb": "thumbs/kw_shotbydcl_7694989210889030934.jpg",
@@ -2991,12 +2954,18 @@
       "shares": 50047,
       "engRate": 28.6,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Question"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Film grain"
+      ],
       "audio": "original sound - abby.ccrawford · Abby Crawford🪷",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Backpackers in an Egyptian alley with an on-screen question that sets up the next-destination reveal.",
       "week": "2026-10-12",
       "date": "2026-09-28",
       "thumb": "thumbs/kw_abby.ccrawford_7690578227537972494.jpg",
@@ -3004,7 +2973,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "“so... where do you want togo next?”"
+      "videoText": "so... where do you want to go next?"
     },
     {
       "account": "hudsonfilms__",
@@ -3022,12 +2991,19 @@
       "shares": 2591,
       "engRate": 27.2,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange",
+        "Moody/dark"
+      ],
       "audio": "original sound - hudsonfilms__",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Teal neon Tokyo night with an umbrella silhouette — textbook cinematic Tokyo look.",
       "week": "2026-10-12",
       "date": "2026-10-08",
       "thumb": "thumbs/kw_hudsonfilms___7694301173389577490.jpg",
@@ -3035,7 +3011,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "“ey Leer"
+      "videoText": ""
     },
     {
       "account": "livefromtilla",
@@ -3053,12 +3029,18 @@
       "shares": 15241,
       "engRate": 27.0,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Surprise"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "original sound - prodbydloo_ · dloo!",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Snowy ski-trip photo dump opening on someone flopping out of a car window into snow; casual group-trip energy.",
       "week": "2026-10-12",
       "date": "2026-09-23",
       "thumb": "thumbs/kw_livefromtilla_7688818847947820310.jpg",
@@ -3066,7 +3048,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "~ ~<"
+      "videoText": ""
     },
     {
       "account": "julescinefilms",
@@ -3084,12 +3066,18 @@
       "shares": 4402,
       "engRate": 26.7,
       "outlier": null,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "original sound - weslleygito · 𝗪𝗲𝘀𝗹𝗹𝗲𝘆𝗚𝗶𝘁𝗼",
       "audioDetected": false,
-      "notes": "",
+      "notes": "'let's leave to the mountains.' over a friends-jumping-into-an-alpine-lake shot; invitation line plus tagged-person CTA.",
       "week": "2026-10-12",
       "date": "2026-10-01",
       "thumb": "thumbs/kw_julescinefilms_7691669290159738144.jpg",
@@ -3097,7 +3085,7 @@
       "carousel": [],
       "carryover": false,
       "sourceDate": "2026-10-12",
-      "videoText": "let’s leave to.the mountains."
+      "videoText": "let's leave to the mountains."
     },
     {
       "account": "keenanlam",
@@ -3115,18 +3103,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 23.34,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Skógafoss waterfall with a figure mid-kick in a blue puffer. PAID partnership (Canada Goose) — treat as branded reference.",
       "week": "2026-10-12",
       "date": "2023-10-15",
       "thumb": "thumbs/disc_01_keenanlam.jpg",
       "video": "https://instagram.frix7-1.fna.fbcdn.net/o1/v/t2/f2/m82/AQOPRJK4bjDNTIgA7gGSaMWmzwfyw4LBDecAfJZN-h_IRxUNodG_AwheDzf82rubV1C1e8H3K9xCjSi1gJ4NBmBROCmhygZcpmSl3-0.mp4?_nc_cat=111&_nc_oc=Adq9HrucmmqakE6zXl1DbeZyw2jMhVqoLjqgFATbM-k7JpSZqGo4PDCMd-3VEla1Ed4&_nc_sid=5e9851&_nc_ht=instagram.frix7-1.fna.fbcdn.net&_nc_ohc=Pvd5jgIjVF0Q7kNvwEtSRxF&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6NzQ5MjI3NzA3NzQ1NTA4MCwiYXNzZXRfYWdlX2RheXMiOjEwOTMsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjo4LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=a30ed3501c6f1b80&_nc_vs=HBksFQIYT2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfcHJvZC9FQzREOTZCMjA5RTQ2MzVEQkUyNThCODU3MjQxMUJCNF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HT0NhWkJlUk9nVE9GUHNDQU9FVmVmMGFoUzRwYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm0MOVnPaLzxoVAigCQzMsF0Ahu2RaHKwIGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_gid=ms_BueLlh6FBu67PfC5YjQ&_nc_ss=7a3ba&_nc_zt=28&oh=00_AQNOnnfG0KikLR8qt4mC3mZi8I2x6LcozjKqumE33BvqIg&oe=6ACF14E4",
       "carousel": [],
-      "videoText": "“aa",
+      "videoText": "",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3146,18 +3140,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 23.08,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Original audio · watchluke",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Title card 'a film told by the people of Venezuela' over an Indigenous community portrait; documentary-film snippet.",
       "week": "2026-10-12",
       "date": "2026-09-18",
       "thumb": "thumbs/disc_02_watchluke.jpg",
       "video": "https://instagram.fsyq10-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQOk-PiWkxAdOZD96YP97VxZcNSr4lZhUqMzb8RSoUTmzoekq5179nWVpFIF9FxsF3wjOq2fAMVDKHGr5HNA9bkMuJET50Sf54u6lvc.mp4?_nc_cat=111&_nc_oc=Adr6d3gPj5cr694rvFKqDtOu8NK3yNTFeUjN_8QOsM6cchN1mLBPyfjRUzFZHO14Z9U&_nc_sid=5e9851&_nc_ht=instagram.fsyq10-1.fna.fbcdn.net&_nc_ohc=DScfO79hJBYQ7kNvwHFp7yc&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTQ0MTg1MTI5NDQ4NTg4MSwiYXNzZXRfYWdlX2RheXMiOjI0LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6NzQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=23a1da05a88274cd&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9FNjRDRDFDOEE3QzNFNUQ2NzQzQzgwNjA0RERDN0JBRV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzkyNDdDNDNEMDBCRkFBNkE3RTE0RDc3NEE5OUM2MUIxX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbytdCj5daPBRUCKAJDMywXQFK0vGp--dsYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=Um_nvoTllUur6AUfj43m1Q&_nc_ss=7a3ba&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQMM3aGcN-1Si2dwb7Jj2nrgRLN1PD8mUMLc3lkrd67v0A&oe=6ACF18AC",
       "carousel": [],
-      "videoText": "a film told by the people of venezuela feta [Nei | Ned",
+      "videoText": "a film told by the people of Venezuela",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3177,18 +3177,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 22.44,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "People Get Up And Drive Your Funky Soul (Remix) · James Brown, Fred Wesley, The J.B.'s",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Split-panel pink/yellow Cape Town edit with bold 'CAPE TOWN' title type — graphic, retro-poster style.",
       "week": "2026-10-12",
       "date": "2025-01-14",
       "thumb": "thumbs/disc_03_maxim_oprea.jpg",
       "video": "https://scontent-iev1-1.cdninstagram.com/o1/v/t2/f2/m367/AQO-KumqiQ4NB4SPFEIoYRp0nMwCNomF4fNUOkjh5ZmEFFl0HEauRlu_uQhlBGH-CxFc0eo033fB7mF0yTRqX-K1l04CIxubF0KnECg.mp4?_nc_cat=110&_nc_sid=5e9851&_nc_ht=scontent-iev1-1.cdninstagram.com&_nc_ohc=v9sTVrRzstgQ7kNvwFje0AQ&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6NTc3MzEwNjE1MTE5MjcxLCJhc3NldF9hZ2VfZGF5cyI6NjM2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=6d83c4257aaf7c8a&_nc_vs=HBksFQIYQGlnX2VwaGVtZXJhbC9CNTRBMTJEMjU4NEU2RDc0QkEwMDgwMzU5QjQyOEQ5Q192aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xNjU4NjI5ODExNzU2MDk2XzU0NTE1MzQ2MTIwNDE4OTQ1MDUubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJs6WnaLzw4YCFQIoAkMzLBdALCj1wo9cKRgSZGFzaF9iYXNlbGluZV8xX3YxEQB1_gdl5p0BAA&_nc_gid=IprEFwu453k9UTn4WLgeJg&_nc_ss=7a3ba&_nc_zt=28&oh=00_AQN-cGaPGkm4bPrznDI20Rhd5Rgjnbjos1kfMwO9kFZc3Q&oe=6AD30F1F",
       "carousel": [],
-      "videoText": "Tae Tar Comma — Ce jake pai] oe) wuld crap Hi STAC ATLA TH tomar it ~—T) ——— ea r | iia",
+      "videoText": "CAPE TOWN",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3208,18 +3214,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 17.2,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Drone/aerial"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Low-angle volcano eruption with glowing lava and ash column — raw power shot as the cover.",
       "week": "2026-10-12",
       "date": "2023-08-28",
       "thumb": "thumbs/disc_04_erikhedenfalk.jpg",
       "video": "https://instagram.flim6-4.fna.fbcdn.net/o1/v/t2/f2/m82/AQMHj-BkvxO7d3bKkFX4d4lkmr7aKiL3CyHb_fmLS1K7SoG5Bn9Vq5IxdktddoQ60PBKzz5UGnbEVme6sMxEBAAwi8Or4eqJrPAmLZY.mp4?_nc_cat=108&_nc_oc=Adpo89HoHqreoqE8xxCG5HCtOxL_uD_IOzpE_J9JtulOrqH551nV0RhOdYAVtIg-D54&_nc_sid=5e9851&_nc_ht=instagram.flim6-4.fna.fbcdn.net&_nc_ohc=ojITbn1MVT4Q7kNvwFr204A&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MjcwNDEyODg5MDk1MDk2LCJhc3NldF9hZ2VfZGF5cyI6MTE0MSwidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjE3LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=39e74622fe353ad3&_nc_vs=HBkcFQIYT2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfcHJvZC82ODQ5RjVBMzIzMzAwRDk2Q0ZBQTU3QkFGOTRBOTdCOV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm8O6Tg438ehUCKAJDMywXQDEIcrAgxJwYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=VKC_Pjd7SS1CaUDl9ReFjw&_nc_ss=7a3ba&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQNQ_KING6V_DYdY6tJQpE31TvMK-5WMFDSJGKNg7uEffA&oe=6ACF3681",
       "carousel": [],
-      "videoText": "mae i",
+      "videoText": "",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3239,12 +3251,18 @@
       "shares": 0,
       "engRate": null,
       "outlier": 6.66,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Raja Ampat carousel: diver and fish school, a face-painted portrait, and an aerial of an islet — water-to-culture sequence.",
       "week": "2026-10-12",
       "date": "2026-04-15",
       "thumb": "thumbs/disc_05_mariuskaening.jpg",
@@ -3276,18 +3294,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 4.04,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "Ethereal · mikeeysmind",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Tiny silhouette on a Grand Canyon rim under swirling cloud — scale contrast.",
       "week": "2026-10-12",
       "date": "2026-01-08",
       "thumb": "thumbs/disc_06_jaysonrobertson.jpg",
       "video": "https://instagram.fphb1-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQP-3SQRxyqMIVy567BkSiwl7-bNVxBxFobtKQUaBWPpjWe4v6W2EzFua6t-d83SylAhTjIWzizzwhLojMCBML8FlJMVsZ0JDTqjwNE.mp4?_nc_cat=105&_nc_oc=Adq1C0tfTRySvt4_qG254Mq69-GJS-jHrIUk1rX1PCbBOEMG6xSeQtoNxHfpux53Afs&_nc_sid=5e9851&_nc_ht=instagram.fphb1-1.fna.fbcdn.net&_nc_ohc=MvD--F0m8jYQ7kNvwFUvVc9&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuMTI3Ni5kYXNoX2Jhc2VsaW5lXzFfdjEiLCJ4cHZfYXNzZXRfaWQiOjE5NDE4MjcxNTY3NzA5MDIsImFzc2V0X2FnZV9kYXlzIjoyNzcsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjoxNCwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=5ef2374d02c6add4&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC83RTRFNzJBQzMwNEJDRjY0NDNGMkM0NDk2MTgyRDQ4MF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yOTE0NjU4ODI4NzM5MDE4XzM2OTA2MzQ1MzIwNjk0MTA3NTQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJqyBqN6bhfMGFQIoAkMzLBdALHGp--dsixgSZGFzaF9iYXNlbGluZV8xX3YxEQB1_gdl5p0BAA&_nc_gid=rz781u-h15tspDx8CuKM2A&_nc_ss=7a3ba&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQNzHfl5hI19jaLdb4HWw1LJM4JUQjG70qtuEZ1zyvCs9g&oe=6ACF33BA",
       "carousel": [],
-      "videoText": "om | fit",
+      "videoText": "",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3307,12 +3331,19 @@
       "shares": 0,
       "engRate": null,
       "outlier": 3.24,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe",
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Lone 4x4 and a standing figure on pale dunes; Africa-2027 teaser carousel with muted sand palette.",
       "week": "2026-10-12",
       "date": "2026-09-27",
       "thumb": "thumbs/disc_07_gonzalopasquier.jpg",
@@ -3357,18 +3388,24 @@
       "shares": 0,
       "engRate": null,
       "outlier": 2.39,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Moody/dark"
+      ],
       "audio": "Original audio · liliandkai",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Black-and-white Bangkok building facade with strong geometry — 'calm becomes design' architectural study.",
       "week": "2026-10-12",
       "date": "2026-02-13",
       "thumb": "thumbs/disc_08_liliandkai.jpg",
       "video": "https://instagram.fgye1-1.fna.fbcdn.net/o1/v/t16/f2/m69/AQNJvE1aKI-SxW8N52FiT362O3_e11cAN0NGa48NVVix98BrwHlxxnEM01R8fg31aRxRKCkJOafoOEVPXx0tGvgC.mp4?strext=1&_nc_cat=107&_nc_oc=AdoKossrGtiiFAXu8nu9DZmuKri31PLhjnGKV7EHv-zKHcO7mMHyjKXu5GI5uHcCb08&_nc_sid=5e9851&_nc_ht=instagram.fgye1-1.fna.fbcdn.net&_nc_ohc=aE9YzuEe000Q7kNvwHrocEa&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTgwOTgyMDUxMTY1MDAwMzYsImFzc2V0X2FnZV9kYXlzIjoyNDEsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjo0MiwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=38d2461724c1f864&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTXJwamlXOEJBUGthVmNHQVBlemJnWnhTNzhrYnNwVEFRQUYVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzRDNDJGMTk0MkQ4MzM2NkM4Q0YxNDc4MTkyRDdCOUFCX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaIodTwl46mQBUCKAJDMywXQEUiDEm6XjUYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=A3A799DRl303blRF2ZAJnQ&_nc_ss=7a3ba&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQMKbIY2CZ1XB3KOkuOFPOWdc79YRuv3gb7XVBxNbHh2Zg&oe=6AD305CD",
       "carousel": [],
-      "videoText": "{| (|i {NN i = vr 1 1 cant Sytem poms an) It]",
+      "videoText": "",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3388,12 +3425,18 @@
       "shares": 0,
       "engRate": null,
       "outlier": 2.27,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Bold claim"
+      ],
+      "triggers": [
+        "Ego"
+      ],
+      "visualStyles": [
+        "Cinematic/teal-orange"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "'Photos I've taken that I consider almost perfect' over a man on a black-sand shoreline — humble-brag curation carousel.",
       "week": "2026-10-12",
       "date": "2025-12-15",
       "thumb": "thumbs/disc_09_chema.bal.jpg",
@@ -3411,7 +3454,7 @@
         "https://instagram.fccs7-1.fna.fbcdn.net/v/t51.82787-15/591156461_18547113751047753_389548567177035366_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&_nc_cat=102&_nc_map=urlgen_bucketless&ig_cache_key=Mzc4ODQwODk0NzA4NzY0MTQzMw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=bVxZAqTxBGoQ7kNvwGMSrrK&_nc_oc=AdpioUaLOaCMfVuGs22ShTnxxrUntfVdx4mw3GDG9VY-ly9p0b4R78FuI3qFpb8aJAk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fccs7-1.fna&_nc_gid=orOcEJB6UQao1HMeS1F0yQ&_nc_ss=7a3ba&oh=00_AQP1P7lssi0mjzNJqCMhjKQIGliZhiKyf7OGv0Oez0AkzQ&oe=6AD316FD",
         "https://instagram.fccs7-1.fna.fbcdn.net/v/t51.82787-15/601294719_18547113763047753_9215367871661566138_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&_nc_cat=104&_nc_map=urlgen_bucketless&ig_cache_key=Mzc4ODQwODk0NzA4NzcwMDcxMA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=lMBhRcvazAYQ7kNvwEjBS62&_nc_oc=Adqkom0kZyIgNS2eLz8aZoSvfH9Sqj3JvmAcFCLKUNJzh0DNJJ6fuxHyYlULQ1UPstU&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fccs7-1.fna&_nc_gid=orOcEJB6UQao1HMeS1F0yQ&_nc_ss=7a3ba&oh=00_AQNRTJagVqIYiH9U2eHDrcDLlGLzQEHV-ACY_PdQJUrcOg&oe=6AD31889"
       ],
-      "videoText": "",
+      "videoText": "Photos I've taken that I consider almost perfect",
       "carryover": false,
       "sourceDate": "2026-10-12"
     },
@@ -3431,12 +3474,18 @@
       "shares": 0,
       "engRate": null,
       "outlier": 1.59,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Storytime"
+      ],
+      "triggers": [
+        "Awe"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Greenland iceberg carousel with a thank-you-for-feedback caption — community-gratitude angle on a trip recap.",
       "week": "2026-10-12",
       "date": "2026-09-28",
       "thumb": "thumbs/disc_10_dreamexplorers_.jpg",
@@ -3472,12 +3521,18 @@
       "shares": 0,
       "engRate": null,
       "outlier": 1.0,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
+      "hookTypes": [
+        "Location reveal"
+      ],
+      "triggers": [
+        "Desire/Wanderlust"
+      ],
+      "visualStyles": [
+        "Bright/airy"
+      ],
       "audio": "Original audio",
       "audioDetected": false,
-      "notes": "",
+      "notes": "Mykonos postcard carousel: infinity pool, breakfast spread, 'Greece' flag napkin — lifestyle travel, bright and airy.",
       "week": "2026-10-12",
       "date": "2025-06-11",
       "thumb": "thumbs/disc_11_camelia.beresteanu.jpg",
@@ -3497,67 +3552,36 @@
       "videoText": "",
       "carryover": false,
       "sourceDate": "2026-10-12"
-    },
-    {
-      "account": "jetourauto",
-      "url": "https://www.instagram.com/reel/DeJTrWHATUV/",
-      "platform": "instagram",
-      "lane": "discovered",
-      "newFind": true,
-      "source": "discover.py — related to 28 seed accounts",
-      "trendScore": 0.1,
-      "hook": "Mexico's story reaches far beyond the contrast between city and countryside. Starting in Mexico…",
-      "format": "Reel",
-      "views": 1264795,
-      "likes": 1201,
-      "comments": 20,
-      "shares": 0,
-      "engRate": null,
-      "outlier": 1.0,
-      "hookTypes": [],
-      "triggers": [],
-      "visualStyles": [],
-      "audio": "Original audio · jetourauto",
-      "audioDetected": false,
-      "notes": "",
-      "week": "2026-10-12",
-      "date": "2026-10-06",
-      "thumb": "thumbs/disc_12_jetourauto.jpg",
-      "video": "https://instagram.fccs7-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQPwzug_mjxWmBGDbM9ncHhbgL3MldqoiVaQaiqAfrLXVSGnP1D4hgcUeGHWcXaVQFo_v6e6ALjbhwxaEs6yuOLK6nODKN5YUKJsSK0.mp4?_nc_cat=104&_nc_oc=Ado24D3p0PJU71HvCEeG8bQ-E9M0O9Lz_d8htGjz71KaRCpuGTAqIokbqngbrJG7FmQ&_nc_sid=5e9851&_nc_ht=instagram.fccs7-1.fna.fbcdn.net&_nc_ohc=zQswaa3loXMQ7kNvwGWw3iA&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuMTI4MC5kYXNoX2Jhc2VsaW5lXzFfdjEiLCJ4cHZfYXNzZXRfaWQiOjE4MTMwNDQ3MjA3Njg1NDQzLCJhc3NldF9hZ2VfZGF5cyI6NiwidmlfdXNlY2FzZV9pZCI6MTIzNzQsImR1cmF0aW9uX3MiOjE2MywidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=5045efc2ab976fb8&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xNDE3OERGRENFNjU0MDZCOTExRjkyN0VDQUM5NEVBQ192aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyL0M3RjY2RUE5OURGMjRGMkNBQ0VERkUyOEY3NjcwMTg3X2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaG9faW9uK0QBUCKAJDMywXQGRyj1wo9cMYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZazBAQA&_nc_gid=orOcEJB6UQao1HMeS1F0yQ&_nc_ss=7a3ba&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQORA7rLt6dLbFBUrBSOA4NhPSyuBrr4EWoYIIPFlqSRAg&oe=6ACF033D",
-      "carousel": [],
-      "videoText": "Yoox voN aia Bed —ae WONDE FoR JeTouR R .",
-      "carryover": false,
-      "sourceDate": "2026-10-12"
     }
   ],
   "generatedHooks": [
     {
-      "trigger": "Surprise",
-      "text": "A hurricane 400 miles away gave us this sunset. I had eleven minutes to film it."
+      "trigger": "Relatable confession",
+      "text": "I don't sleep when I travel. I'm up at 5am to watch the city wake up and I'm not sorry."
     },
     {
       "trigger": "Desire/Wanderlust",
-      "text": "Phone on do-not-disturb. Cabin, coffee, zero bars. That's the entire itinerary."
+      "text": "No signal. No plans. One road through the Tetons. This is what I'd rather be doing."
     },
     {
-      "trigger": "Ego",
-      "text": "Photos I've taken that I consider almost perfect — the last one took me three winters."
-    },
-    {
-      "trigger": "Nostalgia",
-      "text": "I spent a month in one city and edited it like a postcard from 1974."
+      "trigger": "Question",
+      "text": "So… where do you want to go next? Pick one and I'll show you the version nobody posts."
     },
     {
       "trigger": "Surprise",
-      "text": "There's a person in this shot. Most people need three watches to find them."
+      "text": "I turned this ordinary street upside down and it became the best frame of the trip."
+    },
+    {
+      "trigger": "Ego",
+      "text": "Photos I've taken that I consider almost perfect. Number four cost me a sunrise and a lens."
+    },
+    {
+      "trigger": "Nostalgia",
+      "text": "Late nights in a city that doesn't know I'm filming it. Blue hour, no music, just the hum."
     },
     {
       "trigger": "Fear/Urgency",
-      "text": "This view only exists for about a week a year. We're standing in it right now."
-    },
-    {
-      "trigger": "Relatability",
-      "text": "What if I filmed this… and it's the only take I get before the light's gone?"
+      "text": "Two weeks until this trail closes for the season. This is the footage I almost didn't shoot."
     }
   ],
   "soundChart": [
@@ -49841,7 +49865,7 @@
       ]
     }
   },
-  "curatedAt": "2026-09-29",
+  "curatedAt": "2026-10-14",
   "unresolvedAccounts": {
     "ig": [
       "_mikehenderson",
