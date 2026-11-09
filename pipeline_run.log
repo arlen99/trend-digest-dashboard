@@ -2,237 +2,170 @@
   blob read failed: HTTP Error 403: Forbidden
 No queued account edits.
 ▶ python3 accumulate.py
-Archived week 2026-10-26: posts=66  soundChart=30  trends=10  tiktokSounds=20  generatedHooks=7  hookTrends=10 | retained 12 (dropped ['2026-07-13'])
-weekOf advanced → 2026-11-02
+Archived week 2026-11-02: posts=80  soundChart=30  trends=11  tiktokSounds=20  generatedHooks=7  hookTrends=10 | retained 12 (dropped ['2026-07-20'])
+weekOf advanced → 2026-11-09
 ▶ python3 scrape.py
 Scraping 130 accounts via TikHub (8 posts each)...
   user IDs: 126/130 (0 new, 126 cached)
-Wrote output/top_posts_2026-11-02.json/.md (150 rows)
+Wrote output/top_posts_2026-11-09.json/.md (150 rows)
 Scraped 976 posts from 126 accounts (126 fetch calls). Next: review the .md, then build the digest.
 ▶ python3 tiktok_scrape.py (non-critical)
 Scraping 25 TikTok creators (10 posts each)...
-Wrote output/top_posts_tiktok_2026-11-02.json/.md — 40 ranked (25 calls)
+Wrote output/top_posts_tiktok_2026-11-09.json/.md — 40 ranked (25 calls)
 ▶ python3 scrape_dedupe.py
-  top_posts_2026-11-02.json: 150 → 127 fresh (23 prior-week dupes removed) → top_posts_2026-11-02_fresh.json
-  top_posts_tiktok_2026-11-02.json: 40 → 31 fresh (9 prior-week dupes removed) → top_posts_tiktok_2026-11-02_fresh.json
-Prior-week curated URLs in registry: 689
+  top_posts_2026-11-09.json: 150 → 108 fresh (42 prior-week dupes removed) → top_posts_2026-11-09_fresh.json
+  top_posts_tiktok_2026-11-09.json: 40 → 27 fresh (13 prior-week dupes removed) → top_posts_tiktok_2026-11-09_fresh.json
+Prior-week curated URLs in registry: 733
 ▶ python3 keyword_posts.py (non-critical)
-  'cinematic travel': 14 kept (recent ≤21d, ≥20,000 views)
-  'travel film': 8 kept (recent ≤21d, ≥20,000 views)
-  'cinematic photography': 10 kept (recent ≤21d, ≥20,000 views)
-  'travel filmmaker': 8 kept (recent ≤21d, ≥20,000 views)
-  'cinematic b roll': 13 kept (recent ≤21d, ≥20,000 views)
-  'travel cinematography': 3 kept (recent ≤21d, ≥20,000 views)
+  'cinematic travel': 16 kept (recent ≤21d, ≥20,000 views)
+  'travel film': 7 kept (recent ≤21d, ≥20,000 views)
+  'cinematic photography': 11 kept (recent ≤21d, ≥20,000 views)
+  'travel filmmaker': 9 kept (recent ≤21d, ≥20,000 views)
+  'cinematic b roll': 8 kept (recent ≤21d, ≥20,000 views)
+  'travel cinematography': 2 kept (recent ≤21d, ≥20,000 views)
 
-Wrote output/keyword_posts_2026-11-02.json/.md — 56 trending posts (56 from off-seed accounts), 6 calls (~$0.006)
+Wrote output/keyword_posts_2026-11-09.json/.md — 53 trending posts (53 from off-seed accounts), 6 calls (~$0.006)
 ▶ python3 audio_trends.py (non-critical)
 Niche audio chart (TikHub) — 130 accounts, 20 reels each
   user IDs: 126/130 (0 new, 126 cached)
 
-Wrote output/audio_trends_2026-11-02.json/.md
+Wrote output/audio_trends_2026-11-09.json/.md
 TOTAL billable TikHub calls: 130
 ▶ python3 tiktok_trends.py (non-critical)
-Wrote output/tiktok_trends_2026-11-02.json/.md — 50 sounds, 7 cross-platform with IG niche
+Wrote output/tiktok_trends_2026-11-09.json/.md — 50 sounds, 6 cross-platform with IG niche
 ▶ python3 chart_audd.py (non-critical)
-  ♫ johnluisbeier's 'original audio' = Fever (Instrumental Slowed) — xaviorthemachine/Dev1lHawk
+  ♫ fatoomii.i's 'original audio' = You give me — JACQUELINE MACLEOĎ
 
-AudD on chart: 2 new buckets fingerprinted, 1 identified (29 total in cache) → output/chart_audd.json
-▶ python3 hook_text.py output/top_posts_2026-11-02_fresh.json --limit 150
-OCR'd 118 new posts, 115 had readable hook text (1105 total cached) -> output/hook_texts.json
-▶ python3 fetch_thumbs.py output/top_posts_2026-11-02_fresh.json
-Fetching 127 thumbnails from top_posts_2026-11-02_fresh.json
+AudD on chart: 2 new buckets fingerprinted, 1 identified (30 total in cache) → output/chart_audd.json
+▶ python3 hook_text.py output/top_posts_2026-11-09_fresh.json --limit 150
+OCR'd 69 new posts, 45 had readable hook text (1150 total cached) -> output/hook_texts.json
+▶ python3 fetch_thumbs.py output/top_posts_2026-11-09_fresh.json
+Fetching 108 thumbnails from top_posts_2026-11-09_fresh.json
 
-  01 @saxonkent              -> 01_saxonkent.jpg
-  02 @carlosfortea           -> 02_carlosfortea.jpg
-  03 @bonnyandgava           -> 03_bonnyandgava.jpg
-  04 @perianyiez             -> 04_perianyiez.jpg
-  05 @psalm1.0               -> 05_psalm1.0.jpg
-  06 @alexpantela            -> 06_alexpantela.jpg
-  07 @michaelacarrot         -> 07_michaelacarrot.jpg
-  08 @agnesnicolee           -> 08_agnesnicolee.jpg
-  09 @psalm1.0               -> 09_psalm1.0.jpg
-  10 @isabelledvictoria      -> 10_isabelledvictoria.jpg
-  11 @ryantucreative         -> 11_ryantucreative.jpg
-  12 @michaelacarrot         -> 12_michaelacarrot.jpg
-  13 @henbu_                 -> 13_henbu_.jpg
-  14 @lawrencewalton_        -> 14_lawrencewalton_.jpg
-  15 @amdshutter             -> 15_amdshutter.jpg
-  16 @inojuettner            -> 16_inojuettner.jpg
-  17 @kiantye                -> 17_kiantye.jpg
-  18 @kayo                   -> 18_kayo.jpg
-  19 @alvarovaliente         -> 19_alvarovaliente.jpg
-  20 @agnesnicolee           -> 20_agnesnicolee.jpg
-  21 @andres.visual          -> 21_andres.visual.jpg
-  22 @shane_dk               -> 22_shane_dk.jpg
-  23 @elliotmacguire         -> 23_elliotmacguire.jpg
-  24 @jessmelu               -> 24_jessmelu.jpg
-  25 @thesunnilife           -> 25_thesunnilife.jpg
-  26 @michaelacarrot         -> 26_michaelacarrot.jpg
-  27 @ryannifsya             -> 27_ryannifsya.jpg
-  28 @kayo                   -> 28_kayo.jpg
-  29 @margatuzon             -> 29_margatuzon.jpg
-  30 @danielillescas         -> 30_danielillescas.jpg
-  31 @laurastravl            -> 31_laurastravl.jpg
-  32 @bonnyandgava           -> 32_bonnyandgava.jpg
-  33 @shane_dk               -> 33_shane_dk.jpg
-  34 @tyron.shi              -> 34_tyron.shi.jpg
-  35 @psalm1.0               -> 35_psalm1.0.jpg
-  36 @bxnmxclean             -> 36_bxnmxclean.jpg
-  37 @nilenriquezz           -> 37_nilenriquezz.jpg
-  38 @lawrencewalton_        -> 38_lawrencewalton_.jpg
-  39 @elliotmacguire         -> 39_elliotmacguire.jpg
-  40 @joefii_                -> 40_joefii_.jpg
-  41 @ferry.kch              -> 41_ferry.kch.jpg
-  42 @margatuzon             -> 42_margatuzon.jpg
-  43 @danielillescas         -> 43_danielillescas.jpg
-  44 @alexpantela            -> 44_alexpantela.jpg
-  45 @ru.visions             -> 45_ru.visions.jpg
-  46 @danielillescas         -> 46_danielillescas.jpg
-  47 @lukas_pousset          -> 47_lukas_pousset.jpg
-  48 @jonsoriginals          -> 48_jonsoriginals.jpg
-  49 @juliakursten           -> 49_juliakursten.jpg
-  50 @jetlagjessy            -> 50_jetlagjessy.jpg
-  51 @madiaubakirov          -> 51_madiaubakirov.jpg
-  52 @danielzelinger         -> 52_danielzelinger.jpg
-  53 @inojuettner            -> 53_inojuettner.jpg
+  01 @kayo                   -> 01_kayo.jpg
+  02 @alexpantela            -> 02_alexpantela.jpg
+  03 @nilenriquezz           -> 03_nilenriquezz.jpg
+  04 @keegan.greene          -> 04_keegan.greene.jpg
+  05 @margatuzon             -> 05_margatuzon.jpg
+  06 @michaelacarrot         -> 06_michaelacarrot.jpg
+  07 @henbu_                 -> 07_henbu_.jpg
+  08 @iykezachariah          -> 08_iykezachariah.jpg
+  09 @_nikolajgreen_         -> 09__nikolajgreen_.jpg
+  10 @michaelacarrot         -> 10_michaelacarrot.jpg
+  11 @margatuzon             -> 11_margatuzon.jpg
+  12 @hoehen_flug            -> 12_hoehen_flug.jpg
+  13 @cam_snaps              -> 13_cam_snaps.jpg
+  14 @shane_dk               -> 14_shane_dk.jpg
+  15 @kayo                   -> 15_kayo.jpg
+  16 @tyron.shi              -> 16_tyron.shi.jpg
+  17 @andyescapes            -> 17_andyescapes.jpg
+  18 @jetlagjessy            -> 18_jetlagjessy.jpg
+  19 @mikelspirit            -> 19_mikelspirit.jpg
+  20 @zacfreuden             -> 20_zacfreuden.jpg
+  21 @laurastravl            -> 21_laurastravl.jpg
+  22 @andyescapes            -> 22_andyescapes.jpg
+  23 @phillippfeiffer_       -> 23_phillippfeiffer_.jpg
+  24 @tyron.shi              -> 24_tyron.shi.jpg
+  25 @sebastienclosuit       -> 25_sebastienclosuit.jpg
+  26 @dennisglanz            -> 26_dennisglanz.jpg
+  27 @peterngynn             -> 27_peterngynn.jpg
+  28 @shane_dk               -> 28_shane_dk.jpg
+  29 @lawrencewalton_        -> 29_lawrencewalton_.jpg
+  30 @saxonkent              -> 30_saxonkent.jpg
+  31 @lukas_pousset          -> 31_lukas_pousset.jpg
+  32 @paulyloz               -> 32_paulyloz.jpg
+  33 @kyrkejaleco            -> 33_kyrkejaleco.jpg
+  34 @alvarovaliente         -> 34_alvarovaliente.jpg
+  35 @michaelacarrot         -> 35_michaelacarrot.jpg
+  36 @elliotmacguire         -> 36_elliotmacguire.jpg
+  37 @daniescayola           -> 37_daniescayola.jpg
+  38 @sebastienclosuit       -> 38_sebastienclosuit.jpg
+  39 @lawrencewalton_        -> 39_lawrencewalton_.jpg
+  40 @keonilachhar           -> 40_keonilachhar.jpg
+  41 @laurastravl            -> 41_laurastravl.jpg
+  42 @lucaepifany            -> 42_lucaepifany.jpg
+  43 @sulzie                 -> 43_sulzie.jpg
+  44 @ryantucreative         -> 44_ryantucreative.jpg
+  45 @ryannifsya             -> 45_ryannifsya.jpg
+  46 @ryannifsya             -> 46_ryannifsya.jpg
+  47 @bonnyandgava           -> 47_bonnyandgava.jpg
+  48 @joshpkohler            -> 48_joshpkohler.jpg
+  49 @psalm1.0               -> 49_psalm1.0.jpg
+  50 @robinlamhj             -> 50_robinlamhj.jpg
+  51 @danielillescas         -> 51_danielillescas.jpg
+  52 @juliakursten           -> 52_juliakursten.jpg
+  53 @juliakursten           -> 53_juliakursten.jpg
   54 @kiantye                -> 54_kiantye.jpg
-  55 @charliefaga            -> 55_charliefaga.jpg
-  56 @rayanclaverrol         -> 56_rayanclaverrol.jpg
-  57 @andyescapes            -> 57_andyescapes.jpg
-  58 @andyescapes            -> 58_andyescapes.jpg
-  59 @david_zamut            -> 59_david_zamut.jpg
-  60 @tyron.shi              -> 60_tyron.shi.jpg
-  61 @kayo                   -> 61_kayo.jpg
-  62 @amdshutter             -> 62_amdshutter.jpg
+  55 @tyron.shi              -> 55_tyron.shi.jpg
+  56 @alvarovaliente         -> 56_alvarovaliente.jpg
+  57 @ru.visions             -> 57_ru.visions.jpg
+  58 @alexbjorstorp          -> 58_alexbjorstorp.jpg
+  59 @bxnmxclean             -> 59_bxnmxclean.jpg
+  60 @tobin.yates            -> 60_tobin.yates.jpg
+  61 @carlosfortea           -> 61_carlosfortea.jpg
+  62 @lucaepifany            -> 62_lucaepifany.jpg
   63 @jessmelu               -> 63_jessmelu.jpg
-  64 @shane_dk               -> 64_shane_dk.jpg
-  65 @andres.visual          -> 65_andres.visual.jpg
-  66 @mikelspirit            -> 66_mikelspirit.jpg
-  67 @hoehen_flug            -> 67_hoehen_flug.jpg
-  68 @sethtillman            -> 68_sethtillman.jpg
-  69 @keonilachhar           -> 69_keonilachhar.jpg
-  70 @maor.benezri           -> 70_maor.benezri.jpg
-  71 @kirstyinmotion         -> 71_kirstyinmotion.jpg
-  72 @_nikolajgreen_         -> 72__nikolajgreen_.jpg
-  73 @dennisglanz            -> 73_dennisglanz.jpg
-  74 @henbu_                 -> 74_henbu_.jpg
-  75 @hugo.visuals           -> 75_hugo.visuals.jpg
-  76 @_nikolajgreen_         -> 76__nikolajgreen_.jpg
-  77 @bxnmxclean             -> 77_bxnmxclean.jpg
-  78 @lukas_pousset          -> 78_lukas_pousset.jpg
-  79 @peterngynn             -> 79_peterngynn.jpg
-  80 @lawrencewalton_        -> 80_lawrencewalton_.jpg
-  81 @kelvin_t413            -> 81_kelvin_t413.jpg
-  82 @kobajourney            -> 82_kobajourney.jpg
-  83 @ryannifsya             -> 83_ryannifsya.jpg
-  84 @tyron.shi              -> 84_tyron.shi.jpg
-  85 @cam_snaps              -> 85_cam_snaps.jpg
-  86 @daniescayola           -> 86_daniescayola.jpg
+  64 @amdshutter             -> 64_amdshutter.jpg
+  65 @kelvin_t413            -> 65_kelvin_t413.jpg
+  66 @dario.explore          -> 66_dario.explore.jpg
+  67 @michaelacarrot         -> 67_michaelacarrot.jpg
+  68 @danielzelinger         -> 68_danielzelinger.jpg
+  69 @lukas_pousset          -> 69_lukas_pousset.jpg
+  70 @juliakursten           -> 70_juliakursten.jpg
+  71 @josepostigo            -> 71_josepostigo.jpg
+  72 @kobajourney            -> 72_kobajourney.jpg
+  73 @thesunnilife           -> 73_thesunnilife.jpg
+  74 @jessmelu               -> 74_jessmelu.jpg
+  75 @saxonkent              -> 75_saxonkent.jpg
+  76 @alexoonnn              -> 76_alexoonnn.jpg
+  77 @cam_snaps              -> 77_cam_snaps.jpg
+  78 @chloesumy              -> 78_chloesumy.jpg
+  79 @alexpantela            -> 79_alexpantela.jpg
+  80 @hoehen_flug            -> 80_hoehen_flug.jpg
+  81 @inizi.studio           -> 81_inizi.studio.jpg
+  82 @kayo                   -> 82_kayo.jpg
+  83 @joefii_                -> 83_joefii_.jpg
+  84 @dennisglanz            -> 84_dennisglanz.jpg
+  85 @keankburke             -> 85_keankburke.jpg
+  86 @jacobgeeslin           -> 86_jacobgeeslin.jpg
   87 @keankburke             -> 87_keankburke.jpg
-  88 @jetlagjessy            -> 88_jetlagjessy.jpg
-  89 @alexpantela            -> 89_alexpantela.jpg
-  90 @keankburke             -> 90_keankburke.jpg
+  88 @hugo.visuals           -> 88_hugo.visuals.jpg
+  89 @shane_dk               -> 89_shane_dk.jpg
+  90 @jonsoriginals          -> 90_jonsoriginals.jpg
   91 @tyron.shi              -> 91_tyron.shi.jpg
-  92 @ryannifsya             -> 92_ryannifsya.jpg
-  93 @hugo.visuals           -> 93_hugo.visuals.jpg
-  94 @robinlamhj             -> 94_robinlamhj.jpg
-  95 @tobin.yates            -> 95_tobin.yates.jpg
-  96 @andyescapes            -> 96_andyescapes.jpg
-  97 @dennisglanz            -> 97_dennisglanz.jpg
-  98 @jonsoriginals          -> 98_jonsoriginals.jpg
-  99 @dario.explore          -> 99_dario.explore.jpg
-  100 @lukas_pousset          -> 100_lukas_pousset.jpg
-  101 @mikelspirit            -> 101_mikelspirit.jpg
-  102 @danielzelinger         -> 102_danielzelinger.jpg
-  103 @jacobgeeslin           -> 103_jacobgeeslin.jpg
-  104 @alvarovaliente         -> 104_alvarovaliente.jpg
-  105 @joefii_                -> 105_joefii_.jpg
-  106 @laurastravl            -> 106_laurastravl.jpg
-  107 @anthonyg.xdr           -> 107_anthonyg.xdr.jpg
-  108 @alexbjorstorp          -> 108_alexbjorstorp.jpg
-  109 @andyescapes            -> 109_andyescapes.jpg
-  110 @lukas_pousset          -> 110_lukas_pousset.jpg
-  111 @saxonkent              -> 111_saxonkent.jpg
-  112 @thesunnilife           -> 112_thesunnilife.jpg
-  113 @jessmelu               -> 113_jessmelu.jpg
-  114 @danielillescas         -> 114_danielillescas.jpg
-  115 @sebastienclosuit       -> 115_sebastienclosuit.jpg
-  116 @pou.media              -> 116_pou.media.jpg
-  117 @dennisglanz            -> 117_dennisglanz.jpg
-  118 @david_zamut            -> 118_david_zamut.jpg
-  119 @dennisglanz            -> 119_dennisglanz.jpg
-  120 @hoehen_flug            -> 120_hoehen_flug.jpg
-  121 @phillip3s              -> 121_phillip3s.jpg
-  122 @keankburke             -> 122_keankburke.jpg
-  123 @isabelledvictoria      -> 123_isabelledvictoria.jpg
-  124 @kielymizumoto          -> 124_kielymizumoto.jpg
-  125 @chema.bal              -> 125_chema.bal.jpg
-  126 @jessmelu               -> 126_jessmelu.jpg
-  127 @jessmelu               -> 127_jessmelu.jpg
+  92 @mikelspirit            -> 92_mikelspirit.jpg
+  93 @daniescayola           -> 93_daniescayola.jpg
+  94 @anthonyg.xdr           -> 94_anthonyg.xdr.jpg
+  95 @andres.visual          -> 95_andres.visual.jpg
+  96 @elliotmacguire         -> 96_elliotmacguire.jpg
+  97 @bxnmxclean             -> 97_bxnmxclean.jpg
+  98 @lukas_pousset          -> 98_lukas_pousset.jpg
+  99 @lukas_pousset          -> 99_lukas_pousset.jpg
+  100 @_nikolajgreen_         -> 100__nikolajgreen_.jpg
+  101 @phillippfeiffer_       -> 101_phillippfeiffer_.jpg
+  102 @dennisglanz            -> 102_dennisglanz.jpg
+  103 @andyescapes            -> 103_andyescapes.jpg
+  104 @dennisglanz            -> 104_dennisglanz.jpg
+  105 @alexpantela            -> 105_alexpantela.jpg
+  106 @hugo.visuals           -> 106_hugo.visuals.jpg
+  107 @pou.media              -> 107_pou.media.jpg
+  108 @phillip3s              -> 108_phillip3s.jpg
 
 Saved to /home/runner/work/trend-digest-dashboard/trend-digest-dashboard/output/thumbs/ — a Claude session can now Read these and tag Visual Style.
-▶ python3 fetch_carousels.py output/top_posts_2026-11-02_fresh.json
-Fetching images for 48 carousel posts from top_posts_2026-11-02_fresh.json
+▶ python3 fetch_carousels.py output/top_posts_2026-11-09_fresh.json
+Fetching images for 0 carousel posts from top_posts_2026-11-09_fresh.json
 
-  @saxonkent              -> 5/5 images saved
-  @carlosfortea           -> 13/13 images saved
-  @bonnyandgava           -> 2/2 images saved
-  @alexpantela            -> 5/5 images saved
-  @ryantucreative         -> 12/12 images saved
-  @inojuettner            -> 6/6 images saved
-  @danielillescas         -> 18/18 images saved
-  @psalm1.0               -> 11/11 images saved
-  @elliotmacguire         -> 5/5 images saved
-  @joefii_                -> 18/18 images saved
-  @danielillescas         -> 12/12 images saved
-  @alexpantela            -> 10/10 images saved
-  @lukas_pousset          -> 8/8 images saved
-  @juliakursten           -> 14/14 images saved
-  @inojuettner            -> 13/13 images saved
-  @charliefaga            -> 19/19 images saved
-  @andyescapes            -> 12/12 images saved
-  @andyescapes            -> 9/9 images saved
-  @mikelspirit            -> 6/6 images saved
-  @maor.benezri           -> 4/4 images saved
-  @kirstyinmotion         -> 13/13 images saved
-  @hugo.visuals           -> 13/13 images saved
-  @_nikolajgreen_         -> 7/7 images saved
-  @bxnmxclean             -> 8/8 images saved
-  @lukas_pousset          -> 13/13 images saved
-  @ryannifsya             -> 3/3 images saved
-  @tyron.shi              -> 10/10 images saved
-  @cam_snaps              -> 20/20 images saved
-  @daniescayola           -> 7/7 images saved
-  @jetlagjessy            -> 9/9 images saved
-  @tobin.yates            -> 3/3 images saved
-  @andyescapes            -> 9/9 images saved
-  @dennisglanz            -> 7/7 images saved
-  @dario.explore          -> 5/5 images saved
-  @lukas_pousset          -> 5/5 images saved
-  @mikelspirit            -> 5/5 images saved
-  @danielzelinger         -> 7/7 images saved
-  @jacobgeeslin           -> 5/5 images saved
-  @alvarovaliente         -> 10/10 images saved
-  @alexbjorstorp          -> 5/5 images saved
-  @andyescapes            -> 7/7 images saved
-  @lukas_pousset          -> 11/11 images saved
-  @saxonkent              -> 12/12 images saved
-  @sebastienclosuit       -> 7/7 images saved
-  @pou.media              -> 3/3 images saved
-  @david_zamut            -> 6/6 images saved
-  @dennisglanz            -> 6/6 images saved
-  @kielymizumoto          -> 16/16 images saved
 
-Saved 434 images to /home/runner/work/trend-digest-dashboard/trend-digest-dashboard/output/carousels/ — carousel_paths written back into top_posts_2026-11-02_fresh.json.
+Saved 0 images to /home/runner/work/trend-digest-dashboard/trend-digest-dashboard/output/carousels/ — carousel_paths written back into top_posts_2026-11-09_fresh.json.
 ▶ python3 trends.py
-Trend candidates -> output/trends_2026-11-02.json
-  AUDIO-anchored (>=3 creators): 13
-    [cooling] 9cr  Original audio — aliciadj__
-    [cooling] 8cr  STORM II — GENER8ION, Yung Lean
-    [cooling] 6cr  Sign of the Times — Harry Styles
-    [ rising] 6cr  Purple Rain (2015 Paisley Park Remaster) — Pri
-    [ rising] 4cr  back to friends — sombr
-    [ rising] 3cr  No Church In The Wild (feat. Frank Ocean, The-
+Trend candidates -> output/trends_2026-11-09.json
+  AUDIO-anchored (>=3 creators): 15
+    [ rising] 11cr  STORM II — GENER8ION, Yung Lean
+    [    new] 8cr  Original audio — aliciadjurovic_
+    [ steady] 6cr  Sign of the Times — Harry Styles
+    [cooling] 5cr  Purple Rain (2015 Paisley Park Remaster) — Pri
+    [ rising] 4cr  oh yeah? — Steve Lacy
+    [ rising] 4cr  Papaoutai (Afro Soul) — mikeeysmind, Chill77, 
   HOOK-anchored  (>=2 creators): 10
     3cr  'girl to girl: enjoy your twenties. treat yourself with your '
     2cr  'inl You should visit Switzerland one day...—'
@@ -241,345 +174,370 @@ Trend candidates -> output/trends_2026-11-02.json
     2cr  'THE POWER OF COLORGRADING'
     2cr  'What if we just... - ca'
 ▶ python3 hook_search.py (non-critical)
-Stage 0: 507 OCR'd hooks -> 20 canonical candidates (5 used by >=2 of our own creators)
+Stage 0: 527 OCR'd hooks -> 20 canonical candidates (5 used by >=2 of our own creators)
 Stage 1: OCR'ing the latest keyword-scan corpus...
   52 independently-sourced texts OCR'd
-  [unconfirmed    ] "it's the moment becomes nothing something"  (internal=2, template=1, niche=0)
+  [unconfirmed    ] "it's the moment becomes nothing something"  (internal=2, template=0, niche=0)
   [unconfirmed    ] 'What do you dream about? DP)'  (internal=2, template=3, niche=0)
   [unconfirmed    ] 'What if we just... - ca'  (internal=2, template=4, niche=0)
   [unconfirmed    ] 'The Art of Colourgrading'  (internal=2, template=1, niche=1)
-  [unconfirmed    ] 'What humans used to build'  (internal=2, template=3, niche=0)
+  [targeted_search] 'What humans used to build'  (internal=2, template=3, niche=2)
   [unconfirmed    ] 'ne, Abb Bahay. te) Be il fa. ose,'  (internal=1, template=0, niche=0)
-  [targeted_search] 'the art of friendship ‘ XY,'  (internal=1, template=4, niche=2)
-  [unconfirmed    ] 'Progression is real ‘+ ——e'  (internal=1, template=2, niche=0)
+  [unconfirmed    ] 'the art of friendship ‘ XY,'  (internal=1, template=3, niche=1)
+  [unconfirmed    ] 'Progression is real ‘+ ——e'  (internal=1, template=1, niche=0)
   [unconfirmed    ] '% Higgsfield Vlaliiaalixsxemelate (oxy _ ™ T'  (internal=1, template=0, niche=0)
-  [unconfirmed    ] 'The only camera you need..'  (internal=1, template=4, niche=0)
-  [targeted_search] 'internal NDs Bu'  (internal=1, template=3, niche=2)
-  [unconfirmed    ] 'inl You should visit Switzerland one day...—'  (internal=1, template=1, niche=1)
-  [unconfirmed    ] 'ICA stafion is Antarctica.'  (internal=1, template=1, niche=0)
-  [unconfirmed    ] 'f === “Women bs eelcomplicated What women ac'  (internal=1, template=3, niche=0)
+  [unconfirmed    ] 'The only camera you need..'  (internal=1, template=3, niche=0)
+  [unconfirmed    ] 'internal NDs Bu'  (internal=1, template=0, niche=0)
+  [unconfirmed    ] 'inl You should visit Switzerland one day...—'  (internal=1, template=0, niche=0)
+  [unconfirmed    ] 'ICA stafion is Antarctica.'  (internal=1, template=0, niche=0)
+  [unconfirmed    ] 'f === “Women bs eelcomplicated What women ac'  (internal=1, template=5, niche=0)
   [unconfirmed    ] 'wtf is vertical i & Fe Nath Oe, “<d'  (internal=1, template=0, niche=0)
-  [unconfirmed    ] "yy & «’ »' 6 NO HAY RESPETO por los animales"  (internal=1, template=2, niche=0)
+  [unconfirmed    ] "yy & «’ »' 6 NO HAY RESPETO por los animales"  (internal=1, template=1, niche=0)
   [unconfirmed    ] 'POV: the northern lights stata up for your n'  (internal=1, template=1, niche=0)
-  [unconfirmed    ] '—~ a s “== go soi -you feel si nee'  (internal=1, template=0, niche=0)
-  [unconfirmed    ] 'is officially replacing me.'  (internal=1, template=4, niche=0)
+  [unconfirmed    ] '—~ a s “== go soi -you feel si nee'  (internal=1, template=3, niche=0)
+  [unconfirmed    ] 'is officially replacing me.'  (internal=1, template=2, niche=0)
   [unconfirmed    ] 'Greece is a feeling. aot:'  (internal=1, template=0, niche=0)
 
-2 confirmed hook trends (0 via keyword-scan, 2 via targeted-search fallback); writing 10 rows (min-rows=10) -> output/hook_trends_2026-11-02.json
-▶ python3 curate_posts.py output/top_posts_2026-11-02_fresh.json
-  01 @saxonkent -> included: 
-  02 @carlosfortea -> included: 
-  03 @bonnyandgava -> included: 
-  04 @perianyiez -> included: 
-  05 @psalm1.0 -> included: 
-  06 @alexpantela -> excluded (This is an e-book/product launch carousel (monetization content), not travel or cinematic content itself.)
-  07 @michaelacarrot -> included: 
-  08 @agnesnicolee -> included: 
-  09 @psalm1.0 -> included: 
-  10 @isabelledvictoria -> included: 
-  11 @ryantucreative -> included: 
-  12 @michaelacarrot -> included: 
-  13 @henbu_ -> excluded (Monetization/engagement-bait caption ("Comment LUTS and I'll send you my colour grade") rather than genuine travel content showcase.)
-  14 @lawrencewalton_ -> included: 
-  15 @amdshutter -> included: 
-  16 @inojuettner -> included: 
-  17 @kiantye -> included: 
-  18 @kayo -> excluded (This is a horror/creepypasta skit (POV doomscrolling + silhouette figure) rather than travel or cinematic filmmaking content.)
-  19 @alvarovaliente -> excluded (Sponsored/branded tech product content (Apple MacBook hands-on), not travel or cinematic filmmaking content.)
-  20 @agnesnicolee -> included: 
-  21 @andres.visual -> included: 
-  22 @shane_dk -> included: 
-  23 @elliotmacguire -> included: 
-  24 @jessmelu -> included: 
-  25 @thesunnilife -> included: 
-  26 @michaelacarrot -> included: 
-  27 @ryannifsya -> included: 
-  28 @kayo -> included: 
-  29 @margatuzon -> excluded (Sponsored/branded content (tags @hertzphilippines car rental partner) and the image itself is a plain static roadside car shot without notable cinematic execution.)
-  30 @danielillescas -> included: 
-  31 @laurastravl -> excluded (Monetization bait - caption pushes "comment DREAM for my free training" lead-gen funnel rather than showcasing genuine travel/cinematic craft.)
-  32 @bonnyandgava -> included: 
-  33 @shane_dk -> excluded (Not travel/cinematic content—just a casual relatable moment/joke clip, no travel or cinematic filmmaking element.)
-  34 @tyron.shi -> included: 
-  35 @psalm1.0 -> included: 
-  36 @bxnmxclean -> included: 
-  37 @nilenriquezz -> included: 
-  38 @lawrencewalton_ -> included: 
-  39 @elliotmacguire -> included: 
-  40 @joefii_ -> included: 
-  41 @ferry.kch -> included: 
-  42 @margatuzon -> included: 
-  43 @danielillescas -> included: 
-  44 @alexpantela -> excluded (This is an e-book sales/waitlist promo (monetization content), not travel or cinematic filmmaking content itself.)
-  45 @ru.visions -> included: 
-  46 @danielillescas -> included: 
-  47 @lukas_pousset -> included: 
-  48 @jonsoriginals -> included: 
-  49 @juliakursten -> included: 
-  50 @jetlagjessy -> included: 
-  51 @madiaubakirov -> included: 
-  52 @danielzelinger -> included: 
-  53 @inojuettner -> included: 
+1 confirmed hook trends (0 via keyword-scan, 1 via targeted-search fallback); writing 10 rows (min-rows=10) -> output/hook_trends_2026-11-09.json
+▶ python3 curate_posts.py output/top_posts_2026-11-09_fresh.json
+  01 @kayo -> excluded (Not travel or cinematic filmmaking content—this is a relationship/lifestyle skit (fashion/relatable scenario) shot in a minimalist interior, unrelated to travel content or filmmaking technique.)
+  02 @alexpantela -> no image available, skipping
+  03 @nilenriquezz -> included: 
+  04 @keegan.greene -> included: 
+  05 @margatuzon -> excluded (Sponsored/branded content (tags @hertzphilippines, a car rental brand) despite strong performance metrics.)
+  06 @michaelacarrot -> included: 
+  07 @henbu_ -> excluded (Monetization bait - caption asks viewers to comment "LUTS" to receive a color grade, which is engagement-bait rather than pure travel/cinematic content for study.)
+  08 @iykezachariah -> included: 
+  09 @_nikolajgreen_ -> included: 
+  10 @michaelacarrot -> included: 
+  11 @margatuzon -> included: 
+  12 @hoehen_flug -> excluded (Sponsored/branded content (marked "Anzeige" = Advertisement in German, tagged with tour operator @dertour_de).)
+  13 @cam_snaps -> included: 
+  14 @shane_dk -> excluded (Comedy/prank roommate content, not travel or cinematic filmmaking related.)
+  15 @kayo -> excluded (Horror/skit content with a figure silhouette and POV text hook—not travel or cinematic filmmaking content.)
+  16 @tyron.shi -> included: 
+  17 @andyescapes -> included: 
+  18 @jetlagjessy -> included: 
+  19 @mikelspirit -> no image available, skipping
+  20 @zacfreuden -> no image available, skipping
+  21 @laurastravl -> excluded (Monetization bait - caption pushes "comment DREAM for my free training" on making money while traveling, not genuine travel/cinematic content study material.)
+  22 @andyescapes -> no image available, skipping
+  23 @phillippfeiffer_ -> included: 
+  24 @tyron.shi -> included: 
+  25 @sebastienclosuit -> included: 
+  26 @dennisglanz -> included: 
+  27 @peterngynn -> included: 
+  28 @shane_dk -> excluded (Not travel/cinematic content - this is a casual selfie-style comedy/relatability clip shot indoors, unrelated to travel or cinematic filmmaking techniques.)
+  29 @lawrencewalton_ -> included: 
+  30 @saxonkent -> no image available, skipping
+  31 @lukas_pousset -> no image available, skipping
+  32 @paulyloz -> included: 
+  33 @kyrkejaleco -> included: 
+  34 @alvarovaliente -> excluded (Tech/product review content (Apple MacBook hands-on), not travel or cinematic filmmaking content.)
+  35 @michaelacarrot -> included: 
+  36 @elliotmacguire -> included: 
+  37 @daniescayola -> no image available, skipping
+  38 @sebastienclosuit -> no image available, skipping
+  39 @lawrencewalton_ -> included: 
+  40 @keonilachhar -> excluded (Fitness/gym content, not travel or cinematic filmmaking related.)
+  41 @laurastravl -> included: 
+  42 @lucaepifany -> no image available, skipping
+  43 @sulzie -> no image available, skipping
+  44 @ryantucreative -> no image available, skipping
+  45 @ryannifsya -> no image available, skipping
+  46 @ryannifsya -> no image available, skipping
+  47 @bonnyandgava -> included: 
+  48 @joshpkohler -> no image available, skipping
+  49 @psalm1.0 -> included: 
+  50 @robinlamhj -> no image available, skipping
+  51 @danielillescas -> included: 
+  52 @juliakursten -> no image available, skipping
+  53 @juliakursten -> no image available, skipping
   54 @kiantye -> included: 
-  55 @charliefaga -> included: 
-  56 @rayanclaverrol -> included: 
-  57 @andyescapes -> included: 
-  58 @andyescapes -> included: 
-  59 @david_zamut -> included: 
-  60 @tyron.shi -> included: 
-  61 @kayo -> included: 
-  62 @amdshutter -> included: 
+  55 @tyron.shi -> no image available, skipping
+  56 @alvarovaliente -> excluded (Tech/product unboxing content (Apple MacBook ad-style post), not travel or cinematic filmmaking content.)
+  57 @ru.visions -> included: 
+  58 @alexbjorstorp -> no image available, skipping
+  59 @bxnmxclean -> no image available, skipping
+  60 @tobin.yates -> no image available, skipping
+  61 @carlosfortea -> no image available, skipping
+  62 @lucaepifany -> excluded (This is a portrait/BTS promo for a woodcarving short doc, not travel content; it's a behind-the-scenes crew photo rather than cinematic travel footage to study.)
   63 @jessmelu -> included: 
-  64 @shane_dk -> excluded (This is a casual personal/relationship-bait selfie clip (snowy backdrop but no real travel or cinematic filmmaking technique), not genuine travel/cinematic content worth studying.)
-  65 @andres.visual -> included: 
-  66 @mikelspirit -> included: 
-  67 @hoehen_flug -> included: 
-  68 @sethtillman -> included: 
-  69 @keonilachhar -> excluded (Fitness/gym content, not travel or cinematic filmmaking related.)
-  70 @maor.benezri -> included: 
+  64 @amdshutter -> included: 
+  65 @kelvin_t413 -> included: 
+  66 @dario.explore -> included: 
+  67 @michaelacarrot -> included: 
+  68 @danielzelinger -> no image available, skipping
+  69 @lukas_pousset -> no image available, skipping
+  70 @juliakursten -> included: 
 
-60/70 candidates included (fresh this run).
-Wrote 60 curated IG posts + kept 20 TikTok/keyword posts into dashboard/data.json.
-▶ python3 curate_trends.py output/trends_2026-11-02.json output/hook_trends_2026-11-02.json
-  [audio] Original audio — aliciadj__ -> "Maybe I Should..." Cinematic Hook
-  [audio] STORM II — GENER8ION, Yung Lean -> Peak Pose, Arms Wide
-  [audio] Sign of the Times — Harry Styles -> Golden-Hour Cinematic Wanderer Portrait
-  [audio] Purple Rain (2015 Paisley Park Remaster) -> Silhouette Sunsets to Purple Rain
+34/70 candidates included (fresh this run).
+Wrote 34 curated IG posts + kept 20 TikTok/keyword posts into dashboard/data.json.
+▶ python3 curate_trends.py output/trends_2026-11-09.json output/hook_trends_2026-11-09.json
+  [audio] STORM II — GENER8ION, Yung Lean -> Hidden Lagoon Drone Reveal
+  [audio] Original audio — aliciadjurovic_ -> Safari Lodge Triptych Reveal
+  [audio] Sign of the Times — Harry Styles -> Golden Hour Wanderer Portraits
+  [audio] Purple Rain (2015 Paisley Park Remaster) -> Silhouette Golden Hour Reveal
+  [audio] oh yeah? — Steve Lacy -> City Name + Skyline Sunrise Reveal
+  [audio] Papaoutai (Afro Soul) — mikeeysmind, Chi -> "You Visit vs Instead" Hidden Spot Reveal
+  [audio] No Church In The Wild (feat. Frank Ocean -> Remote Horizons Horseback Ride
+  [audio] Staying Still — Noah Kahan -> "For Them" Solo Travel Montage
   [audio] back to friends — sombr -> Golden Hour Silhouette Montage
-  [audio] No Church In The Wild (feat. Frank Ocean -> Epic Landscape Reveal to "No Church in the Wild"
-  [audio] lost in the fire (instrumental) — no/vox -> Solo Desert Reckoning
-  [audio] Staying Still — Noah Kahan -> "She/He CAN Do It" Solo Travel Montage
-  [audio] You Were Bigger Than Life — Shook -> Misty Mountain Reveal
-  [audio] To Build A Home (feat. Patrick Watson) — -> Quiet Window/Moment Confession
-  [hook] the art of friendship ‘ XY, -> no thumbnail available, skipping
-  [hook] internal NDs Bu -> Numbered Gear-Tip Countdown Hook
+  [audio] You Were Bigger Than Life — Shook -> Underwater Whale Tail Cinematics
+  [hook] What humans used to build -> no thumbnail available, skipping
 
-11/12 evidence packs became cards.
-Wrote 11 Trend Radar cards into dashboard/data.json.
+10/11 evidence packs became cards.
+Wrote 10 Trend Radar cards into dashboard/data.json.
 ▶ python3 hooks_to_dashboard.py
 Wrote 10 validated hook trends into dashboard/data.json (hookTrends).
 ▶ python3 audio_chart_to_dashboard.py
-Injected soundChart (30 of 1087 named, from 1103 consolidated; 3 AudD-identified original audio; previews filled next by fetch_audio.py) + tiktokSounds (20, 7 cross-platform) into data.json.
+Injected soundChart (30 of 1121 named, from 1132 consolidated; 3 AudD-identified original audio; previews filled next by fetch_audio.py) + tiktokSounds (20, 6 cross-platform) into data.json.
 ▶ python3 tiktok_to_dashboard.py --top 10
-Merged 10 TikTok posts (fresh this run; 9 covers freshly downloaded, 1 reused) + 60 Instagram. data.json now 80 posts.
+Merged 10 TikTok posts (fresh this run; 10 covers freshly downloaded, 0 reused) + 34 Instagram. data.json now 54 posts.
 ▶ python3 keyword_posts_to_dashboard.py --top 10
-Merged 10 keyword-lane posts (fresh this run; 10 off-seed ⚡, 6 freshly downloaded, 4 reused). data.json now 80 posts.
+Merged 10 keyword-lane posts (fresh this run; 10 off-seed ⚡, 6 freshly downloaded, 4 reused). data.json now 54 posts.
 ▶ python3 tiktok_videotext.py (non-critical)
-  @cinematictravelcon acct     -> 's, = Zoom ae a a Se! wou Atgeme'
-  @hawk330i           acct     -> 'Rat Rime Fe $4 fe en or —T7 Fat Bibert Wi ZA ST LEPE VAZEN'
-  @pierluigibarcaa    acct     -> 'sil a — \\ J (ca ae co area Mary wee panes'
-  @hawk330i           acct     -> '{yrs $e, wy 7 WY, ens NUN iy) Lp ze Mey ee) tee ty (ts is)'
-  @tonyolsenfilm      acct     -> '4 “a'
-  @cinematictravelsa  acct     -> 'iin roel ia! -s\\) ete ine ae 4 ih: rr Xe NaN MN: ————79 h '
+  @oui.photo          acct     -> '{et oA] (ea Side #| Butte Montmartre WANTED) { ‘Nias YO. O'
+  @cinematictravelcon acct     -> '- ~- = e => SRS we: iOS'
+  @cinematictravelsa  acct     -> 'ore = Ae Coes g Mossel Bay ne) Po DP,'
+  @cinematictravelcon acct     -> 'LOR.GRYA Vice B Lye TS & P@W AVAILABLE”'
+  @cinematictravelsa  acct     -> 'ark ASS ais EO na Rea 2 —we —re ——= ——— ——s oar ~~ Pak. ra'
+  @oui.photo          acct     -> 'A | LH. Ll er Fe wil — "ior INTL asi f a ee _— |_| ve aye '
+  @pierluigibarcaa    acct     -> ''
+  @tonyolsenfilm      acct     -> 'wm te'
+  @cinematictravelcon acct     -> ''
   @sedyyfilms         acct     -> ''
-  @dillonfilms_       acct     -> '=" is * ae ba aad Fg: all nn Se te le [ll ater ied ea ba ='
-  @cinematictravelsa  acct     -> '\\i]] ipa ay at k a = = NNT ——— i Te s——- = —_— —<——= ——— D'
-  @cinematictravelsa  acct     -> 'repay moe aati fui 1 LL mi bs<(| nes atu bf, eri. j “ee 1 '
-  @jflix.1            keyword  -> 'iat Pate bate) <'
+  @user121396465      keyword  -> 'eo. Ga’ eam “=e reat ce A aan BN ae > 3 neg apt CO, CRT ra'
   @lowill.photo       keyword  -> 'nig Cv) aad is ¢ Ris'
+  @ayitsphotography   keyword  -> 'red ~~ ™ gree'
+  @elika.travels0     keyword  -> 'Ps, it, tt,'
   @jakexplrs          keyword  -> ''
-  @hudsonfilms__      keyword  -> '“sy Nay tell rrve...'
-  @hudsonfilms__      keyword  -> 'eperiyour hmewt..'
-  @liamscinema        keyword  -> ''
+  @polpabs            keyword  -> 'INE er k MIOs Bu, §~1708) ~ ahve'
   @skylertaylor12     keyword  -> '[Zig 1 \\ ah | Nag be'
-  @user121396465      keyword  -> 'Saks ‘he (ee,'
-  @hudsonfilms__      keyword  -> 'pets RPA 7) As Fas'
-  @hudsonfilms__      keyword  -> 'brs a ter ee'
+  @lauraleealley      keyword  -> 'this and a drag'
+  @hudsonfilms__      keyword  -> 'eperiyour hmewt..'
+  @hudsonfilms__      keyword  -> 'n.* bad <2 twas'
 
-videoText set on 17/20 TikTok posts
+videoText set on 16/20 TikTok posts
 ▶ python3 fetch_videos.py (non-critical)
-  ✗ instagram @perianyiez: HTTP Error 403: Forbidden
+  ✗ instagram @nilenriquezz: HTTP Error 403: Forbidden
+  ✗ instagram @keegan.greene: HTTP Error 403: Forbidden
   ✗ instagram @michaelacarrot: HTTP Error 403: Forbidden
-  ✗ instagram @agnesnicolee: HTTP Error 403: Forbidden
-  ✗ instagram @psalm1.0: HTTP Error 403: Forbidden
-  ✗ instagram @isabelledvictoria: HTTP Error 403: Forbidden
+  ✗ instagram @iykezachariah: HTTP Error 403: Forbidden
+  ✗ instagram @_nikolajgreen_: HTTP Error 403: Forbidden
   ✗ instagram @michaelacarrot: HTTP Error 403: Forbidden
-  ✗ instagram @lawrencewalton_: HTTP Error 403: Forbidden
-  ✗ instagram @amdshutter: HTTP Error 403: Forbidden
-  ✗ instagram @andres.visual: HTTP Error 403: Forbidden
-  ✗ instagram @shane_dk: HTTP Error 403: Forbidden
-  ✗ instagram @jessmelu: HTTP Error 403: Forbidden
-  ✗ instagram @thesunnilife: HTTP Error 403: Forbidden
-  ✗ instagram @michaelacarrot: HTTP Error 403: Forbidden
-  ✗ instagram @ryannifsya: HTTP Error 403: Forbidden
+  ✗ instagram @margatuzon: HTTP Error 403: Forbidden
+  ✗ instagram @cam_snaps: HTTP Error 403: Forbidden
   ✗ instagram @tyron.shi: HTTP Error 403: Forbidden
-  ✗ instagram @lawrencewalton_: HTTP Error 403: Forbidden
-  ✗ instagram @ferry.kch: HTTP Error 403: Forbidden
-  ✗ instagram @jonsoriginals: HTTP Error 403: Forbidden
+  ✗ instagram @andyescapes: HTTP Error 403: Forbidden
   ✗ instagram @jetlagjessy: HTTP Error 403: Forbidden
-  ✗ instagram @danielzelinger: HTTP Error 403: Forbidden
-  ✗ instagram @kiantye: HTTP Error 403: Forbidden
-  ✗ instagram @rayanclaverrol: HTTP Error 403: Forbidden
+  ✗ instagram @phillippfeiffer_: HTTP Error 403: Forbidden
   ✗ instagram @tyron.shi: HTTP Error 403: Forbidden
+  ✗ instagram @sebastienclosuit: HTTP Error 403: Forbidden
+  ✗ instagram @dennisglanz: HTTP Error 403: Forbidden
+  ✗ instagram @peterngynn: HTTP Error 403: Forbidden
+  ✗ instagram @lawrencewalton_: HTTP Error 403: Forbidden
+  ✗ instagram @paulyloz: HTTP Error 403: Forbidden
+  ✗ instagram @kyrkejaleco: HTTP Error 403: Forbidden
+  ✗ instagram @michaelacarrot: HTTP Error 403: Forbidden
+  ✗ instagram @elliotmacguire: HTTP Error 403: Forbidden
+  ✗ instagram @lawrencewalton_: HTTP Error 403: Forbidden
+  ✗ instagram @laurastravl: HTTP Error 403: Forbidden
+  ✗ instagram @bonnyandgava: HTTP Error 403: Forbidden
+  ✗ instagram @psalm1.0: HTTP Error 403: Forbidden
+  ✗ instagram @danielillescas: HTTP Error 403: Forbidden
+  ✗ instagram @kiantye: HTTP Error 403: Forbidden
+  ✗ instagram @ru.visions: HTTP Error 403: Forbidden
   ✗ instagram @jessmelu: HTTP Error 403: Forbidden
-  ✗ instagram @andres.visual: HTTP Error 403: Forbidden
+  ✗ instagram @amdshutter: HTTP Error 403: Forbidden
+  ✗ instagram @kelvin_t413: HTTP Error 403: Forbidden
+  ✗ instagram @dario.explore: HTTP Error 403: Forbidden
+  ✗ instagram @michaelacarrot: HTTP Error 403: Forbidden
+  ✗ instagram @juliakursten: HTTP Error 403: Forbidden
+  ✗ tiktok @oui.photo: HTTP Error 403: Forbidden
   ✗ tiktok @cinematictravelcontent: HTTP Error 403: Forbidden
-  ✗ tiktok @hawk330i: HTTP Error 403: Forbidden
+  ✗ tiktok @cinematictravelsa: HTTP Error 403: Forbidden
+  ✗ tiktok @cinematictravelcontent: HTTP Error 403: Forbidden
+  ✗ tiktok @cinematictravelsa: HTTP Error 403: Forbidden
+  ✗ tiktok @oui.photo: HTTP Error 403: Forbidden
   ✗ tiktok @pierluigibarcaa: HTTP Error 403: Forbidden
-  ✗ tiktok @hawk330i: HTTP Error 403: Forbidden
   ✗ tiktok @tonyolsenfilm: HTTP Error 403: Forbidden
-  ✗ tiktok @cinematictravelsa: HTTP Error 403: Forbidden
+  ✗ tiktok @cinematictravelcontent: HTTP Error 403: Forbidden
   ✗ tiktok @sedyyfilms: HTTP Error 403: Forbidden
-  ✗ tiktok @dillonfilms_: HTTP Error 403: Forbidden
-  ✗ tiktok @cinematictravelsa: HTTP Error 403: Forbidden
-  ✗ tiktok @cinematictravelsa: HTTP Error 403: Forbidden
-  ✗ tiktok @jflix.1: HTTP Error 403: Forbidden
-  ✗ tiktok @lowill.photo: HTTP Error 403: Forbidden
-  ✗ tiktok @jakexplrs: HTTP Error 403: Forbidden
-  ✗ tiktok @hudsonfilms__: HTTP Error 403: Forbidden
-  ✗ tiktok @hudsonfilms__: HTTP Error 403: Forbidden
-  ✗ tiktok @liamscinema: HTTP Error 403: Forbidden
-  ✗ tiktok @skylertaylor12: HTTP Error 403: Forbidden
   ✗ tiktok @user121396465: HTTP Error 403: Forbidden
+  ✗ tiktok @lowill.photo: HTTP Error 403: Forbidden
+  ✗ tiktok @ayitsphotography: HTTP Error 403: Forbidden
+  ✗ tiktok @elika.travels0: HTTP Error 403: Forbidden
+  ✗ tiktok @jakexplrs: HTTP Error 403: Forbidden
+  ✗ tiktok @polpabs: HTTP Error 403: Forbidden
+  ✗ tiktok @skylertaylor12: HTTP Error 403: Forbidden
+  ✗ tiktok @lauraleealley: HTTP Error 403: Forbidden
   ✗ tiktok @hudsonfilms__: HTTP Error 403: Forbidden
   ✗ tiktok @hudsonfilms__: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DbYVwyUTZYI/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfKfQdfz-Sw/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DGnoJZ_snfn/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dezafz2CGiS/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/C4inAzYsla-/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DZVVvGpuqGT/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdGf-kloOIQ/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd6-9k7vm8p/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DaUf9LjTYDN/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeQxWaLSPjL/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Ddt_ugDNniW/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfKfZmITJrE/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfE56sYqjb2/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DbsR-0sqy0f/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De13H5VMtX_/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DbYNHBosiln/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/C-VBCFqNWmU/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DejzjKFMjXz/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Ddt57ooO14U/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdqYml_PyLB/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdzetEXzZFu/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfKfjFbT5Pi/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfBCGIoP0T2/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdD-5Uhs45b/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeUSmHliFr9/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Ddulyf1zebS/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/C4sV5rLOGWp/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DZaWV2vCPZp/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Da-aP2NsP-_/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd4sTmHPWVF/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DaUfLxqTj0P/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfOW8uXPRfT/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdvJJOSv_8i/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfPG61Ws_AA/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeV8YfqRcNZ/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeSPtW-iQtE/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfLIBdhqZPX/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd8FjTGvify/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De7-EzXPfgJ/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De2cXIuC22k/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De6tTcdsEFP/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd4rXtay6J6/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DPXy8raE0RX/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfP3ltaquUx/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DNQeD1UIM0G/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Db-MdALIm7c/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeuSU5eJona/: HTTP Error 403: Forbidden
-  ✗ EX tiktok 444653076633488686: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfHZn_Rzsw0/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfMSYHJN8LG/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Derk_pLu1CV/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dcu_AHZxhX9/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De7-SxzP3oG/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DLjGyLxzNUA/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dauy9ELIn3V/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DbApylNs8gE/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DeJflEWIABH/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfLMh-2KHaL/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DToWxl2k2r4/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DY9WpcdIRv_/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Db_qCF-ot6x/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DewFxo8NfMd/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd0k6YmzvIF/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DNknp00oFP7/: HTTP Error 403: Forbidden
   ✗ EX instagram /reel/Dd7AI-wPDUP/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DexgfQXPsW5/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DemwGDNiIJx/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DdFmqqKyymz/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfNgZV0gOR9/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DffVqqkqIUT/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Ddu0wLWJIOx/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfLMh-2KHaL/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/C2FTCYhOQR0/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfgRESHgHY5/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeeVK-jsYkE/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DdrPKORsHKN/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfLIBdhqZPX/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd_p-VrTfiV/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DNiuK2XoDdc/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DPXy8raE0RX/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dc0g_DgzKwZ/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DffDi16swZi/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/De6tTcdsEFP/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd8Jo65NEca/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/C-VBCFqNWmU/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfdvEXsgIK0/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfOj_E7yI6s/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DewFxo8NfMd/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DbYVwyUTZYI/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Da-aP2NsP-_/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DaUf9LjTYDN/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DLjGyLxzNUA/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DToWxl2k2r4/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DX1aVPkSpM4/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfeufNkPF0J/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfiCnf6S6vD/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dffy6iRMEEv/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DbApylNs8gE/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DdD-5Uhs45b/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dfe5PslxXSo/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Ddt_ugDNniW/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeK9EPevtKy/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfcKcjxPiKl/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfMOLkqMEid/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DNQeD1UIM0G/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfO5fUvs8VY/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DdOJ0kszCI_/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfdyFdigRTk/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeEPDfsojgg/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfPG61Ws_AA/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfSerEpiDP-/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DcV3JB0J2wn/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dde6NHIpypu/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Ddt57ooO14U/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeAgOgRyGeO/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/De13H5VMtX_/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DGnoJZ_snfn/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/C4inAzYsla-/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dfc0FgbyDOT/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Ddg8XazNPIK/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeqsBHyIaix/: HTTP Error 403: Forbidden
   ✗ EX instagram /reel/DedEwjRvSQ9/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dew0eOUJKzj/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De08G8Pt3Rf/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DXOJ_txElUY/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DePHHE6IQKo/: HTTP Error 403: Forbidden
-  ✗ EX tiktok 493595150598278442: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfKbkSxTQsy/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De1UK3CC9Iw/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/DfO-0koqO0-/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfeYHrlKBgc/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DZaWV2vCPZp/: HTTP Error 403: Forbidden
   ✗ EX instagram /reel/DfNDwvqS4Vc/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Der20RLJfjr/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/De073e3thiZ/: HTTP Error 403: Forbidden
-  ✗ EX instagram /reel/Dd8UWLWSFXE/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd4sTmHPWVF/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd8FjTGvify/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfZ3q7gBTex/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DaUfLxqTj0P/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DffVPM4qwaA/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DVlA-IODDRv/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DffbL3lKRZf/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfZb7V-OTbk/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd0k6YmzvIF/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Db_qCF-ot6x/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/De7-EzXPfgJ/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DdvJJOSv_8i/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfNgZV0gOR9/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeJflEWIABH/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfhciKPpgCT/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dew0eOUJKzj/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/C4sV5rLOGWp/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Db-6LyRqBtI/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dc0Hq9bRxIi/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DewsbS9MBH2/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfTy_unzysD/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dfh_17ViNuB/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dd55QYytSzW/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfcXFePPgDY/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DffjhbKtvZQ/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfZxSRjsRm3/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfeypgfvYJb/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DeuSU5eJona/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfKbkSxTQsy/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DemwGDNiIJx/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dcu_AHZxhX9/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/DfcvHl1PA2_/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/C5DL-MnKSvA/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Dfhi2KDK4dP/: HTTP Error 403: Forbidden
+  ✗ EX instagram /reel/Db-MdALIm7c/: HTTP Error 403: Forbidden
 
-Board posts: 0 new, 0 kept, 61 failed.
-Example reels: 0 new, 5 kept, 94 failed, 0 pruned (rotated out, unsaved).
+Board posts: 0 new, 0 kept, 54 failed.
+Example reels: 0 new, 3 kept, 93 failed, 2 pruned (rotated out, unsaved).
 Inspiration links: 0 new, 0 kept, 0 failed.
 Dismissed >7d: 0 download(s) removed.
-Blob now holds 160 videos.
+Blob now holds 158 videos.
 ▶ python3 fetch_audio.py (non-critical)
-  ✗ blob put 27880502174911861: HTTP Error 403: Forbidden
-  ✗ Original audio                       (no audio resolved)
   ✗ blob put 1670624957467949: HTTP Error 403: Forbidden
   ✗ STORM II                             (no audio resolved)
-  ✗ blob put 608309751564097: HTTP Error 403: Forbidden
-  ✗ back to friends                      (no audio resolved)
-  ✗ blob put 1266344670180120: HTTP Error 403: Forbidden
-  ✗ No Church In The Wild (feat. Frank   (no audio resolved)
-  ✗ blob put 1402530461318864: HTTP Error 403: Forbidden
-  ✗ lost in the fire (instrumental)      (no audio resolved)
-  ✗ blob put 1506657994163412: HTTP Error 403: Forbidden
-  ✗ Staying Still                        (no audio resolved)
-  ✗ blob put 2068591689851875: HTTP Error 403: Forbidden
-  ✗ You Were Bigger Than Life            (no audio resolved)
-  ✗ blob put 769633083409642: HTTP Error 403: Forbidden
-  ✗ To Build A Home (feat. Patrick Wat   (no audio resolved)
-  ✗ Papaoutai (Afro Soul)                (no audio resolved)
-  ✗ blob put 1137843618817511: HTTP Error 403: Forbidden
-  ✗ biting bullets                       (no audio resolved)
+  ✗ blob put 27880502174911861: HTTP Error 403: Forbidden
+  ✗ Original audio                       (no audio resolved)
   ✗ blob put 712456295295826: HTTP Error 403: Forbidden
   ✗ oh yeah?                             (no audio resolved)
-  ✗ blob put 1007981855047944: HTTP Error 403: Forbidden
-  ✗ Made of Dreams                       (no audio resolved)
+  ✗ blob put 710544585226373: HTTP Error 403: Forbidden
+  ✗ Papaoutai (Afro Soul)                (no audio resolved)
+  ✗ blob put 1266344670180120: HTTP Error 403: Forbidden
+  ✗ No Church In The Wild (feat. Frank   (no audio resolved)
+  ✗ blob put 1506657994163412: HTTP Error 403: Forbidden
+  ✗ Staying Still                        (no audio resolved)
+  ✗ blob put 608309751564097: HTTP Error 403: Forbidden
+  ✗ back to friends                      (no audio resolved)
+  ✗ blob put 2068591689851875: HTTP Error 403: Forbidden
+  ✗ You Were Bigger Than Life            (no audio resolved)
+  ✗ blob put 1137843618817511: HTTP Error 403: Forbidden
+  ✗ biting bullets                       (no audio resolved)
+  ✗ blob put 508535482970730: HTTP Error 403: Forbidden
+  ✗ 500 Miles                            (no audio resolved)
   ✗ blob put 331838513222324: HTTP Error 403: Forbidden
   ✗ Earrings                             (no audio resolved)
+  ✗ blob put 26693129967034144: HTTP Error 403: Forbidden
   ✗ Original audio                       (no audio resolved)
+  ✗ blob put 720819121018753: HTTP Error 403: Forbidden
+  ✗ Raindance                            (no audio resolved)
+  ✗ blob put 1028160720667028: HTTP Error 403: Forbidden
+  ✗ The Reason                           (no audio resolved)
+  ✗ blob put 1007981855047944: HTTP Error 403: Forbidden
+  ✗ Made of Dreams                       (no audio resolved)
+  ✗ blob put 2017160595433486: HTTP Error 403: Forbidden
+  ✗ Chubina (Slowed)                     (no audio resolved)
   ✗ blob put 3097677870423589: HTTP Error 403: Forbidden
   ✗ Window Pane Rain                     (no audio resolved)
-  ✗ blob put 1046582691329703: HTTP Error 403: Forbidden
-  ✗ Sand Drawing                         (no audio resolved)
   ✗ blob put 5132826636819127: HTTP Error 403: Forbidden
   ✗ Idea 22                              (no audio resolved)
-  ✗ blob put 0: HTTP Error 403: Forbidden
-  ✗ The One                              (no audio resolved)
+  ✗ blob put 1402530461318864: HTTP Error 403: Forbidden
+  ✗ lost in the fire (instrumental)      (no audio resolved)
+  ✗ blob put 454726935005549: HTTP Error 403: Forbidden
+  ✗ It's a Man's World                   (no audio resolved)
+  ✗ blob put 586698632590047: HTTP Error 403: Forbidden
+  ✗ Duvet (Acoustic)                     (no audio resolved)
+  ✗ blob put 1094285778571973: HTTP Error 403: Forbidden
   ✗ i feel lost - Aaron Hibell           (no audio resolved)
-  ✗ blob put 634117833693825: HTTP Error 403: Forbidden
-  ✗ What Goes Around.../...Comes Aroun   (no audio resolved)
-  ✗ blob put 1195897392711412: HTTP Error 403: Forbidden
-  ✗ win again (slowed)                   (no audio resolved)
-  ✗ blob put 486665065097971: HTTP Error 403: Forbidden
-  ✗ Time                                 (no audio resolved)
+  ✗ blob put 1338847798295413: HTTP Error 403: Forbidden
+  ✗ Solace                               (no audio resolved)
+  ✗ blob put 29573551168919716: HTTP Error 403: Forbidden
+  ✗ Original audio                       (no audio resolved)
   ✗ blob put 1235801320642148: HTTP Error 403: Forbidden
   ✗ Sweet Heat Lightning                 (no audio resolved)
   ✗ blob put 1664989511654648: HTTP Error 403: Forbidden
   ✗ Ithaca                               (no audio resolved)
   ✗ blob put 197707719917488: HTTP Error 403: Forbidden
   ✗ Can You Hear The Music               (no audio resolved)
-  ✗ blob put 233453057352168: HTTP Error 403: Forbidden
-  ✗ The Blue Planet                      (no audio resolved)
-  ✗ blob put 0: HTTP Error 403: Forbidden
+  ✗ blob put 1388796695752095: HTTP Error 403: Forbidden
   ✗ Hipnotique                           (no audio resolved)
 
-Audio previews: 0 new, 3 kept, 27 unresolved. Pruned 0 stale clips. Chart now self-hosts real audio (Deezer deprecated).
+Audio previews: 0 new, 2 kept, 28 unresolved. Pruned 1 stale clips. Chart now self-hosts real audio (Deezer deprecated).
 ▶ python3 discover.py (non-critical)
 Resolving user_ids for 130 seeds...
   126/130 resolved (cached + fresh)
 Expanding related-profiles for 126 seeds...
 Fetching follower counts for 0 surfaced candidates...
-Wrote output/discovered_2026-11-02.json/.md — 0 candidates (related to >= 3 seeds).
+Wrote output/discovered_2026-11-09.json/.md — 0 candidates (related to >= 3 seeds).
 Next: python3 discovery_posts.py && python3 discovery_to_dashboard.py — surfaces each candidate's actual posts on the dashboard (⚡ new find). Nothing is added to accounts.json until you save one of those posts and confirm 'add to watchlist?' — no bulk/blind merge.
 ▶ python3 discovery_posts.py (non-critical)
 IG: no untracked candidates (run discover.py / bootstrap.py first, or everyone's already tracked).
@@ -588,14 +546,14 @@ No candidate posts fetched. Nothing to write.
 ▶ python3 discovery_to_dashboard.py (non-critical)
 No output/discovery_candidates_*.json — run discovery_posts.py first.
 ▶ python3 general_corpus.py --pages 5 --explore 900 (non-critical)
-  US billboard: 100 kept (100 fetched, 5 page(s))
+  US billboard: 99 kept (99 fetched, 5 page(s))
     (5 consecutive empty responses — stopping, possible sustained rate-limit or outage)
-    WARNING: wanted 900, got 185 after 30 calls (max_calls=85) — feed may be exhausted or survival rate lower than expected
-  explore: 185 kept (185 fetched)
+    WARNING: wanted 900, got 0 after 5 calls (max_calls=85) — feed may be exhausted or survival rate lower than expected
+  explore: 0 kept (0 fetched)
 
-Wrote 285 general trending videos -> output/general_corpus_2026-11-02.json
-  by source: {'top_contents': 100, 'explore': 185}   regions: US
-  35 TikHub calls (~$0.035)
+Wrote 99 general trending videos -> output/general_corpus_2026-11-09.json
+  by source: {'top_contents': 99}   regions: US
+  10 TikHub calls (~$0.010)
 ▶ python3 general_hooks.py --limit 1000 --verify 25 (non-critical)
 ⚠ FAILED (non-critical, continuing): python3 general_hooks.py --limit 1000 --verify 25
 ▶ python3 general_hooks_to_dashboard.py (non-critical)
@@ -604,7 +562,7 @@ No general hook templates in this run's output — keeping 20 committed row(s) r
 No output/general_hook_trends_*.json — run general_hooks.py first.
 ⚠ FAILED (non-critical, continuing): python3 build_general_dashboard.py
 ▶ python3 provenance.py
-Injected provenance: {"igAccounts": 130, "igResolved": 126, "igSeed": 130, "igDiscovered": 0, "igBootstrap": 0, "igDiscMinSeeds": 3, "igDiscCandidates": 0, "igDiscSeedCoverage": [0, 126], "igDiscReviewed": null, "igDiscPostsPerCandidate": 5, "igDiscCap": 10, "tiktokCreators": 25, "postsPerIg": 8, "postsPerTt": 10, "daysBack": 30, "dedupeRegistry": 689, "dedupeScraped": 190, "dedupeExcluded": 32, "igCurated": 60, "tiktokCurated": 10, "keywordFinds": 10, "keywordScanned": 56, "boardAccounts": 56, "igCarryover": 0, "tiktokCarryover": 0, "keywordCarryover": 0, "discFresh": 0, "discCarryover": 0, "audioAccounts": 126, "audioReelsPer": 20, "audioTracks": 1103, "audioMulti": 56, "audioShown": 30, "ttSounds": 50, "ttXplatform": 7, "ttShown": 20, "audioReels": 2520, "hooksOcrd": 1213, "hooksReadable": 1105, "hooksGibberish": 95, "hooksStable": 165, "hooksStableChecked": 398, "hookValidated": 2, "hookPlats": ["Instagram"], "hookMinNiche": 2, "hookSearchPool": 8, "hookShown": 10, "nicheSignals": {"Travel & destinations": ["travel", "adventure", "wander", "landscape", "roadtrip", "backpack", "nomad", "explor", "bali", "iceland", "dolomit"], "Filmmaking & camera": ["cinematic", "cinematograph", "filmmak", "drone", "fpv", "b-roll", "broll", "color grading", "colour grading", "colorgrading", "davinci", "gimbal", "shot on", "fx3", "fx6", "a7s", "bmpcc"], "Underwater": ["underwater", "freedive", "freediving", "scuba", "snorkel", "dive", "diving"]}, "keywordScanKeywords": ["cinematic travel", "travel film", "cinematic photography", "travel filmmaker", "cinematic b roll", "travel cinematography"], "keywords": ["cinematic travel", "travel film", "cinematic photography", "travel filmmaker", "cinematic b roll", "travel cinematography"], "trendsAudio": 10, "trendsHook": 1, "costTikhubCalls": 1064, "costClaudeCalls": 105, "costAuddCalls": 50, "auddAuthDead": true, "costAcrcloudCalls": 25, "costTikhub": 1.064, "costClaude": 1.113, "costTotal": 2.177, "igExcluded": 10, "igEvaluated": 70, "igExcludeReasons": [["This is an e-book/product launch carousel (monetization content), not travel or cinematic content itself.", 1], ["Monetization/engagement-bait caption (\"Comment LUTS and I'll send you my colour grade\") rather than genuine travel content showcase.", 1], ["This is a horror/creepypasta skit (POV doomscrolling + silhouette figure) rather than travel or cinematic filmmaking content.", 1], ["Sponsored/branded tech product content (Apple MacBook hands-on), not travel or cinematic filmmaking content.", 1], ["Sponsored/branded content (tags @hertzphilippines car rental partner) and the image itself is a plain static roadside car shot without notable cinematic execution.", 1]]}
+Injected provenance: {"igAccounts": 130, "igResolved": 126, "igSeed": 130, "igDiscovered": 0, "igBootstrap": 0, "igDiscMinSeeds": 3, "igDiscCandidates": 0, "igDiscSeedCoverage": [0, 126], "igDiscReviewed": null, "igDiscPostsPerCandidate": 5, "igDiscCap": 10, "tiktokCreators": 25, "postsPerIg": 8, "postsPerTt": 10, "daysBack": 30, "dedupeRegistry": 733, "dedupeScraped": 190, "dedupeExcluded": 55, "igCurated": 34, "tiktokCurated": 10, "keywordFinds": 10, "keywordScanned": 53, "boardAccounts": 44, "igCarryover": 0, "tiktokCarryover": 0, "keywordCarryover": 0, "discFresh": 0, "discCarryover": 0, "audioAccounts": 126, "audioReelsPer": 20, "audioTracks": 1132, "audioMulti": 57, "audioShown": 30, "ttSounds": 50, "ttXplatform": 6, "ttShown": 20, "audioReels": 2520, "hooksOcrd": 1282, "hooksReadable": 1150, "hooksGibberish": 97, "hooksStable": 177, "hooksStableChecked": 443, "hookValidated": 1, "hookPlats": ["Instagram"], "hookMinNiche": 2, "hookSearchPool": 8, "hookShown": 10, "nicheSignals": {"Travel & destinations": ["travel", "adventure", "wander", "landscape", "roadtrip", "backpack", "nomad", "explor", "bali", "iceland", "dolomit"], "Filmmaking & camera": ["cinematic", "cinematograph", "filmmak", "drone", "fpv", "b-roll", "broll", "color grading", "colour grading", "colorgrading", "davinci", "gimbal", "shot on", "fx3", "fx6", "a7s", "bmpcc"], "Underwater": ["underwater", "freedive", "freediving", "scuba", "snorkel", "dive", "diving"]}, "keywordScanKeywords": ["cinematic travel", "travel film", "cinematic photography", "travel filmmaker", "cinematic b roll", "travel cinematography"], "keywords": ["cinematic travel", "travel film", "cinematic photography", "travel filmmaker", "cinematic b roll", "travel cinematography"], "trendsAudio": 10, "trendsHook": 0, "costTikhubCalls": 829, "costClaudeCalls": 79, "costAuddCalls": 52, "auddAuthDead": true, "costAcrcloudCalls": 26, "costTikhub": 0.829, "costClaude": 0.578, "costTotal": 1.407, "igExcluded": 12, "igEvaluated": 46, "igExcludeReasons": [["Not travel or cinematic filmmaking content\u2014this is a relationship/lifestyle skit (fashion/relatable scenario) shot in a minimalist interior, unrelated to travel content or filmmaking technique.", 1], ["Sponsored/branded content (tags @hertzphilippines, a car rental brand) despite strong performance metrics.", 1], ["Monetization bait - caption asks viewers to comment \"LUTS\" to receive a color grade, which is engagement-bait rather than pure travel/cinematic content for study.", 1], ["Sponsored/branded content (marked \"Anzeige\" = Advertisement in German, tagged with tour operator @dertour_de).", 1], ["Comedy/prank roommate content, not travel or cinematic filmmaking related.", 1]]}
 ▶ python3 build_dashboard.py
-Copied 62 new thumbnail(s) into dashboard/thumbs.
-Built dashboard/index.html — 80 posts, 2126 KB.
+Copied 28 new thumbnail(s) into dashboard/thumbs.
+Built dashboard/index.html — 54 posts, 2165 KB.
